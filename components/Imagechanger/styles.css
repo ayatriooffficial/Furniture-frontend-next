@@ -1,0 +1,88 @@
+@media only screen and (max-width: 450px) {
+  .main-trend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .imagechanger .left,
+  .imagechanger .right {
+    width: 100%;
+  }
+
+  .image-container {
+    width: 100%; /* Ensure the image container takes up 100% width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* .imagechanger .right img {
+    width: 90%; 
+    height: auto;
+    
+  } */
+}
+/* Add custom styles for Swiper navigation here */
+.swiper-button-prev {
+  color: black;
+  font-weight: 300;
+  margin-top:8rem;
+  /* background-color: rgb(197, 197, 197); */
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  padding: 4px;
+  margin-left: 84%;
+  font-weight:bolder;
+}
+
+
+.swiper-button-next {
+  margin-top: 8rem;
+  color: black;
+  /* background-color: rgb(197, 197, 197); */
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  padding: 4px;
+  font-weight:bolder;
+  margin-right:2%;
+  }
+  
+  @media only screen and (max-width:800px){
+    .swiper-button-next {
+      margin-top: 2%;
+    }
+  }
+  @media only screen and (max-width: 800px) {
+  .swiper-button-prev {
+    margin-left: 0%;
+    margin-top: 2%;
+  }
+}
+
+
+.slick-prev {
+  left: 3% !important;
+  z-index: 1;
+}
+.slick-next {
+  right: 3% !important;
+  z-index: 1;
+}
+
+.slick-prev:before,.slick-next:before {
+  color: red;
+}
+.slick-slider.slick-initialized {
+  width: 100vw;
+}
+.slick-arrow.slick-prev {
+  background: black;
+}
+.slick-arrow.slick-next {
+  background: black;
+}
+

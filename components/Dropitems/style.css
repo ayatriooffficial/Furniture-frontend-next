@@ -1,0 +1,40 @@
+.main_heading {
+  @apply font-medium text-3xl;
+}
+
+/* .filter_container {
+  @apply w-screen mt-16 max-w-full grid grid-cols-app;
+} */
+
+.filter_item {
+  @apply flex flex-col gap-[20px] font-medium;
+}
+
+.gray-text {
+  @apply text-[#6c7a8980];
+}
+
+.filter_content_list {
+  display: flex;
+  list-style-type: none;
+  flex-direction: column;
+  gap: 20px;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.571;
+}
+
+.foter-info {
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: inherit;
+  padding-right: 20px;
+}
+
+.color_item {
+  @apply flex items-center;
+}
+
+.color_photo {
+  @apply w-5 h-5 rounded-full mr-4;
+}

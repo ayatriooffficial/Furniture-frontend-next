@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  ayatrio-webapp:
+    image: mohdimranansari/ayatrio-webapp:latest
+    ports:
+      - "3000:3000"
+    dns:
+      - 8.8.8.8
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: https://backendnew.ayatrio.com
+      NEXT_PUBLIC_BASE_URL: https://www.ayatrio.com

@@ -1,0 +1,36 @@
+
+.custom-max-width {
+    max-width: 768px;
+  }
+  
+  
+  @media (min-width: 768px) {
+    .dd-compact-large-15 {
+      margin-left: 15% !important;
+      margin-right: 15% !important;
+    }
+  }
+  @media (min-width: 768px) {
+    .box-width {
+  
+        width: 980px;
+      }
+    }
+  
+    element.style {
+    }
+    .rf-emicalculator-header {
+        text-align: center;
+    }
+    @media only screen and (max-width: 1023px) and (max-device-width: 736px){
+    .typography-headline {
+        font-size: 32px;
+        line-height: 1.125;
+    }
+  }
+    @media only screen and (max-width: 1023px) and (max-device-width: 736px){
+    .typography-para {
+        font-size: 19px;
+    }
+  }
+  

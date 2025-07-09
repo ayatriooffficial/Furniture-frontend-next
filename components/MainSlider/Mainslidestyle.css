@@ -1,0 +1,118 @@
+.slider-container {
+  position: relative;
+  overflow: hidden;
+  margin-top: 135px;
+  border-bottom: 1px solid #fafafa;
+}
+
+.slider-cont {
+  display: flex;
+  overflow: scroll;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+.sd {
+  height: 67vh;
+  width: 40rem;
+  flex-shrink: 0;
+  transition: 2s ease;
+}
+
+.arrow-left {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 2s ease;
+}
+
+.arrow-rightS {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.arrow-nav {
+  width: 1.6rem;
+  height: 2rem;
+  padding-right: 0.2rem;
+  color: rgb(248, 245, 245);
+  cursor: pointer;
+}
+
+/* .arrow-left {
+  margin-left: 0.3rem;
+} */
+
+.slider-container > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  position: absolute;
+}
+
+.hover-box {
+  position: absolute;
+  top: 15px;
+  left: -5px;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+}
+
+.circle:hover .hover-box {
+  display: block;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.top-condition {
+  top: -100px;
+}
+
+.left-condition {
+  left: -100px;
+}
+
+.circle-container:hover .circle {
+  display: block;
+}
+
+.circle {
+  display: none;
+}
+
+.effect {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 5px solid rgba(207, 207, 207, 0.5);
+  border-radius: 50%;
+  background: white;
+  transition: width 3ms, height 3ms;
+}
+
+.effect:hover {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 6px solid rgba(200, 198, 198, 0.7);
+}
+@media screen and (max-width: 450px) {
+  .sd {
+    width: 23rem;
+    height: 57vh;
+  }
+}

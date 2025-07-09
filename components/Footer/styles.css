@@ -1,0 +1,8 @@
+.list-socialicon {
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    margin: 10px;
+}

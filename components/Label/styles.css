@@ -1,0 +1,20 @@
+.carcular-conui {
+    border: 1.5px solid rgba(264, 264, 264, 0.5);
+    border-radius: 50%;
+    color: #000;
+    background-color: rgba(0, 0, 0, 0.1)
+  }
+  
+  .carcular-ui {
+    margin: 7.5px;
+  }
+  
+  .box-container-product {
+    box-shadow: 0 1px 4px rgba(17, 17, 17, 0.3);
+    text-align: initial;
+    display: flex;
+    text-decoration: none;
+    background-color: #fff;
+    color: #000;
+  }
+  

@@ -1,0 +1,224 @@
+.room-page-nav-link {
+  color: rgb(34, 34, 34) !important;
+  font-weight: 600 !important;
+  padding: 30px 0px !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  position: relative !important;
+}
+.room-page-nav-link:hover::after {
+  background-color: rgb(34, 34, 34) !important;
+  content: "" !important;
+  display: block !important;
+  bottom: 0px !important;
+  height: 4px !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  transition: opacity 0.15s ease 0s !important;
+  width: 100% !important;
+}
+
+.change-dates {
+  /* background:radial-gradient(circle at center,#FF385C 0%,#E61E4D 27.5%,#E31C5F 40%,#D70466 57.5%,#BD1E59 75%,#BD1E59 100%); */
+  background: #ff385c;
+  color: #fff;
+  font-size: 1rem;
+  padding: 12px 24px;
+}
+
+.amenities-button {
+  font-size: 1rem;
+  padding: 12px 24px;
+}
+.react-datepicker-popper {
+  margin-top: 0rem;
+  top: auto;
+  left: 30% !important;
+  bottom: 0px;
+  inset: unset !important;
+  transform: none !important;
+  /* transform: translate3d(84px, 2105.33px, 0px) !important; */
+}
+.react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle {
+  display: none !important;
+}
+.react-datepicker {
+  font-size: 1rem !important;
+  background-color: #fff !important;
+  color: #000;
+  border: none !important;
+}
+.react-datepicker__navigation--previous {
+  display: none !important;
+}
+.react-datepicker__navigation--next {
+  display: none !important;
+}
+.react-datepicker__header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 20px 0 !important;
+}
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  color: #000 !important;
+  width: 3.2rem !important;
+  height: 3.2rem !important;
+  line-height: 3rem !important;
+  margin: 0rem !important;
+}
+.react-datepicker__day-name {
+  font-size: 12px !important;
+  font-weight: normal !important;
+}
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+  color: #000 !important;
+  font-weight: normal !important;
+  font-size: 1rem !important;
+  margin-bottom: 1rem !important ;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range,
+.react-datepicker__month-text--selected,
+.react-datepicker__month-text--in-selecting-range,
+.react-datepicker__month-text--in-range,
+.react-datepicker__quarter-text--selected,
+.react-datepicker__quarter-text--in-selecting-range,
+.react-datepicker__quarter-text--in-range,
+.react-datepicker__year-text--selected,
+.react-datepicker__year-text--in-selecting-range,
+.react-datepicker__year-text--in-range {
+  border-radius: 49% !important;
+  background-color: black !important;
+  color: #fff !important;
+}
+
+.react-datepicker__day--selected:hover {
+  background: #000 !important;
+}
+
+.room-card {
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 6px 16px;
+  position: sticky;
+  top: 35%;
+  right: 10%;
+  width: 100%;
+}
+
+@media only screen and (max-width: 450px) {
+  .villarooms {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prefence-text {
+    display: block;
+    position: relative;
+    /* top: 20px; */
+    left: 0;
+    z-index: 1000;
+  }
+}
+
+.cardpopup {
+  box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.7);
+}
+
+/* *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+  }
+   */
+.carousel {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.carousel > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: 200ms opacity ease-in-out;
+  transition-delay: 200ms;
+}
+
+.slide > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slide[data-active] {
+  opacity: 1;
+  z-index: 1;
+  transition-delay: 0ms;
+}
+
+.carousel-button {
+  position: absolute;
+  z-index: 2;
+  background: none;
+  border: none;
+  font-size: 4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.carousel-button:hover,
+.carousel-button:focus {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.carousel-button:focus {
+  outline: 1px solid black;
+}
+
+.carousel-button.prev {
+  left: 1rem;
+}
+
+.carousel-button.next {
+  right: 1rem;
+}
+
+.card {
+  position: sticky;
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+  cursor: url("/icons/plus.svg"), auto;
+}
+
+.image-container img {
+  transition: transform 0.5s ease;
+}
+
+.zoomed {
+  transform: scale(2);
+  cursor: url("/icons/single line.svg"), auto;
+}

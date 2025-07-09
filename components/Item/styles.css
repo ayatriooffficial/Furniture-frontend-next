@@ -1,0 +1,245 @@
+.card-flex .review-icon-container {
+  margin-top: 220px;
+  margin-right: 220px;
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  border-radius: 40px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card-img {
+  /* width: 980px; */
+  border-radius: 1rem;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 5px 0 5px;
+  font-weight: 700;
+}
+
+.desc-bottom {}
+
+.card-title-desc {
+  margin-left: 4px;
+}
+
+.card-date {
+  margin-left: 7px;
+  opacity: 50%;
+}
+
+.card-rating {
+  display: flex;
+}
+
+.card-price {
+  padding-top: 0.4rem;
+  font-size: medium;
+  font-weight: 300;
+  display: flex;
+  margin-left: 7px;
+}
+
+/* swip css */
+.carousel {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%
+}
+
+@media only screen and (max-width: 866px) {
+  .carousel {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.slide {
+  border-radius: 0.1rem;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-hidden {
+  display: none;
+}
+
+.arrow {
+  position: absolute;
+  filter: drop-shadow(0px 0px 5px #555);
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.card:hover .arrow {
+  position: absolute;
+  filter: drop-shadow(0px 0px 5px #555);
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.arrow:hover {
+  cursor: pointer;
+}
+
+.arrow-left {
+  left: 1rem;
+}
+
+.arrow-right {
+  right: 1rem;
+}
+
+.indicators {
+  display: flex;
+  position: absolute;
+  bottom: 1rem;
+}
+
+.indicator {
+  background-color: white;
+  height: 0.5rem;
+  width: 0.5rem;
+  border: none;
+  outline: none;
+  margin: 0 0.2rem;
+  cursor: pointer;
+}
+
+.indicator-inactive {
+  background-color: #ccc;
+  opacity: 0.7;
+}
+
+
+
+/* Add your custom styles for Swiper navigation here */
+.swiper-container {
+  width: 100%;
+  height: 100%;
+  /* position: relative; */
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  /* position: absolute; */
+  /* top: 50%; */
+  /* margin-bottom: 100px; */
+  width: 100px;
+  height: 100px;
+  color: black !important;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+  /* opacity: 0.7; */
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  opacity: 1;
+}
+
+/* .swiper-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+} */
+
+.swiper-button-lock {
+  display: "block";
+}
+
+.swiper-button-prev {
+  margin-left: 82%;
+  margin-top: 132px;
+  font-weight: bolder;
+  /* background-color: #a6a6a6; */
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiper-button-next {
+  margin-right: 6%;
+  margin-top: 132px;
+  font-weight: bolder;
+  /* background-color: #a6a6a6; */
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.swiper-horizontal>.swiper-scrollbar,
+.swiper-scrollbar.swiper-scrollbar-horizontal {
+  transition-duration: 2s !important;
+  width: 35% !important;
+  left: 63% !important;
+}
+
+.fade-in {
+  animation: fadeIn ease 1.5s;
+  -webkit-animation: fadeIn ease 1.5s;
+  -moz-animation: fadeIn ease 1.5s;
+  -o-animation: fadeIn ease 1.5s;
+  -ms-animation: fadeIn ease 1.5s;
+
+}
+
+/* .swiper-scrollbar-drag {
+  width: 30% !important;
+  background-color: #000;
+} */
+
+.swiper-slide {
+  width: 400px;
+  /* height: 500px; */
+}
+
+.card-flex {
+  height: 380px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* gap: 10px; */
+  width: 100%;
+}
+
+.card1flex {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* gap: 10px; */
+  width: 100%;
+}
+
+.swiper-wrapper {
+  gap: 5px;
+  margin-left: 15px;
+}

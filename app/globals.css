@@ -1,0 +1,243 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap'); */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .main {
+    box-shadow: 2px 2px 0 theme("colors.orange.600");
+  }
+}
+/* @font-face {
+  font-family: "Jost";
+  src: url("/public/Jost/static/Jost-Regular.ttf");
+}
+.Jost{
+  font-family: "Jost";
+} */
+/* *{
+  font-family: 'jost';
+} */
+/* :root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+} */
+
+.no-scroll {
+  overflow: hidden !important;
+}
+
+details summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+details summary::-webkit-details-marker {
+  display: none; /* Hide marker in WebKit browsers (e.g., Safari, Chrome) */
+}
+
+details summary::marker {
+  display: none; /* Hide marker in other browsers */
+}
+
+.category-slider swiper-container swiper-slide {
+  max-width: 100px;
+  margin-right: 10px;
+  min-height: 95px;
+  margin-bottom: 30px;
+}
+
+@media (min-width: 1000px) {
+  .category-slider swiper-container swiper-slide {
+    max-width: 120px;
+  }
+}
+
+@media (min-width: 800px) {
+  .category-slider swiper-container swiper-slide {
+    margin-bottom: 0px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+.ripple-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ripple-layer {
+  position: absolute;
+  border-radius: 50%;
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  pointer-events: none;
+}
+
+/* 🌱 Default Green Ripple */
+.ripple-layer.layer1 {
+  animation: ripple1 4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(210, 210, 210, 0.4); /* light gray */
+}
+.ripple-layer.layer2 {
+  animation: ripple2 4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(180, 180, 180, 0.4); /* medium gray */
+}
+.ripple-layer.layer3 {
+  animation: ripple3 4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(150, 150, 150, 0.779); /* dark gray */
+}
+
+/* Gray/White Keyframes */
+@keyframes ripple1 {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(230, 230, 230, 0.4);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 8px rgba(210, 210, 210, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(220, 220, 220, 0);
+  }
+}
+@keyframes ripple2 {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(200, 200, 200, 0.4);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 6px rgba(180, 180, 180, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(190, 190, 190, 0.0);
+  }
+}
+@keyframes ripple3 {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(170, 170, 170, 0.938);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgba(160, 160, 160, 0.658);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(175, 175, 175, 0.822);
+  }
+}
+
+/* 👆 Add `group` to parent element to make this work 
+ .group:hover .ripple-layer.layer1 {
+  box-shadow: 0 0 0 0 rgba(160, 160, 160, 0.5); /* grey 
+  animation: ripple1-hover 4s ease-in-out infinite;
+}
+ .group:hover .ripple-layer.layer2 {
+  box-shadow: 0 0 0 0 rgba(200, 200, 200, 0.5); /* lighter grey 
+  animation: ripple2-hover 4s ease-in-out infinite;
+}
+.group:hover .ripple-layer.layer3 {
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); /* white 
+  animation: ripple3-hover 4s ease-in-out infinite;
+} */
+
+/* 🤍 Hover Keyframes (Grey / White) */
+/* @keyframes ripple1-hover {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(160, 160, 160, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 8px rgba(160, 160, 160, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(160, 160, 160, 0);
+  }
+}
+
+@keyframes ripple2-hover {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(200, 200, 200, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 6px rgba(200, 200, 200, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(200, 200, 200, 0);
+  }
+} */
+
+/* @keyframes ripple3-hover { 
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+} */
