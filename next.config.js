@@ -36,6 +36,14 @@ const nextConfig = withPWA({
       },
       {
         protocol: "https",
+        hostname: "ayatrio-bucket-data.s3.ap-south-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ayatrio-bucket-data-data.s3.ap-south-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
         hostname: "ayatrio-bucket.s3.ap-south-1.amazonaws.com",
       },
       {

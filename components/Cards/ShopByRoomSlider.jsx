@@ -14,6 +14,7 @@ import axios from "axios";
 import ShopByRoomCard from "./shopbyroomCard";
 
 import ShopByRoomSliderSkeleton from "./../Skeleton/ShopByRoomSliderSkeleton";
+import fixImgUrl from 'utils/modifyUrl.js'
 
 const ShopByRoomSlider = () => {
   const backgroundColors = [
@@ -107,20 +108,21 @@ const ShopByRoomSlider = () => {
           {...swiperOptions2}
           className="px-10"
         >
-          {RoomDataSlider.map((roomData, idx) => (
+          {RoomDataSlider?.map((roomData, idx) => (
             <SwiperSlide
               key={idx}
               className="ml-0 min-w-[322px] sm:min-w-0"
             >
               <ShopByRoomCard
-                title={roomData.roomType}
-                desc={roomData.shortSummary}
-                imgSrc={roomData.mainImage.imgSrc}
-                summary={roomData.summary}
+                title={roomData?.roomType}
+                desc={roomData?.shortSummary}
+                imgSrc={
+                  roomData?.mainImage?.imgSrc}
+                summary={roomData?.summary}
                 bgColorClass={
                   backgroundColors[idx % backgroundColors.length]
                 }
-                id={roomData.roomType.replace(/\s+/g, "-")}
+                id={roomData?.roomType.replace(/\s+/g, "-")}
               />
             </SwiperSlide>
           ))}

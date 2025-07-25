@@ -18,6 +18,7 @@ import {
 } from "../Features/Slices/blogCardSlice";
 import ShopByRoomSliderSkeleton from "../Skeleton/ShopByRoomSliderSkeleton";
 import SuggestionCard from "./SuggestionCard";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const Suggestion = () => {
   const blogCardData = useSelector(selectBlogCardData);
@@ -114,7 +115,7 @@ useEffect(() => {
                 <SuggestionCard
                   title={suggestion.heading}
                   desc={suggestion.shortSummary}
-                  mainImage={suggestion.mainImage}
+                  mainImage={fixImageUrl(suggestion.mainImage)}
                   key={idx}
                   bgColorClass={
                     backgroundColors[idx % backgroundColors.length]

@@ -965,6 +965,7 @@ const Tabs = ({
                   onSubcategoryClick={() => {}}
                   onSubcategorySelect={handleSubcategorySelect}
                   title={heading}
+                  isSubcategoryPage={isSubcategoryPage}
                 />
               </div>
             ) : parentCategory === "offers" && offerCategoryData.length > 0 ? (

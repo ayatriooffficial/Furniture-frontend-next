@@ -34,7 +34,7 @@ const handleUrgencyClick = (urgency) => {
     setFilteredData(newTrendingData);
   } else {
     const filtered = newTrendingData.filter((item) => {
-      console.log(item.title, item.urgency, item.imgSrc, item.productImages);
+      // console.log(item.title, item.urgency, item.imgSrc, item.productImages);
       return item.urgency === urgency;
     });
     setFilteredData(filtered);

@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import MultiCardContent from "../compounds/MultiCardContent";
 import { equalizeCardHeights } from "@/utils/cardUtils";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const MulticardSlider = ({ multicardData }) => {
   const swiperRef = useRef(null);
@@ -82,7 +83,7 @@ const MulticardSlider = ({ multicardData }) => {
             <MultiCardContent
               title={curElement.title}
               text={curElement.description}
-              iconPath={curElement.icon}
+              iconPath={fixImageUrl(curElement?.icon)}
               iconSize={40}
             />
           </div>

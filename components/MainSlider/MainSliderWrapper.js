@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import MainSliderSkeleton from "./MainSliderSkeleton";
+import fixImgUrl from 'utils/modifyUrl.js'
 
 const MainSlider = dynamic(() => import("./MainSlider"), {
   ssr: false,
@@ -53,41 +54,39 @@ const MainSliderWrapper = () => {
   const showFallback = !swiperReady || !firstImageLoaded;
 
   return (
- <div className="w-full px-[12px] sm:px-0 mt-0 sm:mt-[96px]">
-  <div className="relative w-full overflow-hidden" style={{ height: maxHeight, maxHeight }}>
-    {/* Fallback image layer */}
-    {fallbackImage && (
-      <div
-        className={`absolute top-0 left-0 w-full h-full z-0 transition-opacity duration-500 ${
-          swiperReady ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <div className="relative w-[94%] h-full mx-auto overflow-hidden">
-          <Image
-            src={fallbackImage}
-            alt="slider fallback"
-            fill
-            priority
-            onLoad={handleFirstImageLoad}
-            className="object-cover"
-            style={{ maxHeight }}
-          />
-        </div>
-      </div>
-    )}
+    <div className="w-full px-[12px] sm:px-0 mt-0 sm:mt-[96px]">
+      <div className="relative w-full overflow-hidden" style={{ height: maxHeight, maxHeight }}>
+        {/* Fallback image layer */}
+        {fallbackImage && (
+          <div
+            className={`absolute top-0 left-0 w-full h-full z-0 transition-opacity duration-500 ${swiperReady ? "opacity-0" : "opacity-100"
+              }`}
+          >
+            <div className="relative w-[94%] h-full mx-auto overflow-hidden">
+              <Image
+                src={fixImgUrl(fallbackImage)}
+                alt="slider fallback"
+                fill
+                priority
+                onLoad={handleFirstImageLoad}
+                className="object-cover"
+                style={{ maxHeight }}
+              />
+            </div>
+          </div>
+        )}
 
-    {/* Swiper slider layer */}
-    {firstImageLoaded && (
-      <div
-        className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${
-          swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <MainSlider sliderData={sliderData} onSwiperReady={handleSwiperReady} />
+        {/* Swiper slider layer */}
+        {firstImageLoaded && (
+          <div
+            className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+          >
+            <MainSlider sliderData={sliderData} onSwiperReady={handleSwiperReady} />
+          </div>
+        )}
       </div>
-    )}
-  </div>
-</div>
+    </div>
   );
 };
 

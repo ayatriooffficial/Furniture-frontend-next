@@ -21,7 +21,7 @@ const DataSliderWrapper = ({
   const datasliderRefs = useRef([]);
 
  useEffect(() => {
-  console.log("recommendedStatus:", recommendedStatus);
+  // console.log("recommendedStatus:", recommendedStatus);
   if (recommendedStatus === "idle") {
     dispatch({
       type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
@@ -32,7 +32,7 @@ const DataSliderWrapper = ({
 
   useEffect(() => {
     if (recommended) {
-      console.log("Recommended categories:", recommended);
+      // console.log("Recommended categories:", recommended);
       setFilteredData(recommended);
       setUniqueCategories(Object.keys(recommended));
     }

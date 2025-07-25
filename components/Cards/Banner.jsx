@@ -1,5 +1,6 @@
 "use client";
 
+import fixImageUrl from "@/utils/modifyUrl";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +31,7 @@ function Banner() {
           <figure>
             {/* Desktop Image */}
             <Image
-              src={banners[0]?.desktopImgSrc}
+              src={fixImageUrl(banners[0]?.desktopImgSrc)}
               loading="lazy"
               alt="Ayatrio Offer - Desktop Version"
               width={1920}
@@ -39,7 +40,7 @@ function Banner() {
             />
             {/* Mobile Image */}
             <Image
-              src={banners[0]?.mobileImgSrc}
+              src={fixImageUrl(banners[0]?.mobileImgSrc)}
               loading="lazy"
               alt="Ayatrio Offer - Mobile Version"
               width={1920}

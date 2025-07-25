@@ -9,6 +9,7 @@ import { Navigation, Autoplay } from 'swiper/modules'
 import "swiper/css";
 import "swiper/css/navigation";
 import "./slider.css";
+import fixImageUrl from "@/utils/modifyUrl";
 
 //  Register Swiper modules globally
 
@@ -87,7 +88,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
           <Link href={data.link || "#"}>
          <div className="relative w-full h-full px-[12px] sm:px-0">
         <Image
-      src={isDesktop ? data.desktopImgSrc : data.mobileImgSrc}
+      src={isDesktop ? fixImageUrl(data.desktopImgSrc) : fixImageUrl(data.mobileImgSrc)}
       alt="slider"
       fill
       priority={index === 0}

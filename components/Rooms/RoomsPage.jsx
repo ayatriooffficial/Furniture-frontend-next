@@ -34,6 +34,7 @@ import "./styles.css";
 
 import RankedProducts from "@/components/Cards/RankedProducts";
 import ProductPageSkeleton from "../Skeleton/ProductPageSkeleton";
+import fixImageUrl from "@/utils/modifyUrl";
 
 export const RoomsPage = ({ params }) => {
 
@@ -491,22 +492,22 @@ export const RoomsPage = ({ params }) => {
                   aria-labelledby={`section-${sectionName}`}
                 >
                   <TabImage
-                    href={`/${roomMain.mainImage.productCategory.replace(
+                    href={`/${roomMain?.mainImage?.productCategory?.replace(
                       / /g,
                       "-"
                     )}/collection/all`}
-                    src={roomMain.mainImage.imgSrc}
-                    alt={`Main room image showing ${roomMain.mainImage.productCategory}`}
+                    src={fixImageUrl(roomMain?.mainImage?.imgSrc)}
+                    alt={`Main room image showing ${roomMain?.mainImage?.productCategory}`}
                     fill
                     width={1000}
                     height={1000}
                     style={{ objectFit: "cover" }}
-                    labelData={roomMain.mainImage.children}
+                    labelData={roomMain?.mainImage?.children}
                     aria-describedby="main-image-description"
                   />
                   <span id="main-image-description" className="sr-only">
                     Interactive image showing products in a{" "}
-                    {roomMain.mainImage.productCategory} setting
+                    {roomMain?.mainImage?.productCategory} setting
                   </span>
                 </figure>
               )}

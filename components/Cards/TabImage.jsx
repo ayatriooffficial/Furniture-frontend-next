@@ -5,6 +5,7 @@ import "./tabs.css";
 import Image from "next/image";
 import Label from "../Label/Label";
 import Link from "next/link";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const TabImage = ({
   src,
@@ -62,7 +63,7 @@ const TabImage = ({
             <Image
               loading="lazy"
               className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
-              src={src}
+              src={fixImageUrl(src)}
               alt={alt}
               width={width}
               height={height}
@@ -72,7 +73,7 @@ const TabImage = ({
           <Image
             loading="lazy"
             className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
-            src={src}
+            src={fixImageUrl(src)}
             alt={alt}
             width={width}
             height={height}

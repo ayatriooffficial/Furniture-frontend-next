@@ -47,7 +47,7 @@ const Dataslider = ({ category, data, sliderIndex }) => {
   const handleCategoryClick = (e) => {
     e.preventDefault();
     const formattedCategory = category.replace(/ /g, "-").toLowerCase();
-    console.log("Formatted category:", formattedCategory);
+    // console.log("Formatted category:", formattedCategory);
     router.push(`/${formattedCategory}/collection/all`);
   };
 

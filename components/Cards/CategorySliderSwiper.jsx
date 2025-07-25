@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import fixImageUrl from '@/utils/modifyUrl.js'
 
 const CategorySliderSwiper = ({ categories }) => {
   const swiperRef = useRef(null);
@@ -61,7 +62,7 @@ const CategorySliderSwiper = ({ categories }) => {
         aria-live="polite"
         data-component="swiper-container"
       >
-        {categories?.map((curElement, idx) => (
+        {categories && categories?.map((curElement, idx) => (
           <swiper-slide
             key={idx}
             role="group"
@@ -78,7 +79,7 @@ const CategorySliderSwiper = ({ categories }) => {
               <div className="flex flex-col items-center">
                 <figure className="mb-[12px]">
                   <Image
-                    src={curElement.image || "/images/temp.svg"}
+                    src={fixImageUrl(curElement.image) || "/images/temp.svg"}
                     width={120}
                     height={70}
                     priority

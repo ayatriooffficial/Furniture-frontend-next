@@ -6,6 +6,7 @@ import "./styles.css";
 import axios from "axios";
 import { setDbItems } from "../Features/Slices/cartSlice";
 import { FAQPageJsonLd } from 'next-seo';
+import fixImageUrl from "@/utils/modifyUrl";
 
 function TabsProductCard(props) {
   const faqData = props.faqs.map(faq => ({
@@ -169,7 +170,7 @@ function TabsProductCard(props) {
 
   useEffect(() => {
     if (imageData?.length > 0) {
-      setColorImage(imageData[0]?.image);
+      setColorImage(fixImageUrl(imageData[0]?.image));
     }
   }, []);
 
@@ -403,7 +404,7 @@ function TabsProductCard(props) {
                       <Image
                         loading="lazy"
                         src={
-                          isHovered && !isNavigationHovered
+                          fixImageUrl(isHovered && !isNavigationHovered
                             ? productImages.find(
                               (item) =>
                                 item.color ===
@@ -411,7 +412,7 @@ function TabsProductCard(props) {
                                   (item) => item === selectedColor
                                 )
                             )?.images[2]
-                            : src
+                            : src)
                         }
                         alt={props.productTitle}
                         key={idx}
@@ -435,7 +436,7 @@ function TabsProductCard(props) {
                       loading="lazy"
                       src={
                         isHovered && !isNavigationHovered
-                          ? props.images[1]
+                          ? fixImageUrl(props.images[1])
                           : item
                       }
                       alt={props.productTitle}

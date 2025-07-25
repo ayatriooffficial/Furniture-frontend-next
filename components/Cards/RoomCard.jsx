@@ -6,9 +6,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import TabImage from "../Cards/TabImage";
 import RoomCardSkeleton from "../Skeleton/RoomCardSkeleton";
+import fixImageUrl from "@/utils/modifyUrl";
 
 // Define the base URL for Ayatrio at the top
-const AYATRIO_BASE_URL = "https://www.ayatrio.com";
+const AYATRIO_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const RoomCard = () => {
   const [gallery, setGallery] = useState(null);
@@ -154,7 +155,7 @@ const RoomCard = () => {
                     <Image
                       loading="lazy"
                       className="child object-cover hover-zoom"
-                      src={gallery.items[0].img}
+                      src={fixImageUrl(gallery.items[0].img)}
                       fill
                       alt={gallery.items[0].heading}
                     />

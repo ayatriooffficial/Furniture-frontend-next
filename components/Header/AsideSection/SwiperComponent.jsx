@@ -6,6 +6,7 @@ import DesignServices from "../HeaderServices/DesignServices";
 import Offers from "../Offers/Offers";
 
 import axios from "axios";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const SwiperComponent = ({
   hoveredIndex,
@@ -65,7 +66,7 @@ const SwiperComponent = ({
                     <div className="parent w-[170px] h-[80px]">
                       <Image
                         loading="lazy"
-                        src={data?.image}
+                        src={fixImageUrl(data?.image)}
                         width={400}
                         height={400}
                         className="child w-[170px] h-[80px]"

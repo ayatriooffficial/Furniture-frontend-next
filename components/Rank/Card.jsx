@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import fixImgUrl from 'utils/modifyUrl.js'
 
 const Card = ({ category, products, colors }) => {
   return (
@@ -67,7 +68,7 @@ const Card = ({ category, products, colors }) => {
               </div>
               <Link href={`/${item.productTitle.replace(/ /g, "-")}/${item.productId}`}>
                 <img
-                  src={item.images[0]}
+                  src={fixImgUrl(item.images[0])}
                   alt={item.productTitle}
                   className="w-12 h-12 object-cover"
                 />

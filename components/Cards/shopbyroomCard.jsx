@@ -4,6 +4,7 @@ import "./styles.css";
 import PopUp from "../Reviews/PopUp";
 import Image from "next/image";
 import Link from "next/link";
+import fixImageUrl from "@/utils/modifyUrl";
 
 function ShopByRoomCard(props) {
   return (
@@ -12,7 +13,7 @@ function ShopByRoomCard(props) {
         <Link href={`/${props.id}/rooms`}>
           <div className="flex h-full w-full items-center justify-center cursor-pointer overflow-hidden ">
             <Image
-              src={props.imgSrc}
+              src={fixImageUrl(props.imgSrc)}
               alt={props.title}
               height={600}
               width={600}

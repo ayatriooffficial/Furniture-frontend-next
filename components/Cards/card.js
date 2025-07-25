@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { selecteddbItems, setDbItems } from "../Features/Slices/cartSlice";
+import fixImageUrl from "@/utils/modifyUrl";
 
 function Card(props) {
   const dispatch = useDispatch();
@@ -85,7 +86,7 @@ function Card(props) {
   const imageData = props.productImages?.map((item) => {
     return {
       color: item.color,
-      image: item.images[0] || "/fallback-image.jpg",
+      image: fixImageUrl(item.images[0]) || "/fallback-image.jpg",
     };
   });
 
@@ -212,7 +213,7 @@ function Card(props) {
 
   useEffect(() => {
     if (imageData?.length > 0) {
-      setColorImage(imageData[0]?.image);
+      setColorImage(fixImageUrl(imageData[0]?.image));
     }
   }, []);
 
@@ -420,8 +421,8 @@ function Card(props) {
     <Image
       loading={idx === 0 ? "eager" : "lazy"}
       src={isHovered && !isNavigationHovered && imagesToUse.length > 1
-        ? imagesToUse[1]
-        : imagesToUse[idx]}
+        ? fixImageUrl(imagesToUse[1])
+        : fixImageUrl(imagesToUse[idx])}
       alt={`Image of ${props.title}`}
       fill 
       sizes="(min-width: 768px) 33vw, 100vw"
@@ -643,7 +644,7 @@ function Card(props) {
                 >
                   <Image
                     className="w-full h-full object-cover"
-                    src={item.image}
+                    src={fixImageUrl(item.image)}
                     alt={item.color}
                     fill
                     style={{ objectFit: "cover" }}
