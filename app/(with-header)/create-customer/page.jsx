@@ -10,7 +10,7 @@ const page = () => {
   });
 
   const handleCreateCustomer = async () => {
-    console.log(user);
+    // console.log(user);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/create-user`,

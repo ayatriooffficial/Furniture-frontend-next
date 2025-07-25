@@ -3,7 +3,7 @@ import "./styles.css";
 import Image from "next/image";
 
 function UserReviewPostsCard(props) {
-  console.log("UserReviewPostsCard", props);
+  // console.log("UserReviewPostsCard", props);
   return (
     <>
       <div

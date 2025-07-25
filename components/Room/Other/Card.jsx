@@ -136,7 +136,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
     if (STORE_MAP_DATA.length > 0 && userPincode) {
       fetchDistances();
     } else {
-      console.log("No data in STORE_MAP_DATA");
+      // console.log("No data in STORE_MAP_DATA");
     }
   }, [STORE_MAP_DATA, userPincode]);
 
@@ -174,7 +174,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
       );
       setAccessories(responce.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -383,7 +383,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
           setCartData([]);
         }
       } catch (error) {
-        console.log("Error fetching cart data:", error);
+        // console.log("Error fetching cart data:", error);
       }
     };
     fetchData();
@@ -661,7 +661,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
         );
         if (response.status === 200) {
           // toast.success("Request sent successfully");
-          console.log("success");
+          // console.log("success");
         }
 
         alert("Successfully requested!");

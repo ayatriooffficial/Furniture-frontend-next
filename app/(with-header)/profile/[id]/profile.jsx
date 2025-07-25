@@ -28,7 +28,7 @@ const Profile = ({ id }) => {
       // console.log("user data", response.data);
       setUser(response.data);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -40,7 +40,7 @@ const Profile = ({ id }) => {
       // console.log("product data", response.data);
       setAuthorProduct(response.data);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -52,7 +52,7 @@ const Profile = ({ id }) => {
       // console.log("review data", response.data);
       setReviews(response.data);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -79,7 +79,7 @@ const Profile = ({ id }) => {
         setLoggedInUser(null);
       }
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
     }
   };
 
@@ -179,7 +179,7 @@ const Profile = ({ id }) => {
       setEditProfile(false);
       setUpdateLoading(false);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
       setUpdateLoading(false);
     }
   };

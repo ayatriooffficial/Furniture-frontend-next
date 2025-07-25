@@ -38,7 +38,7 @@ export async function POST(request, { params }) {
       status: 301,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     const url = new URL(`/payment/${orderId}`, BASE_URL);
     return NextResponse.redirect(url, {
       status: 301,

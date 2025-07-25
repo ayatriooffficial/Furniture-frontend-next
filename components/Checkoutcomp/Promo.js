@@ -59,7 +59,7 @@ const Promo = () => {
 
   // initiate razorpay payment 
   const initPayment = (data) => {
-    console.log("init Pymentdata: ", data);
+    // console.log("init Pymentdata: ", data);
     const options = {
       key: process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID,
       amount: data.amount,
@@ -81,7 +81,7 @@ const Promo = () => {
           });
 
           const verifyData = await verifyResponse.json();
-          console.log("verifyData: ", verifyData);
+          // console.log("verifyData: ", verifyData);
 
           // if payment verification is successfull
           if (verifyData.paymentSuccess) {
@@ -101,7 +101,7 @@ const Promo = () => {
               body: JSON.stringify({ deviceId:dbItemset.owner ,payment: verifyData.paymentSuccess }),
             })
               .then(response => response.json())
-              .then(data => console.log(data))
+              // .then(data => console.log(data))
               .catch(error => console.error('Error:', error));
 
             // when payment is successfull navigate to order-success page

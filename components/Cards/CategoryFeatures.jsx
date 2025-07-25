@@ -42,7 +42,7 @@ const CategoryFeatures = (props) => {
         }
         
         setLoading(true);
-        console.log("Fetching category data for:", categoryName);
+        // console.log("Fetching category data for:", categoryName);
         
         // Decode the category name first to handle any existing encoding
         const decodedCategory = decodeURIComponent(categoryName);
@@ -50,7 +50,7 @@ const CategoryFeatures = (props) => {
           createApiEndpoint(`getCategoryByName/${encodeURIComponent(decodedCategory)}`)
         );
         
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
         
         const data = response.data;
         if (data && data.features) {
@@ -62,7 +62,7 @@ const CategoryFeatures = (props) => {
             features: data.subcategories[0]?.features || []
           }]);
         } else {
-          console.log("No features found in the response data:", data);
+          // console.log("No features found in the response data:", data);
         }
       } catch (err) {
         console.error("Error fetching category:", err);

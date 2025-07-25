@@ -52,7 +52,7 @@ const ProductPage = ({ productId, initialData }) => {
       );
       setAccessories(response.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 

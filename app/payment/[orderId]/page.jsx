@@ -24,7 +24,7 @@ const page = () => {
         setOrder(data?.orders);
         setPaymentStatus(data?.orders?.payment);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     fetchOrderStatus();
@@ -41,12 +41,12 @@ const page = () => {
             }
           });
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         }
       }
     }
   }, [order]);
-  console.log(order, "order");
+  // console.log(order, "order");
 
 
   const handlePrint = () => {

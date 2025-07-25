@@ -49,7 +49,7 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
           setStores(responce.data);
           setIsStoreLoading(false);
         } catch (error) {
-          console.log(error);
+          // console.log(error);
           setIsStoreLoading(false);
         }
       }

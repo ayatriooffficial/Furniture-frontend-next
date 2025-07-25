@@ -132,7 +132,7 @@ const Delivery = () => {
                 lng: userCoordinates.lng,
               })
                 .then(() => {
-                  console.log("User location saved");
+                  // console.log("User location saved");
                 })
                 .catch((error) => {
                   console.error(`Error saving user location: ${error.message}`);

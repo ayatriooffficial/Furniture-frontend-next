@@ -20,7 +20,7 @@ const UserReviewPosts = ({ slidesPerView, SubcategoryName }) => {
       );
       setPostDetails(response.data);
     } catch (error) {
-      console.log("Some Error Occurred");
+      // console.log("Some Error Occurred");
     }
   };
 

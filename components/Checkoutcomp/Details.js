@@ -156,7 +156,7 @@ const Details = () => {
     try {
       const distances = await Promise.all(
         STORE_MAP_DATA?.map(async (store) => {
-          console.log("STORE", store);
+          // console.log("STORE", store);
           const origins = !!form.postal ? form.postal : userPincode;
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/distance`,
@@ -184,7 +184,7 @@ const Details = () => {
 
       distances.sort((a, b) => a.distanceValue - b.distanceValue);
 
-      console.log("Distances sorted by ascending order:");
+      // console.log("Distances sorted by ascending order:");
       const distance = (distances[0].distanceValue / 1000).toFixed(1);
       setNearestDistance(distance);
       // FetchCost()
@@ -210,11 +210,11 @@ const Details = () => {
   };
 
 const FetchCost = async (distance) => {
-  console.log("FetchCost called with distance:", distance);
+  // console.log("FetchCost called with distance:", distance);
   setIsDeliveryLoading(true);
-  console.log("nearestDistance:", nearestDistance);
+  // console.log("nearestDistance:", nearestDistance);
   if (nearestDistance === null) {
-    console.log("nearestDistance is null, returning early");
+    // console.log("nearestDistance is null, returning early");
     setIsDeliveryLoading(false);
     return;
   }
@@ -222,7 +222,7 @@ const FetchCost = async (distance) => {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/calculateShippingDetails/${distance}`
     );
-    console.log("API response:", response.data);
+    // console.log("API response:", response.data);
     setDeliveryCost(response.data.charge);
     setDeliveryPrice(response.data.charge);
     setIsDeliveryLoading(false);
@@ -250,17 +250,17 @@ const FetchCost = async (distance) => {
 
   // const deliveryPrice = useSelector(selectDeliveryPrice);
 
-  console.log(deliveryPrice);
-  console.log(cartdata);
+  // console.log(deliveryPrice);
+  // console.log(cartdata);
 
   if (typeof window !== "undefined") {
     var id = localStorage.getItem("deviceId");
-    console.log(id);
+    // console.log(id);
   }
 
   // console.log("Card Data", cartdata)
-  console.log("Fetched Card Data", CartData);
-  console.log(deliveryPrice);
+  // console.log("Fetched Card Data", CartData);
+  // console.log(deliveryPrice);
 
   let totalPrice = 0;
   // if (cartdata && cartdata.items) {
@@ -287,7 +287,7 @@ const FetchCost = async (distance) => {
   //   );
   // }
 
-  console.log(totalPrice);
+  // console.log(totalPrice);
   let totalServicesPrice = 0;
 
   if (cartdata) {
@@ -301,9 +301,9 @@ const FetchCost = async (distance) => {
     }, 0);
   }
 
-  console.log(cartdata);
+  // console.log(cartdata);
 
-  console.log(totalServicesPrice);
+  // console.log(totalServicesPrice);
 
   let totalAccessoryPrice = 0;
 
@@ -318,7 +318,7 @@ const FetchCost = async (distance) => {
     }, 0);
   }
 
-  console.log(totalAccessoryPrice);
+  // console.log(totalAccessoryPrice);
 
   let SumtotalPrice = 0;
 
@@ -426,17 +426,17 @@ const FetchCost = async (distance) => {
       [name]: value,
     }));
   }
-  console.log(form);
+  // console.log(form);
 
   const updatedForm = {
     ...form,
     selectedDate: selecteddate,
     selectedTime: selectedtime,
   };
-  console.log(updatedForm);
+  // console.log(updatedForm);
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  console.log(apiBaseUrl, "Base Url")
+  // console.log(apiBaseUrl, "Base Url")
 
   const handleData = async (event) => {
     event.preventDefault();
@@ -453,14 +453,14 @@ const FetchCost = async (distance) => {
     // }
 
     const id = localStorage.getItem("deviceId");
-    console.log(id);
+    // console.log(id);
 
     dispatch(updateFormData(updatedForm));
-    console.log("form-dispatch", updatedForm);
-    console.log("deviceId", deviceId);
-    console.log("cartId", cartId);
+    // console.log("form-dispatch", updatedForm);
+    // console.log("deviceId", deviceId);
+    // console.log("cartId", cartId);
 
-    console.log({ formpostal: form.postal });
+    // console.log({ formpostal: form.postal });
 
     const address = {
       firstName: updatedForm.first,
@@ -528,7 +528,7 @@ try {
       },
     });
 
-    console.log("paymentResponse:", paymentResponse.data); // Debug response
+    // console.log("paymentResponse:", paymentResponse.data); // Debug response
 
     // Initialize Razorpay Checkout
     const { orderId: razorpayOrderId, amount, currency, key } = paymentResponse.data.data;
@@ -541,7 +541,7 @@ try {
       description: "Order Payment",
       handler: async function (paymentResponse) {
         try {
-          console.log("Razorpay Payment Details:", paymentResponse);
+          // console.log("Razorpay Payment Details:", paymentResponse);
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/paymentcallback/${orderId}`,
             {
@@ -550,7 +550,7 @@ try {
               razorpay_signature: paymentResponse.razorpay_signature,
             }
           );
-          console.log("paymentCallback response:", response.data);
+          // console.log("paymentCallback response:", response.data);
           router.push("/paymentsuccess");
         } catch (err) {
           console.error("Payment verification failed:", err.response?.data || err.message);
@@ -573,12 +573,12 @@ try {
       script.async = true;
       document.body.appendChild(script);
       script.onload = () => {
-        console.log("Razorpay script loaded");
+        // console.log("Razorpay script loaded");
         const rzp = new window.Razorpay(options);
         rzp.open();
       };
     } else {
-      console.log("Razorpay script already loaded");
+      // console.log("Razorpay script already loaded");
       const rzp = new window.Razorpay(options);
       rzp.open();
     }
@@ -613,7 +613,7 @@ const [userCoordinates, setUserCoordinates] = useState(null);
     };
 
     try {
-      console.log(lat);
+      // console.log(lat);
       const response = await axios.request(options);
       setLocation(response.data.results[0].address);
     } catch (error) {
@@ -628,7 +628,7 @@ const [userCoordinates, setUserCoordinates] = useState(null);
 
   useEffect(() => {
     if (userCoordinates) {
-      console.log(userCoordinates);
+      // console.log(userCoordinates);
       getDataFromCoordinates(userCoordinates.lat, userCoordinates.lng);
     }
     if (localStorage?.getItem("userPincode")) {

@@ -54,7 +54,7 @@ const AddCart = () => {
 
         setUserId(userId);
       } catch (error) {
-        console.log("Error while fetching userId");
+        // console.log("Error while fetching userId");
       }
     }
 

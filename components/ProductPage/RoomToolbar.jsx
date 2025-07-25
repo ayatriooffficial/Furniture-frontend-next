@@ -68,7 +68,7 @@ const RoomToolbar = ({ data }) => {
       );
       setAllSubCategories(filteredSubcategories);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -182,7 +182,7 @@ const RoomToolbar = ({ data }) => {
         router.push("/checkout?freeSamples=true");
       }
     } catch (error) {
-      console.log("Free Sampling error", error);
+      // console.log("Free Sampling error", error);
     }
   };
 
@@ -218,13 +218,13 @@ const RoomToolbar = ({ data }) => {
         // setFilteredProducts(excludeAccessories)
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
   const handleSubCategoryFilter = (item) => {
     setSelectedSubCategory(item);
-    console.log(item);
+    // console.log(item);
     fetchProductsbySubCategory(item);
   };
 
@@ -656,7 +656,7 @@ const RoomToolbar = ({ data }) => {
                           All Styles
                         </p>
                         {allSubCategories.map((item) => {
-                          console.log(item);
+                          {/* console.log(item); */}
                           return (
                             <p
                               onClick={() => handleSubCategoryFilter(item.name)}

@@ -8,10 +8,10 @@ import { usePathname } from "next/navigation";
 const SubCategorySlider = ({ subCategory, isSubcategoryPage }) => {
   const pathname = usePathname();
   const currentCategorySlug = pathname.slice(1).split('/')[0].replace('-', ' ')
-  console.log(currentCategorySlug)
-  console.log(isSubcategoryPage)
+  // console.log(currentCategorySlug)
+  // console.log(isSubcategoryPage)
   const swiperRef = useRef(null);
-  console.log(subCategory)
+  // console.log(subCategory)
 
   useEffect(() => {
     const swiperParams = {

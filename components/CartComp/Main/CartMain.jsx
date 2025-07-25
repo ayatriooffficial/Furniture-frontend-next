@@ -67,7 +67,7 @@ const CartMain = () => {
 
         setUserId(userId);
       } catch (error) {
-        console.log("Error while fetching userId");
+        // console.log("Error while fetching userId");
       }
     }
 
@@ -122,7 +122,7 @@ const CartMain = () => {
 
   const handleSchedular = (value) => {
     setSchedular(value);
-    console.log(value);
+    // console.log(value);
     dispatch(schedularToogle(value));
   };
 
@@ -211,8 +211,8 @@ const CartMain = () => {
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getExternalOfferApplicablePrice/${userId}/${SumtotalPrice}`
           );
           const externalOffersData = await externalOfferPriceResponse.json();
-          console.log("externalOffersData");
-          console.log(externalOffersData);
+          // console.log("externalOffersData");
+          // console.log(externalOffersData);
 
           if (
             externalOfferPriceResponse.ok &&
@@ -274,8 +274,8 @@ const CartMain = () => {
 
   //delete handle function
   const handleItemDelete = async (productId) => {
-    console.log(productId);
-    console.log(id);
+    // console.log(productId);
+    // console.log(id);
     try {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
@@ -462,7 +462,7 @@ const CartMain = () => {
 
       // console.log(responce.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -485,7 +485,7 @@ const CartMain = () => {
               lng: userCoordinates.lng,
             })
               .then(() => {
-                console.log("User location saved");
+                // console.log("User location saved");
               })
               .catch((error) => {
                 console.error(`Error saving user location: ${error.message}`);

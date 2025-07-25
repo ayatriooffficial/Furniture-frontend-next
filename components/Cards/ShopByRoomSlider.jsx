@@ -14,7 +14,6 @@ import axios from "axios";
 import ShopByRoomCard from "./shopbyroomCard";
 
 import ShopByRoomSliderSkeleton from "./../Skeleton/ShopByRoomSliderSkeleton";
-import fixImgUrl from 'utils/modifyUrl.js'
 
 const ShopByRoomSlider = () => {
   const backgroundColors = [
@@ -40,7 +39,7 @@ const ShopByRoomSlider = () => {
           setRoomDataSlider(response.data);
         }
       } catch (error) {
-        console.log("Error fetching room main data:", error);
+        // console.log("Error fetching room main data:", error);
       }
     };
     fetchData();

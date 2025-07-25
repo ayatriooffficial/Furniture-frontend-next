@@ -161,7 +161,7 @@ const RoomPage = () => {
       );
       setAccessories(response.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -181,7 +181,7 @@ const RoomPage = () => {
       );
       setAllProducts(response.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const fetchAllCategories = async () => {
@@ -191,7 +191,7 @@ const RoomPage = () => {
       );
       setAllCategories(response.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -287,7 +287,7 @@ const RoomPage = () => {
         router.push("/checkout");
       }
     } catch (error) {
-      console.log("Free Sampling error", error);
+      // console.log("Free Sampling error", error);
     }
   };
 
@@ -311,7 +311,7 @@ const RoomPage = () => {
         setFilteredProducts(excludeAccessories);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
