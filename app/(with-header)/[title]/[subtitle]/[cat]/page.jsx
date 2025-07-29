@@ -124,7 +124,7 @@ const page = async ({ params }) => {
   const subCategory = title.replace(/-/g, " ");
 
   const category = await getCategoryByName(categoryName);
-  
+
 
   let faqs = [];
 
@@ -256,7 +256,7 @@ const page = async ({ params }) => {
           // Use first available special or discounted price details
           const startDate = new Date(
             product.specialprice?.startDate ||
-              product.discountedprice?.startDate
+            product.discountedprice?.startDate
           );
 
           const endDate = new Date(
@@ -280,9 +280,8 @@ const page = async ({ params }) => {
           // description: product.productDescription,
           price,
           priceCurrency: "INR",
-          url: `${BASE_URL}/${product.productTitle.replace(/ /g, "-")}/${
-            product.productId
-          }`,
+          url: `${BASE_URL}/${product.productTitle.replace(/ /g, "-")}/${product.productId
+            }`,
           image: product.productImages.flatMap(
             (imageObject) => imageObject.images
           )[0],
@@ -365,7 +364,7 @@ const page = async ({ params }) => {
           // Use first available special or discounted price details
           const startDate = new Date(
             product.specialprice?.startDate ||
-              product.discountedprice?.startDate
+            product.discountedprice?.startDate
           );
 
           const endDate = new Date(
@@ -393,9 +392,8 @@ const page = async ({ params }) => {
           // },
           price,
           priceCurrency: "INR",
-          url: `${BASE_URL}/${product.productTitle.replace(/ /g, "-")}/${
-            product.productId
-          }`,
+          url: `${BASE_URL}/${product.productTitle.replace(/ /g, "-")}/${product.productId
+            }`,
           image: product.productImages.flatMap(
             (imageObject) => imageObject.images
           )[0],
@@ -448,8 +446,8 @@ const page = async ({ params }) => {
         name={
           isCategoryPage
             ? category?.metadata?.title ||
-              category?.name ||
-              params.parentCategory
+            category?.name ||
+            params.parentCategory
             : currentSubcategory?.metadata?.title || currentSubcategory?.name
         }
         description={

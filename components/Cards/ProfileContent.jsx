@@ -14,6 +14,7 @@ import {
   getProfileSuccess,
   selectProfileData,
 } from "../Features/Slices/profileSlice";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const ProfileContent = ({ initialData }) => {
   const profileData = useSelector(selectProfileData);
@@ -99,7 +100,7 @@ const ProfileContent = ({ initialData }) => {
               >
                 <Image
                   loading="lazy"
-                  src={person.user?.image}
+                  src={fixImageUrl(person.user?.image)}
                   alt=""
                   className="rounded-full w-full h-full object-cover"
                   fill

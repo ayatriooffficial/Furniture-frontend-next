@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectProductImages } from "../Features/Slices/imageDataSlice";
 import { selectColor } from "../Features/Slices/productColorSlice";
 import "./styles.css";
+import fixImageUrl from '@/utils/modifyUrl'
 
 export default function RoomImageList({ data, images, alt }) {
   const [zoomedImageIndex, setZoomedImageIndex] = useState(null);
@@ -221,7 +222,7 @@ export default function RoomImageList({ data, images, alt }) {
             >
               <Image
                 loading="lazy"
-                src={image}
+                src={fixImageUrl(image)}
                 alt={alt || `Gallery image ${index + 1}`}
                 width={800}
                 height={800}

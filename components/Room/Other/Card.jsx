@@ -30,6 +30,7 @@ import {
   setColor,
 } from "@/components/Features/Slices/productColorSlice";
 import AvailableServicesSlider from "@/components/Cards/AvailableServicesSlider";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
   const quantity = useSelector(selectQuantity);
@@ -874,7 +875,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
         <div className=" w-[100%] prefence-text">
           <div className="textHolders flex flex-col sm:mt-[5px] md:mt-[1.7rem]">
             {data.demandtype && (
-              <div aria-label="Special price offer and review"  className="flex items-center justify-between">
+              <div aria-label="Special price offer and review" className="flex items-center justify-between">
                 <p className="font-semibold text-[#C31952] text-[15px]">
                   {data.demandtype}
                 </p>
@@ -890,22 +891,22 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
               </div>
             )}
             {data.urgency && (
-              <div aria-label="limited time offer and review"  className="flex flex-row justify-between">
-              <p className="font-medium text-[#0152be] text-[14px]">
-                {data.urgency}
-              </p>
-              {data && reviews.length > 0 && !data.demandtype && (
-                <div className="flex gap-2" >
-                  <div className="flex items-center">{Stars}</div>
-                  <p className="text-gray-800 underline h-[20px] cursor-pointer">
-                    {reviews.length}
-                  </p>
-                </div>
-              )}
+              <div aria-label="limited time offer and review" className="flex flex-row justify-between">
+                <p className="font-medium text-[#0152be] text-[14px]">
+                  {data.urgency}
+                </p>
+                {data && reviews.length > 0 && !data.demandtype && (
+                  <div className="flex gap-2" >
+                    <div className="flex items-center">{Stars}</div>
+                    <p className="text-gray-800 underline h-[20px] cursor-pointer">
+                      {reviews.length}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
-        
+
             <div className="flex items-center justify-between mt-[5px]">
               <h1 id="product-title" itemprop="name" className="text-[1.3rem] font-bold mb-0.5 ">
                 {data?.productTitle}
@@ -914,79 +915,78 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                 </span>
               </h1>
 
-             
+
             </div>
 
             {(data?.productType === "normal" ||
               data?.productType === "special") && (
-              <div itemscope itemtype="https://schema.org/Offer" className="price">
-                <div className="font-bold items-end flex mb-1 mt-[10px]">
-                  <p
-                    className={`text-3xl leading-[0.5] tracking-wide ${
-                      data?.specialprice?.price
-                        ? "bg-[#FFD209] px-2 pt-2 w-fit shadow-lg"
-                        : ""
-                    }`}
-                    style={
-                      data?.specialprice?.price
-                        ? { boxShadow: "3px 3px #ad3535" }
-                        : {}
-                    }
-                  >
-                    <span  className="text-sm price-label">Rs. &nbsp;</span>
-                    {selectedSpecData
-  ? Math.floor(
-      selectedSpecData?.specialprice?.price ||
-        selectedSpecData?.discountedprice ||
-        selectedSpecData?.price
-    )
-  : Math.floor(
-      data?.specialprice?.price ||
-        data?.discountedprice?.price ||
-        data.perUnitPrice
-    )}
-                  </p>{" "}
-                  <span> &nbsp;/{data.unitType}</span>
-                  {/* Discount Percentage at the right side */}
-                  {data?.perUnitPrice &&
-                    (data?.specialprice?.price ||
-                      data?.discountedprice?.price) && (
-                      <span aria-label=" Offer percent" className="text-[#388e3c] bg-[rgba(56,142,60,0.3)] px-2 rounded border-[0.02px] border-[rgba(56,142,60,0.05)] text-xl font-bold ml-5">
-                        {`${Math.round(
-                          ((data?.perUnitPrice -
-                            (data?.specialprice?.price ||
-                              data?.discountedprice?.price)) /
-                            data?.perUnitPrice) *
+                <div itemscope itemtype="https://schema.org/Offer" className="price">
+                  <div className="font-bold items-end flex mb-1 mt-[10px]">
+                    <p
+                      className={`text-3xl leading-[0.5] tracking-wide ${data?.specialprice?.price
+                          ? "bg-[#FFD209] px-2 pt-2 w-fit shadow-lg"
+                          : ""
+                        }`}
+                      style={
+                        data?.specialprice?.price
+                          ? { boxShadow: "3px 3px #ad3535" }
+                          : {}
+                      }
+                    >
+                      <span className="text-sm price-label">Rs. &nbsp;</span>
+                      {selectedSpecData
+                        ? Math.floor(
+                          selectedSpecData?.specialprice?.price ||
+                          selectedSpecData?.discountedprice ||
+                          selectedSpecData?.price
+                        )
+                        : Math.floor(
+                          data?.specialprice?.price ||
+                          data?.discountedprice?.price ||
+                          data.perUnitPrice
+                        )}
+                    </p>{" "}
+                    <span> &nbsp;/{data.unitType}</span>
+                    {/* Discount Percentage at the right side */}
+                    {data?.perUnitPrice &&
+                      (data?.specialprice?.price ||
+                        data?.discountedprice?.price) && (
+                        <span aria-label=" Offer percent" className="text-[#388e3c] bg-[rgba(56,142,60,0.3)] px-2 rounded border-[0.02px] border-[rgba(56,142,60,0.05)] text-xl font-bold ml-5">
+                          {`${Math.round(
+                            ((data?.perUnitPrice -
+                              (data?.specialprice?.price ||
+                                data?.discountedprice?.price)) /
+                              data?.perUnitPrice) *
                             100
-                        )}% off`}
-                      </span>
+                          )}% off`}
+                        </span>
+                      )}
+                  </div>
+
+                  {(data?.specialprice?.price ||
+                    data?.discountedprice?.price) && (
+                      <div className="flex flex-col my-2">
+                        <p aria-label="Original price" className="text-[#757575] text-[12px] pt-[3px]">
+                          Regular price:{" "}
+                          <span itemprop="priceCurrency" content="INR" className="font-bold text-black">
+                            Rs.{" "}
+                            <span className="line-through text-base price-label">
+                              {data?.perUnitPrice}
+                            </span>
+                          </span>{" "}
+                          (incl. of all taxes)
+                        </p>
+
+                        {currentPeriod && (
+                          <p className="text-[#757575] text-[12px]">
+                            Price valid {formatDate(currentPeriod?.from)} -{" "}
+                            {formatDate(currentPeriod?.to)}
+                          </p>
+                        )}
+                      </div>
                     )}
                 </div>
-
-                {(data?.specialprice?.price ||
-                  data?.discountedprice?.price) && (
-                  <div  className="flex flex-col my-2">
-                    <p aria-label="Original price" className="text-[#757575] text-[12px] pt-[3px]">
-                      Regular price:{" "}
-                      <span itemprop="priceCurrency" content="INR" className="font-bold text-black">
-                        Rs.{" "}
-                        <span className="line-through text-base price-label">
-                          {data?.perUnitPrice}
-                        </span>
-                      </span>{" "}
-                      (incl. of all taxes)
-                    </p>
-
-                    {currentPeriod && (
-                      <p className="text-[#757575] text-[12px]">
-                        Price valid {formatDate(currentPeriod?.from)} -{" "}
-                        {formatDate(currentPeriod?.to)}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+              )}
           </div>
 
           {data?.dimensions?.length > 0 && (
@@ -998,11 +998,10 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                     <button
                       key={dim._id}
                       onClick={() => handleSpecClick(dim._id)}
-                      className={`px-2 py-1  ${
-                        selectedSpec === dim._id
+                      className={`px-2 py-1  ${selectedSpec === dim._id
                           ? "bg-green-500 text-white"
                           : "bg-zinc-100 text-black hover:bg-zinc-200"
-                      }`}
+                        }`}
                     >
                       {`${dim.dimension}`}
                       {/* {`${dim.thickness.value} ${dim.length.unit}`} */}
@@ -1015,7 +1014,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
 
           {/* External Offers */}
 
-          <div  aria-labelledby="external offers available" className="flex flex-col items-start  sm:w-auto w-[80vw] mt-[10px]  px-42">
+          <div aria-labelledby="external offers available" className="flex flex-col items-start  sm:w-auto w-[80vw] mt-[10px]  px-42">
             {isExtOffersLoading && (
               <div className="w-full max-w-lg py-1">
                 <div
@@ -1030,7 +1029,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                 {externalOffers && externalOffers.length > 0 ? (
                   <>
                     <div itemscope itemtype="https://schema.org/Offer" className="w-full offer-item flex justify-between">
-                      <h2 id="offers-title"  className="section-title font-bold tracking-wider items-baseline text-[#757575] flex gap-1 my-[5px] text-[14px]">
+                      <h2 id="offers-title" className="section-title font-bold tracking-wider items-baseline text-[#757575] flex gap-1 my-[5px] text-[14px]">
                         Available offers
                       </h2>
                     </div>
@@ -1054,7 +1053,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                               aria-hidden="true"
                             />
                             <p itemprop="description" className="md:text-[14px] text-[12px]">
-                              <span   className="text-black font-bold">
+                              <span className="text-black font-bold">
                                 {offer.description
                                   .split(" ")
                                   .slice(0, 3)
@@ -1138,7 +1137,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                     >
                       <Image
                         className="relative w-full h-full object-cover"
-                        src={item.image}
+                        src={fixImageUrl(item.image)}
                         alt={item.color}
                         fill
                         style={{ objectFit: "cover" }}
@@ -1253,21 +1252,19 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                               <div className="flex-1 flex">
                                 <div
                                   onClick={() => setIsActive("Offers for you")}
-                                  className={`flex-1 cursor-pointer flex items-center justify-center h-[50px] ${
-                                    isActive === "Offers for you"
+                                  className={`flex-1 cursor-pointer flex items-center justify-center h-[50px] ${isActive === "Offers for you"
                                       ? "border-b-4 border-[#2e2e2e] text-black"
                                       : "border-[#8E8E8E] text-[#8E8E8E]"
-                                  }`}
+                                    }`}
                                 >
                                   <p className="text-[16px]">Offers for you</p>
                                 </div>
                                 <div
                                   onClick={() => setIsActive("EMI Plans")}
-                                  className={`flex-1 cursor-pointer flex items-center justify-center h-[50px] ${
-                                    isActive === "EMI Plans"
+                                  className={`flex-1 cursor-pointer flex items-center justify-center h-[50px] ${isActive === "EMI Plans"
                                       ? "border-b-4 border-[#2e2e2e] text-black"
                                       : "border-[#8E8E8E] text-[#8E8E8E]"
-                                  }`}
+                                    }`}
                                 >
                                   <p className="text-[16px]">EMI Plans</p>
                                 </div>
@@ -1370,21 +1367,19 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                     onClick={(e) =>
                                       setEmiOption("Credit Card EMI")
                                     }
-                                    className={`${
-                                      EmiOption === "Credit Card EMI"
+                                    className={`${EmiOption === "Credit Card EMI"
                                         ? "bg-black text-white py-[16px] hover:bg-gray-900 px-[30px] text-center text-[14px] rounded-full"
                                         : "py-[16px] border-2  px-[30px] rounded-full  text-[14px] text-center"
-                                    }`}
+                                      }`}
                                   >
                                     Credit Card EMI
                                   </button>
                                   <button
                                     onClick={(e) => setEmiOption("Debit Card")}
-                                    className={`${
-                                      EmiOption === "Debit Card"
+                                    className={`${EmiOption === "Debit Card"
                                         ? "bg-black hover:bg-gray-900 flex-1 text-white py-[16px] px-[30px] text-center text-[14px]  rounded-full"
                                         : "py-[16px] flex-1 border-2 px-[30px]  rounded-full  text-[14px] text-center"
-                                    }`}
+                                      }`}
                                   >
                                     Debit Card & EMI
                                   </button>
@@ -2005,11 +2000,10 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                               </p>
                               <div className="font-bold items-end flex mb-1 my-[5px]">
                                 <h2
-                                  className={`text-xl leading-[0.5] tracking-wide ${
-                                    data?.specialprice?.price
+                                  className={`text-xl leading-[0.5] tracking-wide ${data?.specialprice?.price
                                       ? "bg-[#FFD209] px-2 pt-[10px] w-fit shadow-lg"
                                       : ""
-                                  } `}
+                                    } `}
                                   style={
                                     data?.specialprice?.price
                                       ? { boxShadow: "3px 3px #ad3535" }
@@ -2020,8 +2014,8 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                   {data?.specialprice?.price
                                     ? data?.specialprice?.price
                                     : data?.discountedprice?.price
-                                    ? data?.discountedprice?.price
-                                    : data.perUnitPrice}
+                                      ? data?.discountedprice?.price
+                                      : data.perUnitPrice}
                                 </h2>{" "}
                                 <span> &nbsp;/{data.unitType}</span>
                               </div>
@@ -2117,9 +2111,8 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                   return (
                                     <div
                                       key={idx}
-                                      className={`flex items-center w-full justify-between mt-2 border p-3 cursor-pointer hover:border-black rounded-md ${
-                                        isSelected ? "border-black" : ""
-                                      }`}
+                                      className={`flex items-center w-full justify-between mt-2 border p-3 cursor-pointer hover:border-black rounded-md ${isSelected ? "border-black" : ""
+                                        }`}
                                     >
                                       <div className="flex flex-col max-w-[200px] items-start gap-1 ">
                                         <p className="text-[13px] font-semibold text-[#484848] flex gap-2">
@@ -2191,7 +2184,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                             </h2>
                             <div className="pb-20 h-[500px] ">
                               {categoryProducts &&
-                              categoryProducts.length > 0 ? (
+                                categoryProducts.length > 0 ? (
                                 categoryProducts.map((product) => (
                                   <div
                                     key={product._id}
@@ -2219,17 +2212,16 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                         </p>
                                         <div className="font-bold items-end flex mb-1 my-[5px]">
                                           <h2
-                                            className={`text-xl leading-[0.5] tracking-wide ${
-                                              product?.specialprice?.price
+                                            className={`text-xl leading-[0.5] tracking-wide ${product?.specialprice?.price
                                                 ? "bg-[#FFD209] pl-1 pr-1 pt-3 w-fit shadow-lg"
                                                 : ""
-                                            } `}
+                                              } `}
                                             style={
                                               product?.specialprice?.price
                                                 ? {
-                                                    boxShadow:
-                                                      "3px 3px #ad3535",
-                                                  }
+                                                  boxShadow:
+                                                    "3px 3px #ad3535",
+                                                }
                                                 : {}
                                             }
                                           >
@@ -2239,8 +2231,8 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                             {product?.specialprice?.price
                                               ? product?.specialprice?.price
                                               : product?.discountedprice?.price
-                                              ? product?.discountedprice?.price
-                                              : product.perUnitPrice}
+                                                ? product?.discountedprice?.price
+                                                : product.perUnitPrice}
                                           </h2>{" "}
                                           <span> &nbsp;/{data.unitType}</span>
                                         </div>

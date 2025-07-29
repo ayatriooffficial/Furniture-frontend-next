@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 // import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 import { FreeMode, Mousewheel, Pagination, Scrollbar } from "swiper/modules";
+import fixImageUrl from '@/utils/modifyUrl'
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const groupIntoThrees = (items) => {
@@ -29,7 +30,7 @@ const PlaceInfo = (data) => {
     allowSlideNext: true,
   };
 
-  
+
   const groupedCoreValues = groupIntoThrees(data?.data?.coreValues);
   //
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
@@ -44,13 +45,13 @@ const PlaceInfo = (data) => {
         {data?.data?.coreValues ? (
           <section className="core-values-section" aria-labelledby="core-values-heading">
             <div className="flex justify-between">
-              <h2 
-                id="core-values-heading" 
+              <h2
+                id="core-values-heading"
                 className="text-[#222222] text-[20px] font-medium"
               >
                 Core Values
               </h2>
-              <button 
+              <button
                 className="pr-5"
                 onClick={toggleDropdown}
                 aria-expanded={isDropdownOpen}
@@ -66,16 +67,15 @@ const PlaceInfo = (data) => {
                 />
               </button>
             </div>
-            
+
             {/* desktop dropdown */}
             {isDropdownOpen && (
               <div
                 id="core-values-content"
-                className={`place-features mt-7 hidden md:grid ${
-                  data?.data?.coreValues.length > 6
+                className={`place-features mt-7 hidden md:grid ${data?.data?.coreValues.length > 6
                     ? "grid-cols-2 gap-4"
                     : ""
-                }`}
+                  }`}
                 aria-live="polite"
               >
                 {data?.data?.coreValues.length > 0 &&
@@ -87,7 +87,7 @@ const PlaceInfo = (data) => {
                       <figure className="mr-4 w-[30px] h-[30px]">
                         <img
                           className="w-full h-full"
-                          src={item.image}
+                          src={fixImageUrl(item.image)}
                           alt=""
                           aria-hidden="true"
                         />
@@ -104,10 +104,10 @@ const PlaceInfo = (data) => {
                   ))}
               </div>
             )}
-  
+
             {/* mobile dropdown */}
             {isDropdownOpen && (
-              <div 
+              <div
                 className="md:hidden overflow-visible h-auto mt-7 max-h-[300px] w-full mb-4"
                 aria-live="polite"
               >
@@ -161,7 +161,7 @@ const PlaceInfo = (data) => {
                           <figure className="mr-4 w-[30px] h-[30px]">
                             <img
                               className="w-full min-w-[30px] min-h-[30px]"
-                              src={item.image}
+                              src={fixImageUrl(item.image)}
                               alt=""
                               aria-hidden="true"
                             />
@@ -239,7 +239,7 @@ const PlaceInfo = (data) => {
             </div>
           </section>
         )}
-        
+
         {isDropdownOpen && (
           <div className="flex flex-col gap-2">
             <p className="text-[#484848] text-xs font-normal">Pattern Number</p>

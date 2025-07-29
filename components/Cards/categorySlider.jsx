@@ -11,7 +11,7 @@ const CategoriesSlider = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trendingCategories`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/homeTrendingCategoriesImgAndType`);
         setCategories(res.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);

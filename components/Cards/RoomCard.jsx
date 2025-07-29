@@ -8,8 +8,6 @@ import TabImage from "../Cards/TabImage";
 import RoomCardSkeleton from "../Skeleton/RoomCardSkeleton";
 import fixImageUrl from "@/utils/modifyUrl";
 
-// Define the base URL for Ayatrio at the top
-const AYATRIO_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const RoomCard = () => {
   const [gallery, setGallery] = useState(null);
@@ -178,7 +176,7 @@ const RoomCard = () => {
                   <>
                     <div className="parent col-start-1 col-end-2 row-start-6 row-span-2 lg:col-start-7 lg:col-end-10 lg:row-start-1 lg:row-end-6">
                       <TabImage
-                        src={gallery?.rooms[0]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[0]?.imgSrc)}
                         href={`/${gallery?.rooms[0]?.productCategory.replace(
                           / /g,
                           "-"
@@ -195,7 +193,7 @@ const RoomCard = () => {
     lg:col-start-10 lg:col-end-13 lg:row-start-1 lg:row-end-7"
                     >
                       <TabImage
-                        src={gallery?.rooms[1]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[1]?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[1]?.children}`}
                         href={`/${gallery?.rooms[1]?.productCategory.replace(
                           / /g,
@@ -211,7 +209,7 @@ const RoomCard = () => {
       lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12"
                     >
                       <TabImage
-                        src={gallery?.rooms[2]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[2]?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[2]?.children}`}
                         href={`/${gallery?.rooms[2]?.productCategory.replace(
                           / /g,
@@ -227,7 +225,7 @@ const RoomCard = () => {
       lg:col-start-10 lg:col-end-13 lg:row-start-7 lg:row-end-12"
                     >
                       <TabImage
-                        src={gallery?.rooms[3]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[3]?.imgSrc)}
                         href={`/${gallery?.rooms[3]?.productCategory.replace(
                           / /g,
                           "-"
@@ -243,7 +241,7 @@ const RoomCard = () => {
                   <>
                     <div className="parent col-start-1 col-end-3 row-start-6 row-span-2 lg:col-start-7 lg:col-end-13 lg:row-start-1 lg:row-end-6">
                       <TabImage
-                        src={gallery?.rooms[0]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[0]?.imgSrc)}
                         href={`/${gallery?.rooms[0]?.productCategory.replace(
                           / /g,
                           "-"
@@ -257,7 +255,7 @@ const RoomCard = () => {
                     </div>
                     <div className="parent col-start-1 col-end-2 row-start-8 row-span-3 lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12">
                       <TabImage
-                        src={gallery?.rooms[2]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[2]?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[2]?.children}`}
                         href={`/${gallery?.rooms[2]?.productCategory.replace(
                           / /g,
@@ -270,7 +268,7 @@ const RoomCard = () => {
                     </div>
                     <div className="parent col-start-2 col-end-3 row-start-8 row-span-3 lg:col-start-10 lg:col-end-13 lg:row-start-6 lg:row-end-12">
                       <TabImage
-                        src={gallery?.rooms[1]?.imgSrc}
+                        src={fixImageUrl(gallery?.rooms[1]?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[1]?.children}`}
                         href={`/${gallery?.rooms[1]?.productCategory.replace(
                           / /g,
@@ -285,7 +283,7 @@ const RoomCard = () => {
                 ))}
             </div>
           </div>
-         
+
         </section>
       )}
     </section>

@@ -3,6 +3,7 @@ import {
   expertDesigners,
   ideasAndAdvice,
 } from "@/Model/BusinessToBusinessData/BusinessToBusinessData";
+import fixImageUrl from "@/utils/modifyUrl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -156,7 +157,7 @@ const DesignServicePage = () => {
                         width={200}
                         height={200}
                         className="h-[200px] w-[200px] object-cover rounded-full"
-                        src={curElement.image}
+                        src={fixImageUrl(curElement.image)}
                         alt=""
                       />
                       {/* </div> */}
@@ -193,7 +194,7 @@ const DesignServicePage = () => {
                         width={350}
                         height={300}
                         className="h-[300px] w-[350px] object-cover object-top"
-                        src={curElement.image}
+                        src={fixImageUrl(curElement.image)}
                         alt=""
                       />
                       <div className="items-center flex flex-col px-3 my-4">

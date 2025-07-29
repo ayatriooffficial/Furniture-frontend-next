@@ -26,7 +26,7 @@ function TabsProductCard(props) {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${props.id}`
       );
-     
+
       setReviews(response.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -108,7 +108,7 @@ function TabsProductCard(props) {
   }, [Reviews]);
 
   const handleclick = async (title) => {
-    
+
     dispatch({ type: "FETCH_ROOM_REQUEST", payload: title });
   };
 
@@ -148,7 +148,7 @@ function TabsProductCard(props) {
   });
 
   const handleColor = (imagesrc) => {
-    
+
     setColorImage(imagesrc);
   };
 
@@ -328,7 +328,7 @@ function TabsProductCard(props) {
 
   return (
     <>
-    {faqData.length > 0 && <FAQPageJsonLd mainEntity={faqData} />}
+      {faqData.length > 0 && <FAQPageJsonLd mainEntity={faqData} />}
       <div
         key={props.idx}
         className="flex flex-col  border-b border-r  sm:border-none "
@@ -492,7 +492,7 @@ function TabsProductCard(props) {
                   {props.urgency}
                 </p>
               )}
-              <h3 id="products-title"  itemProp="name" className={` text-[14px] font-semibold `}>
+              <h3 id="products-title" itemProp="name" className={` text-[14px] font-semibold `}>
                 {props.productTitle}
               </h3>
             </div>
@@ -520,7 +520,7 @@ function TabsProductCard(props) {
                       className={`text-sm ${props?.specialprice?.price ? "" : "pt-3.5"
                         }`}
                     >
-                      Rs.  
+                      Rs.
                     </span>{" "}
                     {props?.specialprice?.price ? (
                       Math.floor(props?.specialprice?.price)
@@ -595,46 +595,46 @@ function TabsProductCard(props) {
                 className="cursor-pointer rounded-full"
               />
             </div>
-            <div  className="bg-[#fff] border border-solid border-[#efefef] hover:bg-[#f5f5f5] p-2 mr-2 rounded-full">
-            {loggedInUser ? (
-              <div className="flex items-center">
-                {isLiked ? (
-                  <button disabled={loading} onClick={handleUnlike}>
-                    <Image
-                      loading="lazy"
-                      src={"/icons/like-fill.svg"}
-                      height={25}
-                      width={25}
-                      className={`cursor-pointer  hover:scale-105 transition-transform`}
-                      alt="like icon"
-                    />
-                  </button>
-                ) : (
-                  <button disabled={loading} onClick={handleLike}>
-                    <Image
-                      loading="lazy"
-                      src={"/icons/like.svg"}
-                      height={25}
-                      width={25}
-                      className={`cursor-pointer hover:scale-105 transition-transform`}
-                      alt="like icon"
-                    />
-                  </button>
-                )}
-              </div>
-            ) : (
-              <Link href={"/login"}>
-                <Image
-                  loading="lazy"
-                  src={"/icons/like.svg"}
-                  height={25}
-                  width={25}
-                  className="cursor-pointer  hover:scale-105 transition-transform"
-                  alt="like icon"
-                />
-              </Link>
-            )}
-          </div></div>
+            <div className="bg-[#fff] border border-solid border-[#efefef] hover:bg-[#f5f5f5] p-2 mr-2 rounded-full">
+              {loggedInUser ? (
+                <div className="flex items-center">
+                  {isLiked ? (
+                    <button disabled={loading} onClick={handleUnlike}>
+                      <Image
+                        loading="lazy"
+                        src={"/icons/like-fill.svg"}
+                        height={25}
+                        width={25}
+                        className={`cursor-pointer  hover:scale-105 transition-transform`}
+                        alt="like icon"
+                      />
+                    </button>
+                  ) : (
+                    <button disabled={loading} onClick={handleLike}>
+                      <Image
+                        loading="lazy"
+                        src={"/icons/like.svg"}
+                        height={25}
+                        width={25}
+                        className={`cursor-pointer hover:scale-105 transition-transform`}
+                        alt="like icon"
+                      />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <Link href={"/login"}>
+                  <Image
+                    loading="lazy"
+                    src={"/icons/like.svg"}
+                    height={25}
+                    width={25}
+                    className="cursor-pointer  hover:scale-105 transition-transform"
+                    alt="like icon"
+                  />
+                </Link>
+              )}
+            </div></div>
 
           {props.expectedDelivery && (
             <div className="flex flex-col items-start mt-2">
@@ -650,7 +650,7 @@ function TabsProductCard(props) {
                 )}
               </div>
               <p className="text-[#757575] text-[12px] mt-1">
-                Expected delivery on  
+                Expected delivery on
                 <span className="text-[#0152be] font-md font-semibold">
                   {getExpectedDeliveryDate(props.expectedDelivery)}
                 </span>
@@ -686,7 +686,7 @@ function TabsProductCard(props) {
                         <Image
                           loading="lazy"
                           className="relative w-full h-full object-cover"
-                          src={item.image}
+                          src={fixImageUrl(item.image)}
                           alt={item.color}
                           width={25}
                           height={25}

@@ -378,61 +378,50 @@ const ProductPage = ({
     }
   }, [category]);
   return (
-    <>
-      {/* ( */}
-      <div>
-        
-        <Tabproduct
-          filteredProductData={
-            parentCategory === "virtualexperience"
-              ? filteredProducts
-              : parentCategory === "offers"
-              ? offerProductData
-              : parentCategory === "demandtype"
+    <Tabproduct
+      filteredProductData={
+        parentCategory === "virtualexperience"
+          ? filteredProducts
+          : parentCategory === "offers"
+            ? offerProductData
+            : parentCategory === "demandtype"
               ? demandTypeProduct
               : filteredProductData
-          }
-          heading={
-            parentCategory === "offers"
-              ? type === "all"
-                ? "Highest Offer"
-                : type
-              : parentCategory === "demandtype"
-              ? type
-              : category.name
-          }
-          type={type}
-          description={category?.description}
-          h1title={category?.h1title}
-          pdesc={category?.pdesc}
-          features={category?.features}
-          card={category?.card}
-          tips={category?.tips}
-          faq={category?.faq}
-          subCategory={category?.subcategories?.filter(
-            (subcategory) => !subcategory.isAccessories
-          )}
-          allTypes={allTypes}
-          parentCategory={parentCategory}
-          offerCategory={offerCategory}
-          setType={setType}
-          setSelectedOfferCategory={setSelectedOfferCategory}
-          currentPage={currentPage}
-          totalPages={
-            parentCategory === "offers" ? totalPagesOffer : totalPages
-          }
-          onPageChange={handlePageChange}
-          firstGrid={firstGrid}
-          secondGrid={secondGrid}
-          isSubcategoryPage={isSubcategoryPage}
-        />
-      </div>
-      {/* ) : (
-        <div className="flex justify-center items-center h-[80vh]">
-          <h2 className="text-2xl"></h2>
-        </div>
-      )} */}
-    </>
+      }
+      heading={
+        parentCategory === "offers"
+          ? type === "all"
+            ? "Highest Offer"
+            : type
+          : parentCategory === "demandtype"
+            ? type
+            : category.name
+      }
+      type={type}
+      description={category?.description}
+      h1title={category?.h1title}
+      pdesc={category?.pdesc}
+      features={category?.features}
+      card={category?.card}
+      tips={category?.tips}
+      faq={category?.faq}
+      subCategory={category?.subcategories?.filter(
+        (subcategory) => !subcategory.isAccessories
+      )}
+      allTypes={allTypes}
+      parentCategory={parentCategory}
+      offerCategory={offerCategory}
+      setType={setType}
+      setSelectedOfferCategory={setSelectedOfferCategory}
+      currentPage={currentPage}
+      totalPages={
+        parentCategory === "offers" ? totalPagesOffer : totalPages
+      }
+      onPageChange={handlePageChange}
+      firstGrid={firstGrid}
+      secondGrid={secondGrid}
+      isSubcategoryPage={isSubcategoryPage}
+    />
   );
 };
 
