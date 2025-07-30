@@ -31,7 +31,7 @@ export async function GET() {
 }
 
 async function generateSitemapUrls() {
-  const homedecorData = await fetchHeaderCategoryData("homedecor");
+  const homedecorData = await fetchHeaderCategoryDataOnlyNames("homedecor");
   const homedecorPaths = [];
   for (const category of homedecorData) {
     for (const sub of category.subcategories) {
@@ -41,7 +41,7 @@ async function generateSitemapUrls() {
     }
   }
 
-  const walldecorData = await fetchHeaderCategoryData("walldecor");
+  const walldecorData = await fetchHeaderCategoryDataOnlyNames("walldecor");
   const walldecorPaths = [];
   for (const category of walldecorData) {
     for (const sub of category.subcategories) {
@@ -51,7 +51,7 @@ async function generateSitemapUrls() {
     }
   }
 
-  const flooringData = await fetchHeaderCategoryData("flooring");
+  const flooringData = await fetchHeaderCategoryDataOnlyNames("flooring");
   const flooringPaths = [];
   for (const category of flooringData) {
     for (const sub of category.subcategories) {
@@ -61,7 +61,7 @@ async function generateSitemapUrls() {
     }
   }
 
-  const categories = await getCategories();
+  const categories = await fetchHeaderCategoryDataOnlyNames();
   const categoryPaths = categories.map((category) =>
     encodeURI(`/${category.name}/category/all`.replace(" ", "-")).replace(/&/g, "&amp;")
   );

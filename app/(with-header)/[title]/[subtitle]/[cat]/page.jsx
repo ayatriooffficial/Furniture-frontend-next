@@ -188,6 +188,7 @@ const page = async ({ params }) => {
     createApiEndpoint(`fetchProductsByCategory/${categoryName}`)
   );
 
+
   const categoryProducts = categoryProductsResponse?.data;
 
   const subcategoryProducts = categoryProducts?.filter?.((product) => {

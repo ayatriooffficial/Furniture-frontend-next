@@ -202,6 +202,26 @@ export const fetchHeaderCategoryData = async (category) => {
         },
       }
     );
+    console.log(response)
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching header category data: ${error.message}`);
+    return []
+  }
+};
+
+export const fetchHeaderCategoryDataOnlyNames = async (category) => {
+  try {
+    const response = await axios.get(
+      createApiEndpoint(`getCategoriesByTypeOnlyNames/${category}`),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response)
 
     return response.data;
   } catch (error) {
@@ -288,6 +308,25 @@ export const getCategoryByName = async (categoryName) => {
     return null;
   }
 };
+
+export const getCategoryByNameModified = async (categoryName) => {
+  try {
+    const response = await axios.get(
+      createApiEndpoint(`getCategoryByName/${categoryName}`)
+    );
+    
+    // 🛑 If it's an array, return first object (if needed)
+    if (Array.isArray(response.data)) {
+      return response.data[0] || null;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching category: ${error.message}`);
+    return null;
+  }
+};
+
 export const getCategories = async () => {
   try {
     const response = await axios.get(createApiEndpoint("categories"));

@@ -99,11 +99,12 @@ const FooterContent = (props) => {
         <div className="col-span-1 space-y-5">
           <h3 className="font-semibold">{categoryHeading}</h3>
           <div className="space-y-3 text-sm text-[#484848]">
-            {categoryData.map((curElement) => {
+            {categoryData.map((curElement, i) => {
               return (
                 <p
                   onClick={() => handleClick(headingId, curElement.id)}
                   className="cursor-pointer"
+                  key={i}
                 >
                   {curElement.text}
                 </p>

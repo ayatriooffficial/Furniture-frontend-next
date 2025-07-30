@@ -27,8 +27,8 @@ const Asidebox = (props) => {
   }
 
   useEffect(() => {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getCategoriesByType/${parentCategory}`;
-
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getCategoriesByTypeLimtedData/${parentCategory}`;
+    // const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getCategoriesByType/${parentCategory}`;
     const fetchCategoryData = async () => {
       try {
         const response = await axios.get(apiUrl, {
@@ -96,9 +96,8 @@ const Asidebox = (props) => {
               <Link
                 key={idx}
                 onMouseEnter={() => handleMouseEnter(idx, value)}
-                className={`lg:block flex items-center justify-between w-full lg:text-[14px] text-[18px] font-semibold ${
-                  defaultLinkIndex === idx ? "text-blue-600" : ""
-                } p-2 pt-0 hover:underline mb-2`}
+                className={`lg:block flex items-center justify-between w-full lg:text-[14px] text-[18px] font-semibold ${defaultLinkIndex === idx ? "text-blue-600" : ""
+                  } p-2 pt-0 hover:underline mb-2`}
                 href={`/${value.name.replace(/ /g, "-")}/collection/all`}
                 onClick={() => handleItemClick(value)}
               >
@@ -108,9 +107,8 @@ const Asidebox = (props) => {
           </aside>
           <div className="inline-block h-full w-[0.5px] self-stretch bg-[#e5e7eb]"></div>
           <div
-            className={`${
-              innerData ? "block" : "hidden"
-            } md:block absolute md:h-auto md:w-[80%] md:static w-full z-[99]`}
+            className={`${innerData ? "block" : "hidden"
+              } md:block absolute md:h-auto md:w-[80%] md:static w-full z-[99]`}
           >
             <Displaybox
               toggleMobileMenu={props.toggleMobileMenu}
