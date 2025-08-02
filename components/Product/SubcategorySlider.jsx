@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const SubCategorySlider = ({ subCategory, isSubcategoryPage }) => {
+const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) => {
   const pathname = usePathname();
   const currentCategorySlug = pathname.slice(1).split('/')[0].replace('-', ' ')
   // console.log(currentCategorySlug)
@@ -43,8 +43,8 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage }) => {
     >
       {!isSubcategoryPage && subCategory.map((category) => (
         <swiper-slide key={category.id} class="!w-auto">
-          <div
-            // href={`/products/${category.slug}`}
+          <Link
+            href={`/${category.name.replace(' ', '-')}/subcollection/${parentCategory}/`}
             className="flex flex-col items-center gap-1"
           >
             <div className="w-[138px] h-[72px] relative  overflow-hidden mb-2">
@@ -56,15 +56,15 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage }) => {
               />
             </div>
             <p className="text-xs w-[138px] truncate text-left">{category.name}</p>
-          </div>
+          </Link>
         </swiper-slide>
       ))}
       {isSubcategoryPage &&
         subCategory.map((category) =>
           category.name === currentCategorySlug ? (
             <swiper-slide key={category.id} class="!w-auto">
-              <div
-                // href={`/products/${category.slug}`}
+              <Link
+                href={`/${category.name.replace(' ', '-')}/subcollection/${parentCategory}/`}
                 className="flex flex-col items-center gap-1"
               >
                 <div className="w-[138px] h-[72px] relative overflow-hidden mb-2">
@@ -76,7 +76,7 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage }) => {
                   />
                 </div>
                 <p className="text-xs w-[138px] truncate text-left">{category.name}</p>
-              </div>
+              </Link>
             </swiper-slide>
           ) : null
         )}

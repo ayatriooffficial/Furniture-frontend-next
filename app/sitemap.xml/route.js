@@ -5,6 +5,7 @@ import {
   getOffers,
 } from "@/components/Features/api";
 import { BASE_URL } from "@/constants/base-url";
+import { fetchHeaderCategoryDataOnlyNames } from "@/components/Features/api";
 
 // Optional: remove this line if you don't specifically need edge runtime.
 // export const runtime = "edge";  // ⚠️ Optional.

@@ -2,7 +2,7 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 
 // const BASE_URL = "http://52.66.30.159:8080/api";
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://backendnew.ayatrio.com"}/api`;;
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://backend.ayatrio.com"}/api`;
 export const createApiEndpoint = (endpoint) => `${BASE_URL}/${endpoint}`;
 // if (typeof window !== "undefined") {
 //   var id = localStorage.getItem("deviceId");
@@ -221,7 +221,6 @@ export const fetchHeaderCategoryDataOnlyNames = async (category) => {
         },
       }
     );
-    console.log(response)
 
     return response.data;
   } catch (error) {

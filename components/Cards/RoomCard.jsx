@@ -17,6 +17,7 @@ const RoomCard = () => {
     const fetchData = async () => {
       // Fetch gallery data
       const galleryData = await fetchGalleryData();
+      // console.log(galleryData)
       setGallery(galleryData);
 
       // Fetch all offers
