@@ -91,9 +91,8 @@ function Cards() {
         </section>
 
         <TabsWrapper />
-        <Phone />
       </Suspense>
-
+      <Phone />
       <Footer />
     </div>
   );

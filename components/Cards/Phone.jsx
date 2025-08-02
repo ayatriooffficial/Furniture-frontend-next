@@ -9,8 +9,9 @@ const Phone = async () => {
   const fetchCategory = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trendingCategories`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trendingCategoriesNames`
       );
+      console.log(response)
       return response.data;
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -76,166 +77,166 @@ const Phone = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       /> */}
-     <div>
-      <h1 itemProp="name" id="main-heading" className="font-semibold xl:text-2xl text-xl pt-4 pb-2 pr-[100px]">
-        Ayatrio: Premium Home Flooring, Rugs & Wallpaper | Window Curtains & Blinds Online
-      </h1>
-      <p itemProp="description" className="text-[14px]  text-[#484848]">
-       We’re the India's premier luxury home furnishing destination with <strong>25+</strong> years expertise. Trusted by<strong> 1.5M+ homes</strong>. <strong>10000+</strong> premium flooring, carpets, rugs, wallpaper, upholstery & fabric, artificial grass & plants, wall panels, Made-to-measure window treatments curtains & blinds options in <strong>1500+</strong> colors and pattern. Live face to face video shoping direct from <strong>30+</strong> ayatrio store.
-      </p>
-      <div className="mx-auto grid grid-cols-1 items-start sm:pr-[0px] md:pr-[100px] lg:pr-[300px] gap-6 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
-      <div className="rounded-xl bg-white p-4 text-left ">
-        <Image src="/icons/ayatrio member love it.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience"  width={30} height={30} className="mb-3" />
-        <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">1M+ Satisfied Customers with 25+ Years Experience</h2>
-        </div>
-        
-      <div className="rounded-xl bg-white p-4 text-left ">
-        <Image src="/icons/45 day trial prioed.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience"  width={30} height={30} className="mb-3" />
-        <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">45-Day trial Guarantee with 3 free yearly services</h2>
-      </div>
-      
-      <div className="rounded-xl bg-white p-4 text-left ">
-        <Image src="/icons/planning and consultation.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience"  width={30} height={30} className="mb-3" />
-        <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Expert Design Consultation and Free Home Samples</h2>
-      </div>
-      <div className="rounded-xl bg-white p-4 text-left ">
-       <Image src="/icons/warranty registration.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience"  width={30} height={30} className="mb-3" />
-        <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Authentic Premium Materials, Quality Global Certification</h2>
-      </div>
-      <div className="rounded-xl bg-white p-4 text-left ">
-       <Image src="/icons/instalation.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience"  width={30} height={30} className="mb-3" />
-        <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Professional Installation, EMI Options and Pan-India Delivery</h2>
-      </div>
-      </div></div>
+      <div>
+        <h1 itemProp="name" id="main-heading" className="font-semibold xl:text-2xl text-xl pt-4 pb-2 pr-[100px]">
+          Ayatrio: Premium Home Flooring, Rugs & Wallpaper | Window Curtains & Blinds Online
+        </h1>
+        <p itemProp="description" className="text-[14px]  text-[#484848]">
+          We’re the India's premier luxury home furnishing destination with <strong>25+</strong> years expertise. Trusted by<strong> 1.5M+ homes</strong>. <strong>10000+</strong> premium flooring, carpets, rugs, wallpaper, upholstery & fabric, artificial grass & plants, wall panels, Made-to-measure window treatments curtains & blinds options in <strong>1500+</strong> colors and pattern. Live face to face video shoping direct from <strong>30+</strong> ayatrio store.
+        </p>
+        <div className="mx-auto grid grid-cols-1 items-start sm:pr-[0px] md:pr-[100px] lg:pr-[300px] gap-6 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
+          <div className="rounded-xl bg-white p-4 text-left ">
+            <Image src="/icons/ayatrio member love it.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience" width={30} height={30} className="mb-3" />
+            <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">1M+ Satisfied Customers with 25+ Years Experience</h2>
+          </div>
+
+          <div className="rounded-xl bg-white p-4 text-left ">
+            <Image src="/icons/45 day trial prioed.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience" width={30} height={30} className="mb-3" />
+            <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">45-Day trial Guarantee with 3 free yearly services</h2>
+          </div>
+
+          <div className="rounded-xl bg-white p-4 text-left ">
+            <Image src="/icons/planning and consultation.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience" width={30} height={30} className="mb-3" />
+            <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Expert Design Consultation and Free Home Samples</h2>
+          </div>
+          <div className="rounded-xl bg-white p-4 text-left ">
+            <Image src="/icons/warranty registration.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience" width={30} height={30} className="mb-3" />
+            <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Authentic Premium Materials, Quality Global Certification</h2>
+          </div>
+          <div className="rounded-xl bg-white p-4 text-left ">
+            <Image src="/icons/instalation.svg" loading="lazy" alt="1M+ Satisfied Customers with 25+ Years Experience" width={30} height={30} className="mb-3" />
+            <h2 className="sm:text-xs md:text-xs lg:text-sm font-medium text-gray-700">Professional Installation, EMI Options and Pan-India Delivery</h2>
+          </div>
+        </div></div>
 
       <div className="text-[14px] text-[#484848] pt-5">
         <h2 className="text-[14px] font-semibold text-[#000000]">Premium Home Flooring | Waterproof Laminate & Engineered Wood Flooring & Vinyl Flooring</h2>
         <p itemProp="description">Discover an extensive collection of flooring online, catering to every need and aesthetic. Explore durable and stylish options including laminate flooring, known for its versatility and affordability. Our range of SPC flooring (Stone Plastic Composite) offers a perfect blend of style and resilience, with <strong>Click-N-Lock®</strong> SPC flooring providing easy installation and featuring real wood-inspired designs like oak and teak, as well as elegant stone textures such as terracotta and sandstone. We also offer a wide selection of vinyl flooring, known for its <strong>waterproof</strong> and <strong>low-maintenance</strong> properties, and classic wooden flooring, including hardwood flooring, bringing warmth and timeless elegance to any space. Our focus is on providing <strong>durable</strong>, convenient, and stylish flooring solutions for homes and commercial spaces.</p>
-      
-      <div className="mx-auto gap-[7px] items-start flex mt-[5px]">
-        
-        <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-       Laminate Flooring
-        </a>
-        </div>
-         <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium">
-        <p className="text-sm text-gray-700">Vinyl Flloring </p>
-        
-      </a></div>
-       <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-        <p className="text-sm text-gray-700">SPC flooring</p>
-       
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Engineering Wood Flooring</p>
-    
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Deck Flooring</p>
-     
-      </a></div>
 
-    </div></div>
+        <div className="mx-auto gap-[7px] items-start flex mt-[5px]">
 
-<div itemScope itemType="https://schema.org/Product" className="text-[14px] text-[#484848] pt-5">
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              Laminate Flooring
+            </a>
+          </div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium">
+              <p className="text-sm text-gray-700">Vinyl Flloring </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">SPC flooring</p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Engineering Wood Flooring</p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Deck Flooring</p>
+
+            </a></div>
+
+        </div></div>
+
+      <div itemScope itemType="https://schema.org/Product" className="text-[14px] text-[#484848] pt-5">
         <h2 itemProp="name" className="text-[14px] font-semibold text-[#000000]">Expert Wallpaper for Walls: Transform Your Space with Premium Designs</h2>
         <p itemProp="description">Elevate your home with our premium, <strong>eco-friendly</strong> wallpaper for walls. Explore a vast collection of <strong>customizable, durable designs</strong>—from modern and 3D to Indian and Chinoiserie, and unique murals—perfect for any space including bedrooms, living rooms, and offices. Our <strong>expert guidance</strong> ensures seamless transformation, <strong>creating stylish</strong>, <strong>personality-rich</strong> interiors with <strong>unmatched quality</strong> and <strong>easy maintenance</strong>.</p>
-      
-      <div className="mx-auto gap-[7px] items-start flex mt-[5px]">
-        
-        <div className="bg-white text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-        <p className="text-sm text-gray-700">Abstract Wallpaper</p>
-        </a>
-        </div>
-          <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium">
-        <p className="text-sm text-gray-700">Animal Wallpapers </p>
-        
-      </a></div>
-       <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-        <p className="text-sm text-gray-700">Floral wallpapers </p>
-      
-      </a></div>
- <span> | </span>
-      <div className="bg-white text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Damask Wallpaper</p>
-    
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Plain and Textured Wallpaper</p>
-     
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Tree and Tropical Wallpaper </p>
-     
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Geometric Wallpaper</p>
-     
-      </a></div>
 
-      </div></div>
+        <div className="mx-auto gap-[7px] items-start flex mt-[5px]">
+
+          <div className="bg-white text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Abstract Wallpaper</p>
+            </a>
+          </div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium">
+              <p className="text-sm text-gray-700">Animal Wallpapers </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Floral wallpapers </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Damask Wallpaper</p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Plain and Textured Wallpaper</p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Tree and Tropical Wallpaper </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Geometric Wallpaper</p>
+
+            </a></div>
+
+        </div></div>
 
       <div itemScope itemType="https://schema.org/Product" className="text-[14px]  text-[#484848] pt-3">
         <h2 itemProp="name" className="text-[14px] font-semibold text-[#000000]">Premium Window Curtains Online - Blackout, Thermal Insulated & Linen Sheer Curtains for Bedroom, Living Room</h2>
         <p itemProp="description">Discover our extensive collection of window curtains online. Find functional options like dimout curtains and blackout curtains for optimal light control and privacy, as well as stylish choices such as elegant linen sheer curtains and visually appealing ombre curtains. Our range includes a variety of designs, from classic plain curtains to patterned floral curtains and geometric curtains, catering to diverse aesthetic preferences. Explore our selection of fabrics, including luxurious satin, natural linen and jute, soft velvet, and textured options like herringbone and slub matte fabrics.</p>
-      
-       <div className="mx-auto gap-[7px] items-start flex mt-[3px] ">
-        
-       
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium">
-        <p className="text-sm text-gray-700">Animal Curtain </p>
-        
-      </a></div>
-       <span> | </span>
-      <div className="bg-white  text-left  hover:text-black ">
-        <a href="#" class="flex font-medium ">
-        <p className="text-sm text-gray-700">Floral Curtain </p>
-      
-      </a></div>
- 
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Plain and Textured Curtain</p>
-     
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Tropical Window Curtain </p>
-     
-      </a></div>
- <span> | </span>
-      <div className="bg-white  text-left hover:text-black ">
-        <a href="#" class="flex font-medium ">
-      <p className="text-sm text-gray-700">Geometric Curtain</p>
-     
-      </a></div>
 
-      </div>
-      
+        <div className="mx-auto gap-[7px] items-start flex mt-[3px] ">
+
+
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium">
+              <p className="text-sm text-gray-700">Animal Curtain </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left  hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Floral Curtain </p>
+
+            </a></div>
+
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Plain and Textured Curtain</p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Tropical Window Curtain </p>
+
+            </a></div>
+          <span> | </span>
+          <div className="bg-white  text-left hover:text-black ">
+            <a href="#" class="flex font-medium ">
+              <p className="text-sm text-gray-700">Geometric Curtain</p>
+
+            </a></div>
+
+        </div>
+
       </div>
 
       <div itemScope itemType="https://schema.org/Product" className="text-[14px] text-[#484848] pt-3">
