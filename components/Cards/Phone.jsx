@@ -11,7 +11,6 @@ const Phone = async () => {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trendingCategoriesNames`
       );
-      console.log(response)
       return response.data;
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -46,7 +45,10 @@ const Phone = async () => {
   };
 
   const categories = await fetchCategory();
-  const categoryDataForSchema = await fetchCategoryDataForSchema(categories);
+  // const categoryDataForSchema = await fetchCategoryDataForSchema(categories); //this is making this
+  //component load slower, so commented it down. if necessary please uncomment
+
+
 
   // Construct the schema dynamically based on fetched data
   // const schemaData = {

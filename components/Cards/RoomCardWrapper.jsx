@@ -17,7 +17,7 @@ const RoomCardWrapper = () => {
     threshold: 0.1,
   });
 
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (inView) {
