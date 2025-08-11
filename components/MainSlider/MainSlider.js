@@ -75,11 +75,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
         loop
         centeredSlides
         spaceBetween={10}
-        breakpoints={{
-          350: { slidesPerView: 1 },
-          640: { slidesPerView: 1.25 },
-          1024: { slidesPerView: 1.08 },
-        }}
+       slidesPerView="auto"
         onSwiper={() => onSwiperReady?.()}
         className="w-full h-full"
       >
