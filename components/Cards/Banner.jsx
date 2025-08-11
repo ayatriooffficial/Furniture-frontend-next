@@ -37,6 +37,7 @@ function Banner() {
               width={1920}
               height={1080}
               className="md:block hidden py-6"
+              quality={75}
             />
             {/* Mobile Image */}
             <Image
@@ -46,6 +47,7 @@ function Banner() {
               width={1920}
               height={1080}
               className="md:hidden py-6"
+               quality={75}
             />
             <figcaption className="sr-only">
               Special Ayatrio Bank Offer Banner

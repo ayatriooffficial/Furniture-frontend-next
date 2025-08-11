@@ -17,6 +17,7 @@ function ShopByRoomCard(props) {
               alt={props.title}
               height={600}
               width={600}
+              quality={75}
               className={"aspect-square w-full object-cover hover-zoom"}
             />
           </div>
@@ -35,6 +36,7 @@ function ShopByRoomCard(props) {
                 src={"/icons/top_arrow-white.svg"}
                 height={25}
                 width={25}
+                quality={75}
                 className="p-1"
                 alt="arrow icon"
                 loading="lazy"

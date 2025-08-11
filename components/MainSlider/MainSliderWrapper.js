@@ -71,6 +71,7 @@ const MainSliderWrapper = () => {
                 onLoad={handleFirstImageLoad}
                 className="object-cover"
                 style={{ maxHeight }}
+                  quality={75}
               />
             </div>
           </div>
@@ -79,7 +80,7 @@ const MainSliderWrapper = () => {
         {/* Swiper slider layer */}
         {firstImageLoaded && (
           <div
-            className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
+            className={`absolute  top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
           >
             <MainSlider sliderData={sliderData} onSwiperReady={handleSwiperReady} />

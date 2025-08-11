@@ -82,6 +82,7 @@ const CategorySliderSwiper = ({ categories }) => {
                     src={fixImageUrl(curElement.image) || "/images/temp.svg"}
                     width={120}
                     height={70}
+                      quality={75} 
                     priority
                     alt=""
                     className="w-[120px] h-[70px]"
