@@ -61,6 +61,8 @@ useEffect(() => {
 
   if (!blogCardData) return <ShopByRoomSliderSkeleton />
 
+
+
   return (
     <section
       className="pt-12 mb-20 bg-white md:pl-[52px] ml-[12px] sm:ml-[12px] md:ml-[0px]"
@@ -115,7 +117,7 @@ useEffect(() => {
                 <SuggestionCard
                   title={suggestion.heading}
                   desc={suggestion.shortSummary}
-                  mainImage={fixImageUrl(suggestion.mainImage)}
+                  mainImage={fixImageUrl(suggestion.mainImage?.imgSrc)}
                   key={idx}
                   bgColorClass={
                     backgroundColors[idx % backgroundColors.length]

@@ -184,6 +184,8 @@ const page = async ({ params }) => {
     return subcategory.name === cat.replace(/-/g, " ");
   });
 
+
+
   const categoryProductsResponse = await axios.get(
     createApiEndpoint(`fetchProductsByCategory/${categoryName}`)
   );
