@@ -1,7 +1,9 @@
 
 
 const fixImageUrl = (url) => {
+  console.log(url)
   if (!url) return "";
+  if (typeof url === "object") url = url.imgSrc
   return url
     .replace("ayatrio-bucket-data-data-data", "ayatrio-bucket-data")
     .replace("ayatrio-bucket-data-data", "ayatrio-bucket-data")
