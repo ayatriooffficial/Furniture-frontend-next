@@ -527,6 +527,7 @@ const Suggestion = ({ id }) => {
   })}
 
                     </div>
+                 
 
                     {suggestion.features[0].icon && (
                       <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
@@ -769,7 +770,7 @@ const Suggestion = ({ id }) => {
                 />
               )}
             </div>
-            <aside className="lg:w-1/3 min-h-[363px] bg-zinc-100 p-10 lg:p-12" aria-label="Customer review">
+          { reviewData && <aside className="lg:w-1/3 min-h-[363px] bg-zinc-100 p-10 lg:p-12" aria-label="Customer review">
               <div className="flex flex-col">
                 <div>
                   <p>{reviewData && reviewData.comment}</p>
@@ -786,7 +787,7 @@ const Suggestion = ({ id }) => {
                   <p>{reviewData && reviewData.name}</p>
                 </div>
               </div>
-            </aside>
+            </aside>}
           </section>
   
           <section aria-labelledby="multicard-section">

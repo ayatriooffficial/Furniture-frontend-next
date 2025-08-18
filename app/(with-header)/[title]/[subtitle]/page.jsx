@@ -37,7 +37,6 @@ export async function generateMetadata({ params }) {
         },
       }
     );
-
     const roomData = response.data;
 
     return {
@@ -218,8 +217,10 @@ const Page = async ({ params }) => {
       params.title?.replace(/-/g, " ")
     );
 
+
     return (
       <>
+      
         <ArticleJsonLd
           useAppDir={true}
           type="BlogPosting"
@@ -230,6 +231,7 @@ const Page = async ({ params }) => {
           dateModified={suggestion.updatedAt?.toString()}
           authorName={suggestion.author?.name || "Ayatrio"}
         />
+       
         <Suggestion id={params.title.replace(/-/g, " ")} />;
       </>
     );
@@ -237,6 +239,7 @@ const Page = async ({ params }) => {
 
   return (
     <>
+    
       <ProductJsonLd
         useAppDir={true}
         productName={product?.productTitle}

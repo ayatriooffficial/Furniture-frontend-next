@@ -5,13 +5,15 @@ import Link from "next/link";
 import PopUp from "../Reviews/PopUp";
 
 function SuggestionCard(props) {
+  
   return (
     <article aria-labelledby={`card-title-${props.cardkey}`}>
       <div key={props.cardkey} className="pb-8 cursor-pointer">
         <Link href={`/${props.title.replace(/ /g, "-")}/inspiration`} aria-label={`View inspiration for ${props.title}`}>
+
           <figure className="flex h-full w-full items-center justify-center cursor-pointer overflow-hidden">
             <Image
-              src={props.mainImage.imgSrc}
+              src={props.mainImage}
               alt={`Featured image for ${props.title}`}
               height={600}
               width={600}
@@ -26,6 +28,7 @@ function SuggestionCard(props) {
             <div className={`text-sm overflow-hidden text-ellipsis`} aria-label="Description">
               {props.desc}
             </div>
+            
             <div className="bg-[#000000] rounded-full max-w-fit p-2 mt-[60px] lg:mt-[90px]" aria-hidden="true">
               <Image
                 src={"/icons/top_arrow-white.svg"}
