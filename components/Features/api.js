@@ -45,7 +45,7 @@ export const fetchRecommendedProductCategoryWise = async ({ categorySkip = 0, ca
     const response = await axios.get(
       createApiEndpoint(`getRecommendationCategoryWise?deviceId=${id}&categorySkip=${categorySkip}&categoryLimit=${categoryLimit}&productLimit=${productLimit}`)
     );
-    return response.data; 
+    return response.data;
   } catch (err) {
     // console.error(err);
   }
@@ -181,7 +181,7 @@ export const fetchFirstImageChangerData = async () => {
 export const fetchSuggestionData = async (heading) => {
   try {
     const response = await axios.get(createApiEndpoint("fetchSuggestionByTitle"), {
-      params: { heading : decodeURI(heading) },
+      params: { heading: decodeURI(heading) },
     });
     console.log("response", response.data);
     return response.data;
@@ -295,7 +295,7 @@ export const getCategoryByName = async (categoryName) => {
     const response = await axios.get(
       createApiEndpoint(`getCategoryByName/${categoryName}`)
     );
-    
+
     // 🛑 If it's an array, return first object (if needed)
     if (Array.isArray(response.data)) {
       return response.data[0] || null;
@@ -313,7 +313,7 @@ export const getCategoryByNameModified = async (categoryName) => {
     const response = await axios.get(
       createApiEndpoint(`getCategoryByName/${categoryName}`)
     );
-    
+
     // 🛑 If it's an array, return first object (if needed)
     if (Array.isArray(response.data)) {
       return response.data[0] || null;
@@ -342,7 +342,7 @@ export const getOffers = async () => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching offers: ${error.message}`);
-    return[]
+    return []
   }
 };
 

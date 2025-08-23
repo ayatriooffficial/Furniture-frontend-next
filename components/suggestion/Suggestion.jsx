@@ -109,7 +109,6 @@ const Suggestion = ({ id }) => {
 
   const renderFeatureDescription = (feature) => {
     if (!feature?.description) return null;
-
     // Utility to check if the description contains HTML
     const hasHtml = (html) => /<\/?[a-z][\s\S]*>/i.test(html);
 
@@ -215,10 +214,10 @@ const Suggestion = ({ id }) => {
       //       </p>
       //     </div>
       //   );
-
       default:
         // Handle tables or any HTML content
         if (hasHtml(feature.description)) {
+          console.log("cwiwiebfiewb")
           return (
             <div
               key={feature._id}
@@ -257,7 +256,7 @@ const Suggestion = ({ id }) => {
               <div
                 className="custom-table"
                 dangerouslySetInnerHTML={{
-                  __html: feature.description  || "",
+                  __html: feature.description || "",
                 }}
               />
             </div>
@@ -380,7 +379,7 @@ const Suggestion = ({ id }) => {
   useEffect(() => {
     fetchRoomData();
     fetchReviewData();
-    
+
   }, [suggestion]);
 
   const swiperOptions2 = {
@@ -405,12 +404,12 @@ const Suggestion = ({ id }) => {
   };
   const Card1Features = ({ features, iconMap }) => {
     if (!features || features.length === 0) return null;
-    
+
     return (
       <div className="mt-6 w-full flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300">
         {features.map((feature, index) => {
           const Icon = feature.icon ? iconMap[feature.icon] : null;
-          
+
           return (
             <div key={index} className="h-full flex-shrink-0">
               <div className="bg-white min-h-[200px] md:min-w-[20vw] min-w-[90vw] md:max-w-[30vw] max-w-[90vw] p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center">
@@ -430,11 +429,11 @@ const Suggestion = ({ id }) => {
       </div>
     );
   };
-  
+
   // Card2Component - Grid layout for cards without icons
   const Card2Features = ({ features }) => {
     if (!features || features.length === 0) return null;
-    
+
     return (
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 w-full">
         {features.map((feature, index) => (
@@ -452,11 +451,11 @@ const Suggestion = ({ id }) => {
       </div>
     );
   };
-  
+
   // TipsComponent - Vertically stacked tips
   const TipsFeatures = ({ features }) => {
     if (!features || features.length === 0) return null;
-    
+
     return (
       <div className="mt-8 flex flex-col gap-4">
         {features.map((feature, index) => (
@@ -475,117 +474,118 @@ const Suggestion = ({ id }) => {
     if (!suggestion || !suggestion.features || suggestion.features.length === 0) {
       return null;
     }
-    
+
     const card1Features = suggestion.features.filter(feature => feature.displayType === 'card1');
     const card2Features = suggestion.features.filter(feature => feature.displayType === 'card2');
     const tipsFeatures = suggestion.features.filter(feature => feature.displayType === 'tips');
-    
+
     return (
       <div className="mt-20 px-5 sm:px-12">
+        <h></h>
         <h2 className="text-2xl font-semibold">Features</h2>
 
         <article className="sm:w-3/4 py-3 w-full ">
           {suggestion.features.length > 0
-            ? 
-                <div  className="">
-                  <div className="flex flex-col ">
-                    <div>
-                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                        {suggestion.features[0].name || "Feature"}:
-                      </h2>
-                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                        {/* {roomMain?.features[0]?.description} */}
-                        {renderFeatureDescription(suggestion.features[0])}
-                      </div>
-                    </div>
-                    <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {suggestion.features[0].cards &&
-  suggestion.features[0]?.cards.map((card, cardIdx) => {
-    // let parsedCard;
-    // try {
-    //   parsedCard = JSON.parse(card);
-    // } catch {
-    //   parsedCard = { description: 'Invalid card', svgUrl: '' };
-    // }
-
-    return (
-      <div
-        key={cardIdx}
-        className="bg-white border-[1px] border-gray-200 text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {card.svgUrl && (
-          <img
-            className="size-20 text-center mx-auto mt-6"
-            src={card.svgUrl}
-            alt=""
-          />
-        )}
-        {cardDescriptionRenderer(card)}
-      </div>
-    );
-  })}
-
-                    </div>
-                 
-
-                    {suggestion.features[0].icon && (
-                      <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
-                        <span className="font-bold">{suggestion.features[0].name} Tip :</span> {suggestion.features[0]?.icon}
-                      </div>
-                    )}
+            ?
+            <div className="">
+              <div className="flex flex-col ">
+                <div>
+                  <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                    {suggestion.features[0].name || "Feature"}:
+                  </h2>
+                  <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                    {/* {roomMain?.features[0]?.description} */}
+                    {renderFeatureDescription(suggestion.features[0])}
                   </div>
                 </div>
+                <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  {suggestion.features[0].cards &&
+                    suggestion.features[0]?.cards.map((card, cardIdx) => {
+                      // let parsedCard;
+                      // try {
+                      //   parsedCard = JSON.parse(card);
+                      // } catch {
+                      //   parsedCard = { description: 'Invalid card', svgUrl: '' };
+                      // }
+
+                      return (
+                        <div
+                          key={cardIdx}
+                          className="bg-white border-[1px] border-gray-200 text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        >
+                          {card.svgUrl && (
+                            <img
+                              className="size-20 text-center mx-auto mt-6"
+                              src={card.svgUrl}
+                              alt=""
+                            />
+                          )}
+                          {cardDescriptionRenderer(card)}
+                        </div>
+                      );
+                    })}
+
+                </div>
+
+
+                {suggestion.features[0].icon && (
+                  <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
+                    <span className="font-bold">{suggestion.features[0].name} Tip :</span> {suggestion.features[0]?.icon}
+                  </div>
+                )}
+              </div>
+            </div>
             : filteredSubCategory &&
-              filteredSubCategory[0]?.features?.length > 0 &&
-              filteredSubCategory[0]?.features.map((feature, featureIdx) => (
-                <div key={featureIdx} className="">
-                  <div className="flex flex-col ">
-                    <div>
-                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                        {feature.title || "Feature"}:
-                      </h2>
-                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                        {renderFeatureDescription(feature)}
-                      </div>
+            filteredSubCategory[0]?.features?.length > 0 &&
+            filteredSubCategory[0]?.features.map((feature, featureIdx) => (
+              <div key={featureIdx} className="">
+                <div className="flex flex-col ">
+                  <div>
+                    <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                      {feature.title || "Feature"}:
+                    </h2>
+                    <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                      {renderFeatureDescription(feature)}
                     </div>
-                    <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                      {feature.cards &&
-                        feature.cards.map((card, cardIdx) => (
-                          <div
-                            key={cardIdx}
-                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                          >
-                            {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt=""/>)}
-                            {cardDescriptionRenderer(card)}
-                            {/* {Array.isArray(card.description)
+                  </div>
+                  <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {feature.cards &&
+                      feature.cards.map((card, cardIdx) => (
+                        <div
+                          key={cardIdx}
+                          className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        >
+                          {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt="" />)}
+                          {cardDescriptionRenderer(card)}
+                          {/* {Array.isArray(card.description)
         ? card.description.map((desc, i) => (
             <div key={i} dangerouslySetInnerHTML={{ __html: desc }} />
           ))
         : <div dangerouslySetInnerHTML={{ __html: card.description }} />} */}
-                          </div>
-                        ))}
-                    </div>
-
-                    {suggestion.features[0].icon && (
-                      <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
-                        <span className="font-bold">{suggestion.features[0].title} Tip :</span> {suggestion.features[0].icon}
-                      </div>
-                    )}
+                        </div>
+                      ))}
                   </div>
+
+                  {suggestion.features[0].icon && (
+                    <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
+                      <span className="font-bold">{suggestion.features[0].title} Tip :</span> {suggestion.features[0].icon}
+                    </div>
+                  )}
                 </div>
-              ))}
+              </div>
+            ))}
         </article>
 
-        
-        {/* <Card1Features features={card1Features} iconMap={iconMap} />
+
+        <Card1Features features={card1Features} iconMap={iconMap} />
         <Card2Features features={card2Features} />
-        <TipsFeatures features={tipsFeatures} /> */}
+        <TipsFeatures features={tipsFeatures} />
       </div>
     )
   }
-  
+
   return (
     <div className="min-h-screen" role="main" aria-label="Content showcase">
       {suggestion && suggestion.position && suggestion.position.length > 0 && (
@@ -601,38 +601,38 @@ const Suggestion = ({ id }) => {
                     {suggestion.summary}
                   </p>
                   {suggestion?.author && (
-  <div className="flex items-center gap-4 mt-5">
-    {suggestion.author.image && (
-      <Image
-        src={suggestion.author.image}
-        alt={suggestion.author.displayName}
-        width={50}
-        height={50}
-        className="rounded-full object-cover"
-      />
-    )}
-    <div>
-      <p className="font-semibold text-lg">{suggestion.author.displayName}</p>
-      {suggestion.author.role && (
-        <p className="text-gray-500 text-sm">{suggestion.author.role}</p>
-      )}
-      {suggestion.author.authorDetails?.experience && (
-        <p className="text-gray-500 text-sm">
-          {suggestion.author.authorDetails.experience} years experience
-        </p>
-      )}
-      {suggestion.author.authorDetails?.award && (
-        <p className="text-gray-500 text-sm">
-          Award: {suggestion.author.authorDetails.award}
-        </p>
-      )}
-    </div>
-  </div>
-)}
+                    <div className="flex items-center gap-4 mt-5">
+                      {suggestion.author.image && (
+                        <Image
+                          src={suggestion.author.image}
+                          alt={suggestion.author.displayName}
+                          width={50}
+                          height={50}
+                          className="rounded-full object-cover"
+                        />
+                      )}
+                      <div>
+                        <p className="font-semibold text-lg">{suggestion.author.displayName}</p>
+                        {suggestion.author.role && (
+                          <p className="text-gray-500 text-sm">{suggestion.author.role}</p>
+                        )}
+                        {suggestion.author.authorDetails?.experience && (
+                          <p className="text-gray-500 text-sm">
+                            {suggestion.author.authorDetails.experience} years experience
+                          </p>
+                        )}
+                        {suggestion.author.authorDetails?.award && (
+                          <p className="text-gray-500 text-sm">
+                            Award: {suggestion.author.authorDetails.award}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               )}
-              
+
               {name === "mainImage" && (
                 <div className="mt-20 relative w-full h-[550px]" aria-label="Featured product image">
                   <TabImage
@@ -648,7 +648,7 @@ const Suggestion = ({ id }) => {
                   />
                 </div>
               )}
-              
+
               {name === "twoGrid" && (
                 <section className="mt-20">
                   <h2 id="section-twoGrid" className="text-2xl font-semibold">
@@ -685,7 +685,7 @@ const Suggestion = ({ id }) => {
                   </div>
                 </section>
               )}
-              
+
               {name === "fiveGrid" && (
                 <section className="mt-20">
                   <h2 id="section-fiveGrid" className="text-2xl font-semibold">
@@ -700,17 +700,16 @@ const Suggestion = ({ id }) => {
                         {suggestion.fiveGrid.fiveGridRooms.map((room, index) => (
                           <div
                             key={index}
-                            className={`parent ${
-                              index === 0
-                                ? "col-start-1 col-end-3 row-start-1 row-end-6 lg:col-start-1 lg:col-end-7 lg:row-start-1 lg:row-end-12"
-                                : index === 1
+                            className={`parent ${index === 0
+                              ? "col-start-1 col-end-3 row-start-1 row-end-6 lg:col-start-1 lg:col-end-7 lg:row-start-1 lg:row-end-12"
+                              : index === 1
                                 ? "col-start-1 col-end-2 row-start-6 row-span-2 lg:col-start-7 lg:col-end-10 lg:row-start-1 lg:row-end-6"
                                 : index === 2
-                                ? "col-start-2 col-end-3 row-start-6 row-span-3 lg:col-start-10 lg:col-end-13 lg:row-start-1 lg:row-end-7"
-                                : index === 3
-                                ? "col-start-1 col-end-2 row-start-8 row-span-3 lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12"
-                                : "col-start-2 col-end-3 row-start-9 row-span-2 lg:col-start-10 lg:col-end-13 lg:row-start-7 lg:row-end-12"
-                            }`}
+                                  ? "col-start-2 col-end-3 row-start-6 row-span-3 lg:col-start-10 lg:col-end-13 lg:row-start-1 lg:row-end-7"
+                                  : index === 3
+                                    ? "col-start-1 col-end-2 row-start-8 row-span-3 lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12"
+                                    : "col-start-2 col-end-3 row-start-9 row-span-2 lg:col-start-10 lg:col-end-13 lg:row-start-7 lg:row-end-12"
+                              }`}
                             onMouseEnter={() => handleMouseEnter(index)}
                             onMouseLeave={handleMouseLeave}
                             aria-label={`Product cell ${index + 1}`}
@@ -733,31 +732,31 @@ const Suggestion = ({ id }) => {
                   </div>
                 </section>
               )}
-  
-              {(name === "firstSlider" || 
-                name === "secondSlider" || 
-                name === "thirdSlider" || 
-                name === "forthSlider" || 
+
+              {(name === "firstSlider" ||
+                name === "secondSlider" ||
+                name === "thirdSlider" ||
+                name === "forthSlider" ||
                 name === "fifthSlider") && (
-                <section aria-labelledby={`section-${name}`}>
-                  <h2 id={`section-${name}`} className="sr-only">{suggestion[name].header}</h2>
-                  <BlogRelatedProducts
-                    relatedProducts={suggestion[name].products}
-                    title={suggestion[name].header}
-                    description={suggestion[name].description}
-                    descriptionLinks={suggestion[name].descriptionLinks}
-                    aria-label={`${suggestion[name].header} slider`}
-                  />
-                </section>
-              )}
+                  <section aria-labelledby={`section-${name}`}>
+                    <h2 id={`section-${name}`} className="sr-only">{suggestion[name].header}</h2>
+                    <BlogRelatedProducts
+                      relatedProducts={suggestion[name].products}
+                      title={suggestion[name].header}
+                      description={suggestion[name].description}
+                      descriptionLinks={suggestion[name].descriptionLinks}
+                      aria-label={`${suggestion[name].header} slider`}
+                    />
+                  </section>
+                )}
             </section>
           ))}
-  
+
           <section aria-labelledby="ranked-products">
             <h2 id="ranked-products" className="sr-only">Ranked Products</h2>
             <RankedProducts aria-label="Top-ranked products" />
           </section>
-          
+
           <section className="flex my-8 lg:max-h-[490px] lg:flex-row w-full flex-col" aria-label="Customer testimonial with product image">
             <div className="lg:w-2/3 h-[446px]" aria-label="Featured room image">
               {reviewRoom && (
@@ -770,7 +769,7 @@ const Suggestion = ({ id }) => {
                 />
               )}
             </div>
-          { reviewData && <aside className="lg:w-1/3 min-h-[363px] bg-zinc-100 p-10 lg:p-12" aria-label="Customer review">
+            {reviewData && <aside className="lg:w-1/3 min-h-[363px] bg-zinc-100 p-10 lg:p-12" aria-label="Customer review">
               <div className="flex flex-col">
                 <div>
                   <p>{reviewData && reviewData.comment}</p>
@@ -789,24 +788,24 @@ const Suggestion = ({ id }) => {
               </div>
             </aside>}
           </section>
-  
+
           <section aria-labelledby="multicard-section">
             <h2 id="multicard-section" className="sr-only">Product Cards</h2>
             <Multicard forhomePage={false} aria-label="Featured product cards" />
           </section>
-  
+
           <section aria-labelledby="recommended-section">
             <h2 id="recommended-section" className="sr-only">Recommended Products</h2>
             <Tabs data={recommended} aria-label="Recommended product tabs" />
           </section>
-          
+
           {suggestion && suggestion.features && suggestion.features.length > 0 && (
             <section aria-labelledby="features-section">
               <h2 id="features-section" className="sr-only">Product Features</h2>
-              <FeaturesSection 
-                suggestion={suggestion} 
-                iconMap={iconMap} 
-                aria-label="Product feature highlights" 
+              <FeaturesSection
+                suggestion={suggestion}
+                iconMap={iconMap}
+                aria-label="Product feature highlights"
               />
             </section>
           )}

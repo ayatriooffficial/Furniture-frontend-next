@@ -1,10 +1,6 @@
 
 
 const fixImageUrl = (url) => {
-
-if(url?.imgSrc){  
-  return url?.imgSrc}
-
   if (!url) return "";
   if (typeof url === "object") url = url.imgSrc
   return url

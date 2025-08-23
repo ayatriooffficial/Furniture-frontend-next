@@ -1,4 +1,4 @@
-"use server";
+"use client"
 
 import { createApiEndpoint } from "@/components/Features/api";
 import axios from "axios";

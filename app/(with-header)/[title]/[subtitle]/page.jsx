@@ -72,10 +72,10 @@ export async function generateMetadata({ params }) {
         description: suggestion?.summary || "",
         images: suggestion?.mainImage
           ? [
-              {
-                url: suggestion.mainImage.imgSrc,
-              },
-            ]
+            {
+              url: suggestion.mainImage.imgSrc,
+            },
+          ]
           : [],
       },
       alternates: {
@@ -85,16 +85,15 @@ export async function generateMetadata({ params }) {
   }
 
   const product = await getProductByProductId(productId);
- 
+
 
   if (!product) {
     return null;
   }
 
   return {
-    title: `Buy ${
-      product?.productTitle || params.title?.replace(/-/g, " ")
-    } at ${product?.offer || ""} | Ayatrio`,
+    title: `Buy ${product?.productTitle || params.title?.replace(/-/g, " ")
+      } at ${product?.offer || ""} | Ayatrio`,
     description: product?.productDescription || "",
     openGraph: {
       title: product?.productTitle || params.title?.replace(/-/g, " "),
@@ -109,25 +108,24 @@ export async function generateMetadata({ params }) {
         "Ayatrio",
       images: product?.images?.length
         ? [
-            {
-              url: product?.images[0], // Use the first image or a specific one
-              alt: product?.productTitle || params.title?.replace(/-/g, " "),
-            },
-          ]
+          {
+            url: product?.images[0], // Use the first image or a specific one
+            alt: product?.productTitle || params.title?.replace(/-/g, " "),
+          },
+        ]
         : [],
-        //Added FAQs here
+      //Added FAQs here
       faqs: product?.faqs?.length ? product.faqs.map(faq => ({
         question: faq.title || "",
         answer: faq.description || ""
-        })) : [{
+      })) : [{
         question: "",
         answer: ""
       }],
     },
     alternates: {
-      canonical: `${BASE_URL}/${(product?.productTitle || '').replace(/ /g, "-")}/${
-        product.productId
-      }`,
+      canonical: `${BASE_URL}/${(product?.productTitle || '').replace(/ /g, "-")}/${product.productId
+        }`,
     },
   };
 }
@@ -195,7 +193,7 @@ const Page = async ({ params }) => {
     );
     const roomData = response.data;
 
-  
+
 
     return (
       <>
@@ -220,7 +218,7 @@ const Page = async ({ params }) => {
 
     return (
       <>
-      
+
         <ArticleJsonLd
           useAppDir={true}
           type="BlogPosting"
@@ -231,7 +229,7 @@ const Page = async ({ params }) => {
           dateModified={suggestion.updatedAt?.toString()}
           authorName={suggestion.author?.name || "Ayatrio"}
         />
-       
+
         <Suggestion id={params.title.replace(/-/g, " ")} />;
       </>
     );
@@ -239,7 +237,7 @@ const Page = async ({ params }) => {
 
   return (
     <>
-    
+
       <ProductJsonLd
         useAppDir={true}
         productName={product?.productTitle}

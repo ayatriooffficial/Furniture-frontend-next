@@ -129,7 +129,7 @@ const RoomCard = () => {
                   src={"/icons/top_arrow-black.svg"}
                   height={15}
                   width={15}
-                    quality={75} 
+                  quality={75}
                   alt="arrow icon"
                 />
               </div>
