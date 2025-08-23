@@ -10,13 +10,20 @@ const LiveRoomAdmin = ({user}) => {
 
   const [requests, setRequests] = useState([]);
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("join_request", (data) => {
-        setRequests((prev) => [...prev, data]);
-      });
-    }
-  }, [socket]);
+useEffect(() => {
+  if (!socket) return;
+
+  const handleJoinRequest = (data) => {
+    console.log("this is the data", data);
+    setRequests((prev) => [...prev, data]);
+  };
+
+  socket.on("join_request", handleJoinRequest);
+
+  return () => {
+    socket.off("join_request", handleJoinRequest); // cleanup
+  };
+}, [socket]);
 
   const handleResponse = (socketId, accepted) => {
     if (socket) {
@@ -33,6 +40,8 @@ const LiveRoomAdmin = ({user}) => {
     }
   };
 
+
+  
   return (
     <div className="h-screen pt-16">
       <div className="absolute left-2 top-2  flex gap-4 items-center">

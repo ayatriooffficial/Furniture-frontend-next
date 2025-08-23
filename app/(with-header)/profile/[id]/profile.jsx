@@ -4,6 +4,7 @@ import Card from "@/components/Cards/card";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Profile = ({ id }) => {
@@ -136,6 +137,7 @@ const Profile = ({ id }) => {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`,
       "_self"
     );
+    router.push("/")
   };
 
   const handleUpdateProfile = async () => {
