@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Profile = ({ id }) => {
+  const router=useRouter();
   const [user, setUser] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
