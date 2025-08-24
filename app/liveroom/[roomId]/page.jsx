@@ -80,6 +80,11 @@ const Page = ({ params }) => {
   const [userCount, setUserCount] = useState(0);
   const [connectionState, setConnectionState] = useState('disconnected');
   const [loading, setLoading] = useState(false);
+  const [userNames, setUserNames] = useState({});
+  const [currentUserName, setCurrentUserName] = useState("");
+  
+  // **NEW STATE: Track if stream is actually active**
+  const [isStreamActive, setIsStreamActive] = useState(false);
 
   // Refs for non-reactive values
   const peersRef = useRef({});
@@ -89,6 +94,33 @@ const Page = ({ params }) => {
 
   // Connection quality monitoring
   const connectionQuality = useConnectionQuality(peersRef);
+
+  // **NEW FUNCTION: Check if stream is truly active**
+  const checkStreamActive = useCallback((stream) => {
+    if (!stream) return false;
+    
+    // Check if stream is active and has active tracks
+    const isActive = stream.active;
+    const hasActiveTracks = stream.getTracks().some(track => 
+      track.readyState === 'live' && track.enabled
+    );
+    
+    return isActive && hasActiveTracks;
+  }, []);
+
+  // **EFFECT: Monitor stream activity**
+  useEffect(() => {
+    const isActive = checkStreamActive(myStream);
+    setIsStreamActive(isActive);
+    setHasCallStarted(isActive); // Set call as started if stream is active
+    
+    console.log('Stream activity check:', {
+      myStream: !!myStream,
+      streamActive: myStream?.active,
+      isActive,
+      tracks: myStream?.getTracks()?.map(t => ({ kind: t.kind, readyState: t.readyState, enabled: t.enabled }))
+    });
+  }, [myStream, checkStreamActive]);
 
   // Memoized peer configuration
   const peerConfig = useMemo(() => ({
@@ -222,11 +254,16 @@ const Page = ({ params }) => {
     return peer;
   }, [peerConfig, socket, recreatePeerConnection]);
 
-  // Socket event handlers
+  // Updated Socket event handlers to handle user names
   const socketHandlers = useMemo(() => ({
-    handleUserJoined: ({ userId, users, userCount }) => {
+    handleUserJoined: ({ userId, users, userCount, userNames: names }) => {
       console.log('User joined:', userId, 'Total users:', userCount);
       setUserCount(userCount || users.length);
+      
+      // Update user names
+      if (names) {
+        setUserNames(names);
+      }
       
       const newUsers = users.filter(id => 
         id !== socket.id && !peersRef.current[id]
@@ -240,6 +277,12 @@ const Page = ({ params }) => {
     handleUserLeft: ({ userId, userCount }) => {
       console.log('User left:', userId);
       setUserCount(userCount);
+      
+      // Remove user name
+      setUserNames(prev => {
+        const { [userId]: removed, ...rest } = prev;
+        return rest;
+      });
       
       const peer = peersRef.current[userId];
       if (peer) {
@@ -395,10 +438,13 @@ const Page = ({ params }) => {
       myStreamRef.current = null;
     }
 
-    // Clear streams
+    // Clear streams and names
     streamsRef.current = {};
     setStreams({});
     setMyStream(null);
+    setUserNames({});
+    setIsStreamActive(false);
+    setHasCallStarted(false);
 
     // Leave socket room
     if (socket) {
@@ -436,7 +482,7 @@ const Page = ({ params }) => {
     };
   }, [socket, socketHandlers]);
 
-  // Initialize room and media
+  // Updated initialization with user name
   useEffect(() => {
     const init = async () => {
       // Check if user should be in this room
@@ -444,6 +490,10 @@ const Page = ({ params }) => {
         router.push("/liveroom");
         return;
       }
+
+      // Get just the user name
+      const userName = sessionStorage.getItem("userName") || `User ${Date.now()}`;
+      setCurrentUserName(userName);
 
       // Redirect if virtual experience data exists
       if (x.length > 0) {
@@ -454,7 +504,10 @@ const Page = ({ params }) => {
       try {
         await initializeMedia();
         if (socket) {
-          socket.emit("join-room", { roomId });
+          socket.emit("join-room", { 
+            roomId, 
+            userInfo: { displayName: userName }
+          });
         }
       } catch (error) {
         console.error('Failed to initialize media:', error);
@@ -479,35 +532,24 @@ const Page = ({ params }) => {
     return cleanup;
   }, [cleanup]);
 
-  // Media control functions
-  const startCall = useCallback(() => {
-    setHasCallStarted(true);
-    cleanup();
-    setTimeout(() => {
-      initializeMedia().then(() => {
-        if (socket) {
-          socket.emit("join-room", { roomId });
-        }
-      });
-    }, 100);
-  }, [cleanup, initializeMedia, roomId, socket]);
-
   const exitCall = useCallback(() => {
     cleanup();
-    setHasCallStarted(false);
     setConnectionState('disconnected');
   }, [cleanup]);
 
   const rejoinCall = useCallback(async () => {
     try {
       await initializeMedia();
-      if (socket) {
-        socket.emit("join-room", { roomId });
+      if (socket && currentUserName) {
+        socket.emit("join-room", { 
+          roomId, 
+          userInfo: { displayName: currentUserName }
+        });
       }
     } catch (error) {
       console.error('Failed to rejoin call:', error);
     }
-  }, [initializeMedia, roomId, socket]);
+  }, [initializeMedia, roomId, socket, currentUserName]);
 
   const toggleAudio = useCallback(() => {
     if (myStreamRef.current) {
@@ -541,12 +583,12 @@ const Page = ({ params }) => {
       setIsScreenSharing(true);
 
       if (myStreamRef.current) {
-        const videoTrack = myStreamRef.current.getVideoTracks()[0];
+        const videoTrack = myStreamRef.current.getVideoTracks();
         if (videoTrack) {
           myStreamRef.current.removeTrack(videoTrack);
           videoTrack.stop();
         }
-        myStreamRef.current.addTrack(screenStream.getVideoTracks()[0]);
+        myStreamRef.current.addTrack(screenStream.getVideoTracks());
 
         // Update peer connections
         Object.values(peersRef.current).forEach((peer) => {
@@ -554,7 +596,7 @@ const Page = ({ params }) => {
             .getSenders()
             .find((s) => s.track && s.track.kind === "video");
           if (sender) {
-            sender.replaceTrack(screenStream.getVideoTracks()[0]);
+            sender.replaceTrack(screenStream.getVideoTracks());
           }
         });
       }
@@ -612,13 +654,19 @@ const Page = ({ params }) => {
             </div>
           </div>
 
-          {/* My Video Stream */}
+          {/* My Video Stream with Name */}
           {myStream && (
-            <VideoComponent 
-              stream={myStream}
-              className="w-full h-full"
-              muted={true}
-            />
+            <div className="relative w-full h-full">
+              <VideoComponent 
+                stream={myStream}
+                className="w-full h-full"
+                muted={true}
+              />
+              {/* My name overlay */}
+              <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+                {currentUserName || "You"}
+              </div>
+            </div>
           )}
 
           {/* Mobile Product Slider */}
@@ -628,7 +676,7 @@ const Page = ({ params }) => {
             </div>
           )}
 
-          {/* Control Buttons */}
+          {/* **FIXED Control Buttons Logic** */}
           <div className="absolute bottom-8 w-full flex gap-2 justify-center">
             <button
               onClick={toggleAudio}
@@ -662,30 +710,22 @@ const Page = ({ params }) => {
               />
             </button>
 
-            {myStream && (
-              hasCallStarted ? (
-                <button
-                  onClick={exitCall}
-                  className="bg-red-500 hover:bg-red-400 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10"
-                >
-                  Exit Call
-                </button>
-              ) : (
-                <button
-                  onClick={startCall}
-                  className="bg-green-500 hover:bg-green-400 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10"
-                >
-                  Start Call
-                </button>
-              )
-            )}
-
-            {!myStream && (
+            {/* **CORRECTED BUTTON LOGIC: Check if stream is truly active** */}
+            {isStreamActive ? (
+              // Stream is active - show exit button
+              <button
+                onClick={exitCall}
+                className="bg-red-500 hover:bg-red-400 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10"
+              >
+                Exit
+              </button>
+            ) : (
+              // No active stream - show join button
               <button
                 onClick={rejoinCall}
                 className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg"
               >
-                Rejoin Call
+                Join Call
               </button>
             )}
 
@@ -706,17 +746,18 @@ const Page = ({ params }) => {
             </button>
           </div>
 
-          {/* Peer Video Streams */}
-          <div className="absolute w-[20%] top-0 right-0">
+          {/* Peer Video Streams with Names */}
+          <div className="absolute w-[20%] top-0 right-0 max-h-full overflow-y-auto">
             {Object.entries(streams).map(([key, stream]) => (
               <div key={key} className="z-50 relative mb-2 rounded-lg shadow-lg">
-                <span className="absolute text-white top-0 text-sm text-center font-semibold mb-2 bg-black/50 px-2 rounded">
-                  User {key.slice(-4)}
-                </span>
                 <VideoComponent 
                   stream={stream}
                   className="w-full rounded-lg"
                 />
+                {/* User name overlay */}
+                <div className="absolute bottom-1 left-1 right-1 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium truncate text-center">
+                  {userNames[key] || `User ${key.slice(-4)}`}
+                </div>
               </div>
             ))}
           </div>

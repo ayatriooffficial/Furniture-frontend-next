@@ -1363,6 +1363,7 @@ const Tabs = ({
           </div>
           <div className="grid md:grid-cols-4 grid-cols-2 cursor-pointer gap-x-4 py-1 sm:py-3 gap-y-8">
             {filterData && filterData.length > 0 ? (
+        
               filterData.map((text, idx) => {
                 const inCart = isProductInCart(text?._id);
                 return (

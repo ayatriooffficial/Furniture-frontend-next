@@ -18,6 +18,13 @@ const page =  () => {
     }
   }, []);
   const { userInfo, isLoading } = useUserInfo();
+
+
+  if (userInfo && userInfo.user) {
+  // store displayName in sessionStorage
+  sessionStorage.setItem("userName", userInfo.user.displayName);
+}
+
   const router = useRouter();
 
   if (isLoading) {
