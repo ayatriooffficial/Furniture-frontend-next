@@ -9,6 +9,11 @@ import { useRouter } from "next/navigation";
 import { useSocket } from "@/providers/SocketProvider";
 import Image from "next/image";
 
+// Constants
+const MAX_RETRY_ATTEMPTS = 3;
+const BASE_RETRY_DELAY = 2000;
+const CONNECTION_TIMEOUT = 15000;
+
 // Utility function for debouncing
 const debounce = (func, wait) => {
   let timeout;
@@ -22,7 +27,37 @@ const debounce = (func, wait) => {
   };
 };
 
-// Connection quality hook
+// Network quality detection hook
+const useNetworkQuality = () => {
+  const [networkQuality, setNetworkQuality] = useState('unknown');
+  
+  useEffect(() => {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    
+    if (connection) {
+      const updateNetworkInfo = () => {
+        const { effectiveType, downlink, rtt } = connection;
+        
+        if (effectiveType === '4g' && downlink > 5 && rtt < 100) {
+          setNetworkQuality('excellent');
+        } else if (effectiveType === '3g' || (downlink > 2 && rtt < 200)) {
+          setNetworkQuality('good');
+        } else {
+          setNetworkQuality('poor');
+        }
+      };
+      
+      updateNetworkInfo();
+      connection.addEventListener('change', updateNetworkInfo);
+      
+      return () => connection.removeEventListener('change', updateNetworkInfo);
+    }
+  }, []);
+  
+  return networkQuality;
+};
+
+// Connection quality hook with retry limits
 const useConnectionQuality = (peersRef) => {
   const [quality, setQuality] = useState('good');
   
@@ -32,23 +67,33 @@ const useConnectionQuality = (peersRef) => {
       if (peers.length === 0) return;
       
       try {
+        let totalLossRate = 0;
+        let peerCount = 0;
+        
         for (const peer of peers) {
-          const stats = await peer.getStats();
-          stats.forEach((report) => {
-            if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
-              const packetsLost = report.packetsLost || 0;
-              const packetsReceived = report.packetsReceived || 0;
-              const lossRate = packetsLost / (packetsLost + packetsReceived);
-              
-              if (lossRate > 0.05) {
-                setQuality('poor');
-              } else if (lossRate > 0.02) {
-                setQuality('fair');
-              } else {
-                setQuality('good');
+          if (peer.connectionState === 'connected') {
+            const stats = await peer.getStats();
+            stats.forEach((report) => {
+              if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
+                const packetsLost = report.packetsLost || 0;
+                const packetsReceived = report.packetsReceived || 0;
+                const lossRate = packetsLost / (packetsLost + packetsReceived);
+                totalLossRate += lossRate;
+                peerCount++;
               }
-            }
-          });
+            });
+          }
+        }
+        
+        if (peerCount > 0) {
+          const avgLossRate = totalLossRate / peerCount;
+          if (avgLossRate > 0.05) {
+            setQuality('poor');
+          } else if (avgLossRate > 0.02) {
+            setQuality('fair');
+          } else {
+            setQuality('good');
+          }
         }
       } catch (error) {
         console.error('Error checking connection quality:', error);
@@ -82,51 +127,33 @@ const Page = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [userNames, setUserNames] = useState({});
   const [currentUserName, setCurrentUserName] = useState("");
-  
-  // **NEW STATE: Track if stream is actually active**
   const [isStreamActive, setIsStreamActive] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState({});
 
   // Refs for non-reactive values
   const peersRef = useRef({});
   const myStreamRef = useRef(null);
   const streamsRef = useRef({});
   const reconnectTimeouts = useRef({});
+  const retryAttempts = useRef({});
+  const connectionTimeouts = useRef({});
 
-  // Connection quality monitoring
+  // Hooks
   const connectionQuality = useConnectionQuality(peersRef);
+  const networkQuality = useNetworkQuality();
 
-  // **NEW FUNCTION: Check if stream is truly active**
-  const checkStreamActive = useCallback((stream) => {
-    if (!stream) return false;
-    
-    // Check if stream is active and has active tracks
-    const isActive = stream.active;
-    const hasActiveTracks = stream.getTracks().some(track => 
-      track.readyState === 'live' && track.enabled
-    );
-    
-    return isActive && hasActiveTracks;
-  }, []);
-
-  // **EFFECT: Monitor stream activity**
-  useEffect(() => {
-    const isActive = checkStreamActive(myStream);
-    setIsStreamActive(isActive);
-    setHasCallStarted(isActive); // Set call as started if stream is active
-    
-    console.log('Stream activity check:', {
-      myStream: !!myStream,
-      streamActive: myStream?.active,
-      isActive,
-      tracks: myStream?.getTracks()?.map(t => ({ kind: t.kind, readyState: t.readyState, enabled: t.enabled }))
-    });
-  }, [myStream, checkStreamActive]);
-
-  // Memoized peer configuration
+  // Enhanced peer configuration with better ICE servers
   const peerConfig = useMemo(() => ({
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun2.l.google.com:19302" },
+      { urls: "stun:stun3.l.google.com:19302" },
+      {
+        urls: "turn:relay1.expressturn.com:3478",
+        username: "efJT4DT8PZ82L5ZH2Y",
+        credential: "O4f5xoWnWPBtkXRE"
+      },
       {
         urls: "turn:numb.viagenie.ca",
         username: "webrtc@live.com",
@@ -134,9 +161,12 @@ const Page = ({ params }) => {
       },
     ],
     iceCandidatePoolSize: 10,
+    iceTransportPolicy: 'all',
+    bundlePolicy: 'balanced',
+    rtcpMuxPolicy: 'require',
   }), []);
 
-  // Memoized stars array
+  // Memoized arrays and products
   const stars = useMemo(() => 
     new Array(4)
       .fill("/icons/star full black.svg")
@@ -144,7 +174,6 @@ const Page = ({ params }) => {
     []
   );
 
-  // Memoized products with computed properties
   const memoizedFilteredProducts = useMemo(() => {
     return filteredProducts.map(product => ({
       ...product,
@@ -159,9 +188,36 @@ const Page = ({ params }) => {
     }));
   }, [similarProducts]);
 
+  // Check if stream is truly active
+  const checkStreamActive = useCallback((stream) => {
+    if (!stream) return false;
+    
+    const isActive = stream.active;
+    const hasActiveTracks = stream.getTracks().some(track => 
+      track.readyState === 'live' && track.enabled
+    );
+    
+    return isActive && hasActiveTracks;
+  }, []);
+
+  // Monitor stream activity
+  useEffect(() => {
+    const isActive = checkStreamActive(myStream);
+    setIsStreamActive(isActive);
+    setHasCallStarted(isActive);
+    
+    console.log('Stream activity check:', {
+      myStream: !!myStream,
+      streamActive: myStream?.active,
+      isActive,
+      tracks: myStream?.getTracks()?.map(t => ({ kind: t.kind, readyState: t.readyState, enabled: t.enabled }))
+    });
+  }, [myStream, checkStreamActive]);
+
   // Adaptive bitrate based on connection quality
   const adaptVideoBitrate = useCallback((quality) => {
     const constraints = {
+      excellent: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
       good: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
       fair: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 24 } },
       poor: { width: { ideal: 320 }, height: { ideal: 240 }, frameRate: { ideal: 15 } }
@@ -170,97 +226,221 @@ const Page = ({ params }) => {
     if (myStreamRef.current) {
       const videoTrack = myStreamRef.current.getVideoTracks()[0];
       if (videoTrack) {
-        videoTrack.applyConstraints(constraints[quality]).catch(console.error);
+        videoTrack.applyConstraints(constraints[quality] || constraints.fair)
+          .catch(error => console.error('Error applying constraints:', error));
       }
     }
   }, []);
 
   // Apply adaptive bitrate when quality changes
   useEffect(() => {
-    adaptVideoBitrate(connectionQuality);
-  }, [connectionQuality, adaptVideoBitrate]);
+    adaptVideoBitrate(networkQuality !== 'unknown' ? networkQuality : connectionQuality);
+  }, [connectionQuality, networkQuality, adaptVideoBitrate]);
 
-  // Recreate peer connection on failure
-  const recreatePeerConnection = useCallback(async (userId) => {
+  // Clear all timeouts for a user
+  const clearUserTimeouts = useCallback((userId) => {
     if (reconnectTimeouts.current[userId]) {
       clearTimeout(reconnectTimeouts.current[userId]);
+      delete reconnectTimeouts.current[userId];
+    }
+    if (connectionTimeouts.current[userId]) {
+      clearTimeout(connectionTimeouts.current[userId]);
+      delete connectionTimeouts.current[userId];
+    }
+  }, []);
+
+  // Enhanced peer connection recreation with retry limits
+  const recreatePeerConnection = useCallback(async (userId) => {
+    // Initialize retry counter
+    if (!retryAttempts.current[userId]) {
+      retryAttempts.current[userId] = 0;
+    }
+    
+    // Check retry limit
+    if (retryAttempts.current[userId] >= MAX_RETRY_ATTEMPTS) {
+      console.log(`Max retry attempts (${MAX_RETRY_ATTEMPTS}) reached for user ${userId}`);
+      
+      // Update connection status
+      setConnectionStatus(prev => ({
+        ...prev,
+        [userId]: 'failed'
+      }));
+      
+      // Clean up and stop retrying
+      if (peersRef.current[userId]) {
+        peersRef.current[userId].close();
+        delete peersRef.current[userId];
+      }
+      
+      clearUserTimeouts(userId);
+      delete retryAttempts.current[userId];
+      
+      return;
     }
 
+    clearUserTimeouts(userId);
+    retryAttempts.current[userId]++;
+    
+    console.log(`Recreating peer connection for ${userId}, attempt ${retryAttempts.current[userId]}/${MAX_RETRY_ATTEMPTS}`);
+    
+    // Update connection status
+    setConnectionStatus(prev => ({
+      ...prev,
+      [userId]: `retrying (${retryAttempts.current[userId]}/${MAX_RETRY_ATTEMPTS})`
+    }));
+    
+    // Exponential backoff
+    const delay = BASE_RETRY_DELAY * Math.pow(1.5, retryAttempts.current[userId] - 1);
+    
     reconnectTimeouts.current[userId] = setTimeout(() => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].close();
         delete peersRef.current[userId];
-        createPeerConnection(userId, false);
       }
-    }, 1000);
-  }, []);
+      createPeerConnection(userId, false);
+    }, delay);
+  }, [clearUserTimeouts]);
 
-  // Optimized peer connection creation
+  // Enhanced peer connection creation
   const createPeerConnection = useCallback((userId, isAnswerer) => {
     if (peersRef.current[userId]) {
+      console.log(`Peer connection already exists for ${userId}`);
       return peersRef.current[userId];
     }
 
+    console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}`);
+    
     const peer = new RTCPeerConnection(peerConfig);
     
+    // Connection timeout
+    connectionTimeouts.current[userId] = setTimeout(() => {
+      if (peer.connectionState !== 'connected') {
+        console.log(`Connection timeout for user ${userId}`);
+        recreatePeerConnection(userId);
+      }
+    }, CONNECTION_TIMEOUT);
+    
+    // Enhanced connection state handling
     peer.onconnectionstatechange = () => {
       console.log(`Peer ${userId} connection state:`, peer.connectionState);
       setConnectionState(peer.connectionState);
       
-      if (peer.connectionState === 'failed' || peer.connectionState === 'disconnected') {
-        recreatePeerConnection(userId);
+      // Update individual connection status
+      setConnectionStatus(prev => ({
+        ...prev,
+        [userId]: peer.connectionState
+      }));
+      
+      switch (peer.connectionState) {
+        case 'connected':
+          console.log(`Successfully connected to user ${userId}`);
+          // Reset retry counter on successful connection
+          if (retryAttempts.current[userId]) {
+            delete retryAttempts.current[userId];
+          }
+          clearUserTimeouts(userId);
+          break;
+          
+        case 'failed':
+          console.log(`Connection failed for user ${userId}, attempt ${retryAttempts.current[userId] || 0}`);
+          clearUserTimeouts(userId);
+          recreatePeerConnection(userId);
+          break;
+          
+        case 'disconnected':
+          console.log(`Connection disconnected for user ${userId}`);
+          // Wait a bit before retrying on disconnect
+          setTimeout(() => {
+            if (peer.connectionState === 'disconnected') {
+              recreatePeerConnection(userId);
+            }
+          }, 3000);
+          break;
       }
     };
 
+    // ICE connection state monitoring
+    peer.oniceconnectionstatechange = () => {
+      console.log(`ICE connection state for ${userId}:`, peer.iceConnectionState);
+      
+      if (peer.iceConnectionState === 'failed') {
+        console.log(`ICE connection failed for user ${userId}, restarting ICE`);
+        try {
+          peer.restartIce();
+        } catch (error) {
+          console.error('Error restarting ICE:', error);
+          recreatePeerConnection(userId);
+        }
+      }
+    };
+
+    // Enhanced ICE candidate handling
     peer.onicecandidate = (event) => {
       if (event.candidate && socket) {
+        console.log(`Sending ICE candidate to ${userId}`);
         socket.emit("ice-candidate", {
           to: userId,
           candidate: event.candidate,
         });
+      } else if (!event.candidate) {
+        console.log(`ICE gathering complete for ${userId}`);
       }
     };
 
+    // Track handling
     peer.ontrack = (event) => {
+      console.log(`Received track from ${userId}`);
       const remoteStream = event.streams[0];
-      streamsRef.current[userId] = remoteStream;
-      setStreams(prev => ({ ...prev, [userId]: remoteStream }));
+      if (remoteStream) {
+        streamsRef.current[userId] = remoteStream;
+        setStreams(prev => ({ ...prev, [userId]: remoteStream }));
+      }
     };
 
+    // Add local stream tracks
     if (myStreamRef.current) {
       myStreamRef.current.getTracks().forEach((track) => {
+        console.log(`Adding ${track.kind} track to peer ${userId}`);
         peer.addTrack(track, myStreamRef.current);
       });
     }
 
+    // Negotiation handling for offerer
     if (!isAnswerer) {
       peer.onnegotiationneeded = async () => {
         try {
+          if (peer.signalingState !== 'stable') {
+            console.log(`Peer ${userId} not in stable state for negotiation: ${peer.signalingState}`);
+            return;
+          }
+          
+          console.log(`Creating offer for ${userId}`);
           const offer = await peer.createOffer({
             offerToReceiveAudio: true,
             offerToReceiveVideo: true,
           });
+          
           await peer.setLocalDescription(offer);
+          
           if (socket) {
             socket.emit("offer", { to: userId, offer });
           }
         } catch (error) {
-          console.error('Error creating offer:', error);
+          console.error(`Error creating offer for ${userId}:`, error);
         }
       };
     }
 
     peersRef.current[userId] = peer;
     return peer;
-  }, [peerConfig, socket, recreatePeerConnection]);
+  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts]);
 
-  // Updated Socket event handlers to handle user names
+  // Enhanced socket handlers
   const socketHandlers = useMemo(() => ({
     handleUserJoined: ({ userId, users, userCount, userNames: names }) => {
       console.log('User joined:', userId, 'Total users:', userCount);
       setUserCount(userCount || users.length);
       
-      // Update user names
       if (names) {
         setUserNames(names);
       }
@@ -269,8 +449,11 @@ const Page = ({ params }) => {
         id !== socket.id && !peersRef.current[id]
       );
       
-      newUsers.forEach(id => {
-        setTimeout(() => createPeerConnection(id, false), 100 * Math.random());
+      // Stagger peer creation to avoid overwhelming the connection
+      newUsers.forEach((id, index) => {
+        setTimeout(() => {
+          createPeerConnection(id, false);
+        }, 200 * index);
       });
     },
 
@@ -284,12 +467,20 @@ const Page = ({ params }) => {
         return rest;
       });
       
+      // Remove connection status
+      setConnectionStatus(prev => {
+        const { [userId]: removed, ...rest } = prev;
+        return rest;
+      });
+      
+      // Clean up peer connection
       const peer = peersRef.current[userId];
       if (peer) {
         peer.close();
         delete peersRef.current[userId];
       }
       
+      // Clean up stream
       if (streamsRef.current[userId]) {
         delete streamsRef.current[userId];
         setStreams(prev => {
@@ -298,45 +489,61 @@ const Page = ({ params }) => {
         });
       }
       
-      if (reconnectTimeouts.current[userId]) {
-        clearTimeout(reconnectTimeouts.current[userId]);
-        delete reconnectTimeouts.current[userId];
+      // Clean up timeouts and retry attempts
+      clearUserTimeouts(userId);
+      if (retryAttempts.current[userId]) {
+        delete retryAttempts.current[userId];
       }
     },
 
     handleOffer: async ({ from, offer }) => {
       try {
+        console.log(`Received offer from ${from}`);
         const peer = createPeerConnection(from, true);
+        
+        if (peer.signalingState !== 'stable') {
+          console.log(`Peer ${from} not in stable state, current: ${peer.signalingState}`);
+          return;
+        }
+        
         await peer.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
+        
         if (socket) {
+          console.log(`Sending answer to ${from}`);
           socket.emit("answer", { to: from, answer });
         }
       } catch (error) {
-        console.error('Error handling offer:', error);
+        console.error(`Error handling offer from ${from}:`, error);
       }
     },
 
     handleAnswer: async ({ from, answer }) => {
       try {
+        console.log(`Received answer from ${from}`);
         const peer = peersRef.current[from];
         if (peer && peer.signalingState === 'have-local-offer') {
           await peer.setRemoteDescription(new RTCSessionDescription(answer));
+        } else {
+          console.log(`Peer ${from} in unexpected state: ${peer?.signalingState}`);
         }
       } catch (error) {
-        console.error('Error handling answer:', error);
+        console.error(`Error handling answer from ${from}:`, error);
       }
     },
 
     handleIceCandidate: async ({ from, candidate }) => {
       try {
+        console.log(`Received ICE candidate from ${from}`);
         const peer = peersRef.current[from];
         if (peer && peer.remoteDescription) {
           await peer.addIceCandidate(new RTCIceCandidate(candidate));
+        } else {
+          console.log(`Cannot add ICE candidate from ${from}, peer not ready`);
         }
       } catch (error) {
-        console.error('Error handling ICE candidate:', error);
+        console.error(`Error handling ICE candidate from ${from}:`, error);
       }
     },
 
@@ -344,24 +551,56 @@ const Page = ({ params }) => {
       alert('Room is full. Please try again later.');
       router.push('/liveroom');
     }
-  }), [socket, router, createPeerConnection]);
+  }), [socket, router, createPeerConnection, clearUserTimeouts]);
 
-  // Initialize media stream
+  // Initialize media stream with better error handling
   const initializeMedia = useCallback(async () => {
     try {
       setLoading(true);
-      const constraints = {
-        video: { 
-          width: { ideal: 1280 }, 
-          height: { ideal: 720 },
-          frameRate: { ideal: 30, max: 30 }
-        },
-        audio: { 
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
+      
+      // Adaptive constraints based on network quality
+      const getConstraints = () => {
+        const baseConstraints = {
+          audio: { 
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        };
+        
+        switch (networkQuality) {
+          case 'poor':
+            return {
+              ...baseConstraints,
+              video: { 
+                width: { ideal: 320 }, 
+                height: { ideal: 240 },
+                frameRate: { ideal: 15, max: 20 }
+              }
+            };
+          case 'fair':
+            return {
+              ...baseConstraints,
+              video: { 
+                width: { ideal: 640 }, 
+                height: { ideal: 480 },
+                frameRate: { ideal: 24, max: 30 }
+              }
+            };
+          default:
+            return {
+              ...baseConstraints,
+              video: { 
+                width: { ideal: 1280 }, 
+                height: { ideal: 720 },
+                frameRate: { ideal: 30, max: 30 }
+              }
+            };
         }
       };
+      
+      const constraints = getConstraints();
+      console.log('Requesting media with constraints:', constraints);
       
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       myStreamRef.current = stream;
@@ -369,14 +608,19 @@ const Page = ({ params }) => {
       setMyAudioEnabled(true);
       setMyVideoEnabled(true);
       
+      console.log('Media initialized successfully');
       return stream;
     } catch (error) {
       console.error('Error accessing media devices:', error);
+      
+      // Fallback: try audio only
       try {
+        console.log('Attempting audio-only fallback');
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         myStreamRef.current = audioStream;
         setMyStream(audioStream);
         setMyAudioEnabled(true);
+        setMyVideoEnabled(false);
         return audioStream;
       } catch (audioError) {
         console.error('Error accessing audio:', audioError);
@@ -385,7 +629,7 @@ const Page = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [networkQuality]);
 
   // Debounced API calls
   const debouncedFetchProducts = useCallback(
@@ -416,13 +660,23 @@ const Page = ({ params }) => {
     []
   );
 
-  // Cleanup function
+  // Enhanced cleanup function
   const cleanup = useCallback(() => {
-    // Clear timeouts
+    console.log('Cleaning up WebRTC connections...');
+    
+    // Clear all timeouts
     Object.values(reconnectTimeouts.current).forEach(timeout => {
       clearTimeout(timeout);
     });
     reconnectTimeouts.current = {};
+    
+    Object.values(connectionTimeouts.current).forEach(timeout => {
+      clearTimeout(timeout);
+    });
+    connectionTimeouts.current = {};
+    
+    // Reset retry attempts
+    retryAttempts.current = {};
 
     // Close all peer connections
     Object.values(peersRef.current).forEach(peer => {
@@ -434,22 +688,29 @@ const Page = ({ params }) => {
 
     // Stop media tracks
     if (myStreamRef.current) {
-      myStreamRef.current.getTracks().forEach(track => track.stop());
+      myStreamRef.current.getTracks().forEach(track => {
+        track.stop();
+        console.log(`Stopped ${track.kind} track`);
+      });
       myStreamRef.current = null;
     }
 
-    // Clear streams and names
+    // Clear streams and states
     streamsRef.current = {};
     setStreams({});
     setMyStream(null);
     setUserNames({});
+    setConnectionStatus({});
     setIsStreamActive(false);
     setHasCallStarted(false);
+    setConnectionState('disconnected');
 
     // Leave socket room
     if (socket) {
       socket.emit("leave-room", { roomId });
     }
+    
+    console.log('Cleanup completed');
   }, [roomId, socket]);
 
   // Socket event listeners setup
@@ -482,7 +743,7 @@ const Page = ({ params }) => {
     };
   }, [socket, socketHandlers]);
 
-  // Updated initialization with user name
+  // Initialization with better error handling
   useEffect(() => {
     const init = async () => {
       // Check if user should be in this room
@@ -491,7 +752,7 @@ const Page = ({ params }) => {
         return;
       }
 
-      // Get just the user name
+      // Get user name
       const userName = sessionStorage.getItem("userName") || `User ${Date.now()}`;
       setCurrentUserName(userName);
 
@@ -502,15 +763,19 @@ const Page = ({ params }) => {
       }
 
       try {
+        console.log('Initializing room...');
         await initializeMedia();
+        
         if (socket) {
+          console.log('Joining room...');
           socket.emit("join-room", { 
             roomId, 
             userInfo: { displayName: userName }
           });
         }
       } catch (error) {
-        console.error('Failed to initialize media:', error);
+        console.error('Failed to initialize:', error);
+        alert('Failed to access camera/microphone. Please check permissions and try again.');
       }
     };
 
@@ -532,13 +797,15 @@ const Page = ({ params }) => {
     return cleanup;
   }, [cleanup]);
 
+  // Control functions
   const exitCall = useCallback(() => {
+    console.log('Exiting call...');
     cleanup();
-    setConnectionState('disconnected');
   }, [cleanup]);
 
   const rejoinCall = useCallback(async () => {
     try {
+      console.log('Rejoining call...');
       await initializeMedia();
       if (socket && currentUserName) {
         socket.emit("join-room", { 
@@ -548,6 +815,7 @@ const Page = ({ params }) => {
       }
     } catch (error) {
       console.error('Failed to rejoin call:', error);
+      alert('Failed to rejoin call. Please check your connection and try again.');
     }
   }, [initializeMedia, roomId, socket, currentUserName]);
 
@@ -556,6 +824,7 @@ const Page = ({ params }) => {
       myStreamRef.current.getAudioTracks().forEach((track) => {
         track.enabled = !track.enabled;
         setMyAudioEnabled(track.enabled);
+        console.log(`Audio ${track.enabled ? 'enabled' : 'disabled'}`);
       });
     }
   }, []);
@@ -565,30 +834,33 @@ const Page = ({ params }) => {
       myStreamRef.current.getVideoTracks().forEach((track) => {
         track.enabled = !track.enabled;
         setMyVideoEnabled(track.enabled);
+        console.log(`Video ${track.enabled ? 'enabled' : 'disabled'}`);
       });
     }
   }, []);
 
   const startScreenShare = useCallback(async () => {
     try {
+      console.log('Starting screen share...');
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
         audio: true
       });
 
       screenStream.getVideoTracks()[0].onended = () => {
+        console.log('Screen share ended');
         stopScreenShare();
       };
 
       setIsScreenSharing(true);
 
       if (myStreamRef.current) {
-        const videoTrack = myStreamRef.current.getVideoTracks();
+        const videoTrack = myStreamRef.current.getVideoTracks()[0];
         if (videoTrack) {
           myStreamRef.current.removeTrack(videoTrack);
           videoTrack.stop();
         }
-        myStreamRef.current.addTrack(screenStream.getVideoTracks());
+        myStreamRef.current.addTrack(screenStream.getVideoTracks()[0]);
 
         // Update peer connections
         Object.values(peersRef.current).forEach((peer) => {
@@ -596,19 +868,22 @@ const Page = ({ params }) => {
             .getSenders()
             .find((s) => s.track && s.track.kind === "video");
           if (sender) {
-            sender.replaceTrack(screenStream.getVideoTracks());
+            sender.replaceTrack(screenStream.getVideoTracks()[0])
+              .catch(error => console.error('Error replacing track:', error));
           }
         });
       }
     } catch (error) {
-      console.error("Error sharing screen: ", error);
+      console.error("Error sharing screen:", error);
+      alert('Failed to start screen sharing. Please try again.');
     }
   }, []);
 
   const stopScreenShare = useCallback(() => {
+    console.log('Stopping screen share...');
     setIsScreenSharing(false);
     exitCall();
-    setTimeout(() => rejoinCall(), 100);
+    setTimeout(() => rejoinCall(), 1000);
   }, [exitCall, rejoinCall]);
 
   const handleHome = useCallback(() => {
@@ -616,8 +891,8 @@ const Page = ({ params }) => {
     router.push("/");
   }, [exitCall, router]);
 
-  // Render video component
-  const VideoComponent = useCallback(({ stream, className, muted = false }) => (
+  // Enhanced video component with error handling
+  const VideoComponent = useCallback(({ stream, className, muted = false, userId = null }) => (
     <video
       className={className}
       autoPlay
@@ -626,6 +901,12 @@ const Page = ({ params }) => {
       ref={(video) => {
         if (video && video.srcObject !== stream) {
           video.srcObject = stream;
+          video.onloadedmetadata = () => {
+            console.log(`Video loaded for ${userId || 'local'}`);
+          };
+          video.onerror = (error) => {
+            console.error(`Video error for ${userId || 'local'}:`, error);
+          };
         }
       }}
     />
@@ -633,8 +914,13 @@ const Page = ({ params }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">Initializing media...</div>
+      <div className="flex items-center justify-center h-screen bg-black text-white">
+        <div className="text-center">
+          <div className="text-xl mb-4">Initializing media...</div>
+          <div className="text-sm text-gray-400">
+            Network Quality: {networkQuality}
+          </div>
+        </div>
       </div>
     );
   }
@@ -644,27 +930,73 @@ const Page = ({ params }) => {
       <div className="sm:px-4 flex px-[20px] h-screen py-4 flex-col md:flex-row overflow-y-hidden">
         {/* Video Section */}
         <div className="relative w-full h-full md:w-[70%] bg-black py-4 border-2 border-black">
-          {/* Connection Quality Indicator */}
-          <div className="absolute top-2 left-2 z-10">
+          {/* Enhanced Status Indicators */}
+          <div className="absolute top-2 left-2 z-10 space-y-2">
             <div className={`px-2 py-1 rounded text-xs text-white ${
               connectionQuality === 'good' ? 'bg-green-500' :
               connectionQuality === 'fair' ? 'bg-yellow-500' : 'bg-red-500'
             }`}>
-              {connectionQuality.toUpperCase()} ({userCount} users)
+              Quality: {connectionQuality.toUpperCase()} ({userCount} users)
             </div>
+            
+            <div className={`px-2 py-1 rounded text-xs text-white ${
+              networkQuality === 'excellent' ? 'bg-green-500' :
+              networkQuality === 'good' ? 'bg-blue-500' :
+              networkQuality === 'fair' ? 'bg-yellow-500' : 
+              networkQuality === 'poor' ? 'bg-red-500' : 'bg-gray-500'
+            }`}>
+              Network: {networkQuality.toUpperCase()}
+            </div>
+            
+            {Object.keys(connectionStatus).length > 0 && (
+              <div className="bg-black/70 text-white px-2 py-1 rounded text-xs max-w-xs">
+                Connections: {Object.entries(connectionStatus).map(([userId, status]) => 
+                  `${userNames[userId]?.slice(0, 8) || userId.slice(-4)}: ${status}`
+                ).join(', ')}
+              </div>
+            )}
           </div>
 
-          {/* My Video Stream with Name */}
+          {/* My Video Stream */}
           {myStream && (
             <div className="relative w-full h-full">
               <VideoComponent 
                 stream={myStream}
-                className="w-full h-full"
+                className="w-full h-full object-cover"
                 muted={true}
               />
               {/* My name overlay */}
               <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
-                {currentUserName || "You"}
+                {currentUserName || "You"} {isScreenSharing && "(Sharing Screen)"}
+              </div>
+              
+              {/* Audio/Video status indicators */}
+              <div className="absolute bottom-4 right-4 flex space-x-2">
+                {!myAudioEnabled && (
+                  <div className="bg-red-500 text-white p-1 rounded-full">
+                    <Image src="/callingicon/ic_removeaudio.svg" alt="Muted" width={16} height={16} />
+                  </div>
+                )}
+                {!myVideoEnabled && (
+                  <div className="bg-red-500 text-white p-1 rounded-full">
+                    <Image src="/callingicon/ic_removevideo.svg" alt="Video Off" width={16} height={16} />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* No stream message */}
+          {!myStream && !loading && (
+            <div className="w-full h-full flex items-center justify-center text-white text-xl">
+              <div className="text-center">
+                <div className="mb-4">Camera/Microphone not available</div>
+                <button
+                  onClick={rejoinCall}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg"
+                >
+                  Try Again
+                </button>
               </div>
             </div>
           )}
@@ -676,13 +1008,15 @@ const Page = ({ params }) => {
             </div>
           )}
 
-          {/* **FIXED Control Buttons Logic** */}
+          {/* Control Buttons */}
           <div className="absolute bottom-8 w-full flex gap-2 justify-center">
             <button
               onClick={toggleAudio}
-              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 ${
+              disabled={!myStream}
+              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 disabled:opacity-50 ${
                 myAudioEnabled ? 'bg-green-500 hover:bg-green-400' : 'bg-red-500 hover:bg-red-400'
               }`}
+              title={myAudioEnabled ? 'Mute Audio' : 'Unmute Audio'}
             >
               <Image
                 loading="lazy"
@@ -696,9 +1030,11 @@ const Page = ({ params }) => {
 
             <button
               onClick={toggleVideo}
-              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 ${
+              disabled={!myStream}
+              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 disabled:opacity-50 ${
                 myVideoEnabled ? 'bg-green-500 hover:bg-green-400' : 'bg-red-500 hover:bg-red-400'
               }`}
+              title={myVideoEnabled ? 'Turn Off Video' : 'Turn On Video'}
             >
               <Image
                 loading="lazy"
@@ -710,20 +1046,20 @@ const Page = ({ params }) => {
               />
             </button>
 
-            {/* **CORRECTED BUTTON LOGIC: Check if stream is truly active** */}
+            {/* Join/Exit Call Button */}
             {isStreamActive ? (
-              // Stream is active - show exit button
               <button
                 onClick={exitCall}
                 className="bg-red-500 hover:bg-red-400 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10"
+                title="Exit Call"
               >
                 Exit
               </button>
             ) : (
-              // No active stream - show join button
               <button
                 onClick={rejoinCall}
                 className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg"
+                title="Join Call"
               >
                 Join Call
               </button>
@@ -731,9 +1067,11 @@ const Page = ({ params }) => {
 
             <button
               onClick={isScreenSharing ? stopScreenShare : startScreenShare}
-              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 ${
+              disabled={!myStream}
+              className={`p-2 text-xs text-center text-white font-medium shadow-sm rounded-full w-10 h-10 disabled:opacity-50 ${
                 isScreenSharing ? 'bg-orange-500 hover:bg-orange-400' : 'bg-blue-500 hover:bg-blue-400'
               }`}
+              title={isScreenSharing ? 'Stop Screen Share' : 'Share Screen'}
             >
               <Image
                 loading="lazy"
@@ -746,17 +1084,28 @@ const Page = ({ params }) => {
             </button>
           </div>
 
-          {/* Peer Video Streams with Names */}
+          {/* Peer Video Streams */}
           <div className="absolute w-[20%] top-0 right-0 max-h-full overflow-y-auto">
-            {Object.entries(streams).map(([key, stream]) => (
-              <div key={key} className="z-50 relative mb-2 rounded-lg shadow-lg">
+            {Object.entries(streams).map(([userId, stream]) => (
+              <div key={userId} className="z-50 relative mb-2 rounded-lg shadow-lg">
                 <VideoComponent 
                   stream={stream}
                   className="w-full rounded-lg"
+                  userId={userId}
                 />
-                {/* User name overlay */}
-                <div className="absolute bottom-1 left-1 right-1 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium truncate text-center">
-                  {userNames[key] || `User ${key.slice(-4)}`}
+                {/* User name and status overlay */}
+                <div className="absolute bottom-1 left-1 right-1 space-y-1">
+                  <div className="bg-black/70 text-white px-2 py-1 rounded text-xs font-medium truncate text-center">
+                    {userNames[userId] || `User ${userId.slice(-4)}`}
+                  </div>
+                  {connectionStatus[userId] && connectionStatus[userId] !== 'connected' && (
+                    <div className={`text-xs text-center px-1 py-0.5 rounded ${
+                      connectionStatus[userId].includes('retrying') ? 'bg-yellow-500' :
+                      connectionStatus[userId] === 'failed' ? 'bg-red-500' : 'bg-gray-500'
+                    } text-white`}>
+                      {connectionStatus[userId]}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
