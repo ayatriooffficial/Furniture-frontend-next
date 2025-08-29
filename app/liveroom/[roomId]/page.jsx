@@ -1,3 +1,4 @@
+//web rtc 
 "use client";
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { allSelectedData } from "@/components/Features/Slices/virtualDataSlice";
@@ -9,13 +10,13 @@ import { useRouter } from "next/navigation";
 import { useSocket } from "@/providers/SocketProvider";
 import Image from "next/image";
 
-// Enhanced constants for distant connections
-const MAX_RETRY_ATTEMPTS = 5;        // Increased from 3
-const BASE_RETRY_DELAY = 3000;       // Increased from 2000
-const CONNECTION_TIMEOUT = 45000;    // Increased from 30000
-const ICE_GATHERING_TIMEOUT = 35000; // New constant
-const ICE_RESTART_DELAY = 5000;      // New constant
-const RECONNECT_DELAY = 8000;        // New constant for disconnected state
+// Constants
+const MAX_RETRY_ATTEMPTS = 5;        
+const BASE_RETRY_DELAY = 3000;       
+const CONNECTION_TIMEOUT = 30000;    // Increased from 15000 to 30000
+const ICE_GATHERING_TIMEOUT = 25000; // Reduced from 35000 to 25000
+const ICE_RESTART_DELAY = 5000;      
+const RECONNECT_DELAY = 8000;
 
 // Utility function for debouncing
 const debounce = (func, wait) => {
@@ -30,30 +31,23 @@ const debounce = (func, wait) => {
   };
 };
 
-// Enhanced network quality detection hook
+// Network quality detection hook
 const useNetworkQuality = () => {
   const [networkQuality, setNetworkQuality] = useState('unknown');
-  const [rtt, setRtt] = useState(0);
   
   useEffect(() => {
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     
     if (connection) {
       const updateNetworkInfo = () => {
-        const { effectiveType, downlink, rtt: connectionRtt } = connection;
-        setRtt(connectionRtt || 0);
+        const { effectiveType, downlink, rtt } = connection;
         
-        // Enhanced network quality detection for distant connections
-        if (effectiveType === '4g' && downlink > 5 && connectionRtt < 100) {
+        if (effectiveType === '4g' && downlink > 5 && rtt < 100) {
           setNetworkQuality('excellent');
-        } else if (effectiveType === '4g' && downlink > 2 && connectionRtt < 200) {
+        } else if (effectiveType === '3g' || (downlink > 2 && rtt < 200)) {
           setNetworkQuality('good');
-        } else if ((effectiveType === '3g' || effectiveType === '4g') && downlink > 1 && connectionRtt < 400) {
-          setNetworkQuality('fair');
-        } else if (connectionRtt > 500 || downlink < 1) {
-          setNetworkQuality('poor');
         } else {
-          setNetworkQuality('unknown');
+          setNetworkQuality('poor');
         }
       };
       
@@ -64,13 +58,12 @@ const useNetworkQuality = () => {
     }
   }, []);
   
-  return { networkQuality, rtt };
+  return networkQuality;
 };
 
-// Enhanced connection quality hook
+// Connection quality hook with retry limits
 const useConnectionQuality = (peersRef) => {
   const [quality, setQuality] = useState('good');
-  const [stats, setStats] = useState({});
   
   useEffect(() => {
     const checkQuality = async () => {
@@ -79,9 +72,7 @@ const useConnectionQuality = (peersRef) => {
       
       try {
         let totalLossRate = 0;
-        let totalRtt = 0;
         let peerCount = 0;
-        const peerStats = {};
         
         for (const peer of peers) {
           if (peer.connectionState === 'connected') {
@@ -93,8 +84,6 @@ const useConnectionQuality = (peersRef) => {
                 const lossRate = packetsLost / (packetsLost + packetsReceived);
                 totalLossRate += lossRate;
                 peerCount++;
-              } else if (report.type === 'candidate-pair' && report.state === 'succeeded') {
-                totalRtt += report.currentRoundTripTime || 0;
               }
             });
           }
@@ -102,29 +91,24 @@ const useConnectionQuality = (peersRef) => {
         
         if (peerCount > 0) {
           const avgLossRate = totalLossRate / peerCount;
-          const avgRtt = totalRtt / peerCount;
-          
-          // Enhanced quality assessment for distant connections
-          if (avgLossRate > 0.08 || avgRtt > 0.8) {
+          if (avgLossRate > 0.05) {
             setQuality('poor');
-          } else if (avgLossRate > 0.03 || avgRtt > 0.4) {
+          } else if (avgLossRate > 0.02) {
             setQuality('fair');
           } else {
             setQuality('good');
           }
-          
-          setStats({ lossRate: avgLossRate, rtt: avgRtt });
         }
       } catch (error) {
         console.error('Error checking connection quality:', error);
       }
     };
     
-    const interval = setInterval(checkQuality, 3000); // More frequent checks
+    const interval = setInterval(checkQuality, 5000);
     return () => clearInterval(interval);
   }, [peersRef]);
   
-  return { quality, stats };
+  return quality;
 };
 
 const Page = ({ params }) => {
@@ -157,110 +141,59 @@ const Page = ({ params }) => {
   const reconnectTimeouts = useRef({});
   const retryAttempts = useRef({});
   const connectionTimeouts = useRef({});
-  const iceGatheringTimeouts = useRef({});
 
-  // Enhanced hooks
-  const { networkQuality, rtt } = useNetworkQuality();
-  const { quality: connectionQuality, stats: connectionStats } = useConnectionQuality(peersRef);
+  // Hooks
+  const connectionQuality = useConnectionQuality(peersRef);
+  const networkQuality = useNetworkQuality();
 
-  // Dynamic peer configuration based on network conditions
-  const peerConfig = useMemo(() => {
-    const baseConfig = {
-      iceServers: [
-        // STUN servers for NAT traversal
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" },
-        { urls: "stun:stun3.l.google.com:19302" },
-        { urls: "stun:stun4.l.google.com:19302" },
-        
-        // Primary TURN servers with multiple protocols
-        {
-          urls: [
-            "turn:relay1.expressturn.com:3478",
-            "turns:relay1.expressturn.com:5349"
-          ],
-          username: "efJT4DT8PZ82L5ZH2Y",
-          credential: "O4f5xoWnWPBtkXRE"
-        },
-        {
-          urls: [
-            "turn:numb.viagenie.ca:3478",
-            "turns:numb.viagenie.ca:5349"
-          ],
-          username: "webrtc@live.com",
-          credential: "muazkh",
-        },
-        
-        // Additional TURN servers for better global coverage
-        {
-          urls: [
-            "turn:openrelay.metered.ca:80",
-            "turn:openrelay.metered.ca:443",
-            "turns:openrelay.metered.ca:443"
-          ],
-          username: "openrelayproject",
-          credential: "openrelayproject",
-        },
-        
-        // Backup TURN servers
-        {
-          urls: "turn:turn.bistri.com:80",
-          username: "homeo",
-          credential: "homeo"
-        },
-        
-        // Additional reliable TURN servers
-        {
-          urls: [
-            "turn:turn.anyfirewall.com:443?transport=tcp",
-            "turns:turn.anyfirewall.com:443?transport=tcp"
-          ],
-          username: "webrtc",
-          credential: "webrtc"
-        }
-      ],
-      bundlePolicy: 'max-bundle',
-      rtcpMuxPolicy: 'require',
-    };
-
-    // Adaptive configuration based on network quality and RTT
-    const isDistantConnection = rtt > 300 || networkQuality === 'poor' || connectionQuality === 'poor';
-    
-    if (isDistantConnection) {
-      console.log('Configuring for distant/poor connection');
-      return {
-        ...baseConfig,
-        // Prioritize TURN servers for distant connections
-        iceServers: [
-          ...baseConfig.iceServers.slice(5), // TURN servers first
-          ...baseConfig.iceServers.slice(0, 5), // STUN servers as fallback
+  // Enhanced peer configuration with better ICE servers
+// Dynamic peer configuration - PRIORITIZE TURN SERVERS FOR LONG DISTANCE
+const peerConfig = useMemo(() => {
+  const baseConfig = {
+    iceServers: [
+      // TURN servers FIRST for long distance connections
+      {
+        urls: [
+          "turn:relay1.expressturn.com:3478",
+          "turns:relay1.expressturn.com:5349"
         ],
-        iceCandidatePoolSize: 20,
-        iceTransportPolicy: 'all', // Try all, but TURN servers are prioritized
-        iceGatheringTimeout: ICE_GATHERING_TIMEOUT,
-        // Additional settings for distant connections
-        iceCandidateTimeout: 20000,
-        enableDscp: true,
-      };
-    } else if (networkQuality === 'fair' || connectionQuality === 'fair') {
-      return {
-        ...baseConfig,
-        iceCandidatePoolSize: 15,
-        iceTransportPolicy: 'all',
-        iceGatheringTimeout: 25000,
-        iceCandidateTimeout: 15000,
-      };
-    } else {
-      return {
-        ...baseConfig,
-        iceCandidatePoolSize: 12,
-        iceTransportPolicy: 'all',
-        iceGatheringTimeout: 20000,
-        iceCandidateTimeout: 10000,
-      };
-    }
-  }, [networkQuality, connectionQuality, rtt]);
+        username: "efJT4DT8PZ82L5ZH2Y",
+        credential: "O4f5xoWnWPBtkXRE"
+      },
+      {
+        urls: [
+          "turn:numb.viagenie.ca:3478",
+          "turns:numb.viagenie.ca:5349"
+        ],
+        username: "webrtc@live.com",
+        credential: "muazkh",
+      },
+      {
+        urls: [
+          "turn:openrelay.metered.ca:80",
+          "turn:openrelay.metered.ca:443",
+          "turns:openrelay.metered.ca:443"
+        ],
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      // STUN servers AFTER TURN servers
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun2.l.google.com:19302" },
+      { urls: "stun:stun3.l.google.com:19302" },
+      { urls: "stun:stun4.l.google.com:19302" },
+    ],
+    bundlePolicy: 'max-bundle',
+    rtcpMuxPolicy: 'require',
+    iceCandidatePoolSize: 15, // Increased from 10
+    iceTransportPolicy: 'all',
+    iceGatheringTimeout: 25000,
+  };
+
+  return baseConfig;
+}, []);
+
 
   // Memoized arrays and products
   const stars = useMemo(() => 
@@ -310,39 +243,19 @@ const Page = ({ params }) => {
     });
   }, [myStream, checkStreamActive]);
 
-  // Enhanced adaptive bitrate based on connection quality and distance
-  const adaptVideoBitrate = useCallback((quality, isDistant = false) => {
+  // Adaptive bitrate based on connection quality
+  const adaptVideoBitrate = useCallback((quality) => {
     const constraints = {
-      excellent: { 
-        width: { ideal: isDistant ? 1280 : 1920 }, 
-        height: { ideal: isDistant ? 720 : 1080 }, 
-        frameRate: { ideal: isDistant ? 25 : 30 } 
-      },
-      good: { 
-        width: { ideal: 1280 }, 
-        height: { ideal: 720 }, 
-        frameRate: { ideal: 30 } 
-      },
-      fair: { 
-        width: { ideal: 854 }, 
-        height: { ideal: 480 }, 
-        frameRate: { ideal: 24 } 
-      },
-      poor: { 
-        width: { ideal: 640 }, 
-        height: { ideal: 360 }, 
-        frameRate: { ideal: 15 } 
-      }
+      excellent: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+      good: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+      fair: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 24 } },
+      poor: { width: { ideal: 320 }, height: { ideal: 240 }, frameRate: { ideal: 15 } }
     };
     
     if (myStreamRef.current) {
       const videoTrack = myStreamRef.current.getVideoTracks()[0];
       if (videoTrack) {
-        const targetConstraints = constraints[quality] || constraints.fair;
-        videoTrack.applyConstraints(targetConstraints)
-          .then(() => {
-            console.log(`Applied video constraints for ${quality} quality:`, targetConstraints);
-          })
+        videoTrack.applyConstraints(constraints[quality] || constraints.fair)
           .catch(error => console.error('Error applying constraints:', error));
       }
     }
@@ -350,12 +263,10 @@ const Page = ({ params }) => {
 
   // Apply adaptive bitrate when quality changes
   useEffect(() => {
-    const isDistant = rtt > 300 || networkQuality === 'poor';
-    const effectiveQuality = networkQuality !== 'unknown' ? networkQuality : connectionQuality;
-    adaptVideoBitrate(effectiveQuality, isDistant);
-  }, [connectionQuality, networkQuality, rtt, adaptVideoBitrate]);
+    adaptVideoBitrate(networkQuality !== 'unknown' ? networkQuality : connectionQuality);
+  }, [connectionQuality, networkQuality, adaptVideoBitrate]);
 
-  // Enhanced clear timeouts function
+  // Clear all timeouts for a user
   const clearUserTimeouts = useCallback((userId) => {
     if (reconnectTimeouts.current[userId]) {
       clearTimeout(reconnectTimeouts.current[userId]);
@@ -365,13 +276,9 @@ const Page = ({ params }) => {
       clearTimeout(connectionTimeouts.current[userId]);
       delete connectionTimeouts.current[userId];
     }
-    if (iceGatheringTimeouts.current[userId]) {
-      clearTimeout(iceGatheringTimeouts.current[userId]);
-      delete iceGatheringTimeouts.current[userId];
-    }
   }, []);
 
-  // Enhanced peer connection recreation with better retry logic
+  // Enhanced peer connection recreation with retry limits
   const recreatePeerConnection = useCallback(async (userId) => {
     // Initialize retry counter
     if (!retryAttempts.current[userId]) {
@@ -411,11 +318,8 @@ const Page = ({ params }) => {
       [userId]: `retrying (${retryAttempts.current[userId]}/${MAX_RETRY_ATTEMPTS})`
     }));
     
-    // Progressive backoff with jitter for distant connections
-    const baseDelay = BASE_RETRY_DELAY;
-    const exponentialFactor = Math.pow(2, retryAttempts.current[userId] - 1);
-    const jitter = Math.random() * 1000; // Add randomness to prevent thundering herd
-    const delay = Math.min(baseDelay * exponentialFactor + jitter, 30000); // Cap at 30 seconds
+    // Exponential backoff
+    const delay = BASE_RETRY_DELAY * Math.pow(1.5, retryAttempts.current[userId] - 1);
     
     reconnectTimeouts.current[userId] = setTimeout(() => {
       if (peersRef.current[userId]) {
@@ -433,26 +337,19 @@ const Page = ({ params }) => {
       return peersRef.current[userId];
     }
 
-    console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}, network: ${networkQuality}, RTT: ${rtt}ms`);
+    console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}`);
     
     const peer = new RTCPeerConnection(peerConfig);
     
-    // Enhanced connection timeout with adaptive timing
-    const timeoutDuration = rtt > 500 ? CONNECTION_TIMEOUT * 1.5 : CONNECTION_TIMEOUT;
-    connectionTimeouts.current[userId] = setTimeout(() => {
-      if (peer.connectionState !== 'connected') {
-        console.log(`Connection timeout for user ${userId} after ${timeoutDuration}ms`);
-        recreatePeerConnection(userId);
-      }
-    }, timeoutDuration);
-    
-    // ICE gathering timeout
-    iceGatheringTimeouts.current[userId] = setTimeout(() => {
-      if (peer.iceGatheringState !== 'complete') {
-        console.log(`ICE gathering timeout for user ${userId}`);
-        // Don't recreate immediately, let other mechanisms handle it
-      }
-    }, ICE_GATHERING_TIMEOUT);
+    // Connection timeout
+
+    const timeoutDuration = CONNECTION_TIMEOUT; 
+ connectionTimeouts.current[userId] = setTimeout(() => {
+  if (peer.connectionState !== 'connected') {
+    console.log(`Connection timeout for user ${userId} after ${timeoutDuration}ms`);
+    recreatePeerConnection(userId);
+  }
+}, timeoutDuration);
     
     // Enhanced connection state handling
     peer.onconnectionstatechange = () => {
@@ -483,92 +380,35 @@ const Page = ({ params }) => {
           
         case 'disconnected':
           console.log(`Connection disconnected for user ${userId}`);
-          // Wait longer before retrying for distant connections
-          const waitTime = rtt > 300 ? RECONNECT_DELAY * 1.5 : RECONNECT_DELAY;
+          // Wait a bit before retrying on disconnect
           setTimeout(() => {
             if (peer.connectionState === 'disconnected') {
-              console.log(`Attempting reconnection for ${userId} after ${waitTime}ms`);
               recreatePeerConnection(userId);
             }
-          }, waitTime);
-          break;
-          
-        case 'connecting':
-          console.log(`Connecting to user ${userId}...`);
+          }, 3000);
           break;
       }
     };
 
-    // Enhanced ICE connection state monitoring
+    // ICE connection state monitoring
     peer.oniceconnectionstatechange = () => {
       console.log(`ICE connection state for ${userId}:`, peer.iceConnectionState);
       
-      switch (peer.iceConnectionState) {
-        case 'failed':
-          console.log(`ICE connection failed for user ${userId}, attempting ICE restart`);
-          setTimeout(() => {
-            try {
-              if (peer.connectionState !== 'closed') {
-                peer.restartIce();
-              }
-            } catch (error) {
-              console.error('Error restarting ICE:', error);
-              recreatePeerConnection(userId);
-            }
-          }, ICE_RESTART_DELAY);
-          break;
-          
-        case 'disconnected':
-          // Wait longer before ICE restart for distant connections
-          const iceWaitTime = rtt > 300 ? 10000 : 6000;
-          setTimeout(() => {
-            if (peer.iceConnectionState === 'disconnected' && peer.connectionState !== 'closed') {
-              console.log(`ICE connection still disconnected for ${userId}, restarting ICE`);
-              try {
-                peer.restartIce();
-              } catch (error) {
-                console.error('Error restarting ICE:', error);
-                recreatePeerConnection(userId);
-              }
-            }
-          }, iceWaitTime);
-          break;
-          
-        case 'connected':
-          console.log(`ICE connection successful for ${userId}`);
-          // Clear ICE gathering timeout on successful connection
-          if (iceGatheringTimeouts.current[userId]) {
-            clearTimeout(iceGatheringTimeouts.current[userId]);
-            delete iceGatheringTimeouts.current[userId];
-          }
-          break;
-      }
-    };
-
-    // Enhanced ICE gathering state monitoring
-    peer.onicegatheringstatechange = () => {
-      console.log(`ICE gathering state for ${userId}:`, peer.iceGatheringState);
-      if (peer.iceGatheringState === 'complete') {
-        if (iceGatheringTimeouts.current[userId]) {
-          clearTimeout(iceGatheringTimeouts.current[userId]);
-          delete iceGatheringTimeouts.current[userId];
+      if (peer.iceConnectionState === 'failed') {
+        console.log(`ICE connection failed for user ${userId}, restarting ICE`);
+        try {
+          peer.restartIce();
+        } catch (error) {
+          console.error('Error restarting ICE:', error);
+          recreatePeerConnection(userId);
         }
       }
     };
 
-    // Enhanced ICE candidate handling with filtering
+    // Enhanced ICE candidate handling
     peer.onicecandidate = (event) => {
       if (event.candidate && socket) {
-        // For distant connections, prioritize relay candidates
-        const candidate = event.candidate;
-        const isRelay = candidate.candidate.includes('typ relay');
-        const isSrflx = candidate.candidate.includes('typ srflx');
-        
-        // Log candidate type for debugging
-        console.log(`Sending ${candidate.candidate.includes('typ host') ? 'host' : 
-                           isRelay ? 'relay' : 
-                           isSrflx ? 'srflx' : 'unknown'} candidate to ${userId}`);
-        
+        console.log(`Sending ICE candidate to ${userId}`);
         socket.emit("ice-candidate", {
           to: userId,
           candidate: event.candidate,
@@ -596,7 +436,7 @@ const Page = ({ params }) => {
       });
     }
 
-    // Enhanced negotiation handling for offerer
+    // Negotiation handling for offerer
     if (!isAnswerer) {
       peer.onnegotiationneeded = async () => {
         try {
@@ -609,9 +449,6 @@ const Page = ({ params }) => {
           const offer = await peer.createOffer({
             offerToReceiveAudio: true,
             offerToReceiveVideo: true,
-            // Enhanced offer options for distant connections
-            iceRestart: false,
-            voiceActivityDetection: true,
           });
           
           await peer.setLocalDescription(offer);
@@ -627,7 +464,7 @@ const Page = ({ params }) => {
 
     peersRef.current[userId] = peer;
     return peer;
-  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts, networkQuality, rtt]);
+  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts]);
 
   // Enhanced socket handlers
   const socketHandlers = useMemo(() => ({
@@ -643,12 +480,11 @@ const Page = ({ params }) => {
         id !== socket.id && !peersRef.current[id]
       );
       
-      // Stagger peer creation more for distant connections
-      const staggerDelay = rtt > 300 ? 500 : 200;
+      // Stagger peer creation to avoid overwhelming the connection
       newUsers.forEach((id, index) => {
         setTimeout(() => {
           createPeerConnection(id, false);
-        }, staggerDelay * index);
+        }, 200 * index);
       });
     },
 
@@ -702,9 +538,7 @@ const Page = ({ params }) => {
         }
         
         await peer.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peer.createAnswer({
-          voiceActivityDetection: true,
-        });
+        const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
         
         if (socket) {
@@ -732,10 +566,10 @@ const Page = ({ params }) => {
 
     handleIceCandidate: async ({ from, candidate }) => {
       try {
+        console.log(`Received ICE candidate from ${from}`);
         const peer = peersRef.current[from];
         if (peer && peer.remoteDescription) {
           await peer.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log(`Added ICE candidate from ${from}`);
         } else {
           console.log(`Cannot add ICE candidate from ${from}, peer not ready`);
         }
@@ -748,54 +582,40 @@ const Page = ({ params }) => {
       alert('Room is full. Please try again later.');
       router.push('/liveroom');
     }
-  }), [socket, router, createPeerConnection, clearUserTimeouts, rtt]);
+  }), [socket, router, createPeerConnection, clearUserTimeouts]);
 
-  // Enhanced media initialization
+  // Initialize media stream with better error handling
   const initializeMedia = useCallback(async () => {
     try {
       setLoading(true);
       
-      // Adaptive constraints based on network quality and distance
+      // Adaptive constraints based on network quality
       const getConstraints = () => {
         const baseConstraints = {
           audio: { 
             echoCancellation: true,
             noiseSuppression: true,
-            autoGainControl: true,
-            sampleRate: 48000,
-            channelCount: 1,
+            autoGainControl: true
           }
         };
-        
-        // Adjust video constraints for distant/poor connections
-        const isDistant = rtt > 300;
         
         switch (networkQuality) {
           case 'poor':
             return {
               ...baseConstraints,
               video: { 
-                width: { ideal: 480, max: 640 }, 
-                height: { ideal: 270, max: 360 },
-                frameRate: { ideal: 12, max: 15 }
+                width: { ideal: 320 }, 
+                height: { ideal: 240 },
+                frameRate: { ideal: 15, max: 20 }
               }
             };
           case 'fair':
             return {
               ...baseConstraints,
               video: { 
-                width: { ideal: isDistant ? 640 : 854 }, 
-                height: { ideal: isDistant ? 360 : 480 },
-                frameRate: { ideal: isDistant ? 20 : 24 }
-              }
-            };
-          case 'good':
-            return {
-              ...baseConstraints,
-              video: { 
-                width: { ideal: isDistant ? 854 : 1280 }, 
-                height: { ideal: isDistant ? 480 : 720 },
-                frameRate: { ideal: isDistant ? 24 : 30 }
+                width: { ideal: 640 }, 
+                height: { ideal: 480 },
+                frameRate: { ideal: 24, max: 30 }
               }
             };
           default:
@@ -804,7 +624,7 @@ const Page = ({ params }) => {
               video: { 
                 width: { ideal: 1280 }, 
                 height: { ideal: 720 },
-                frameRate: { ideal: 30 }
+                frameRate: { ideal: 30, max: 30 }
               }
             };
         }
@@ -827,13 +647,7 @@ const Page = ({ params }) => {
       // Fallback: try audio only
       try {
         console.log('Attempting audio-only fallback');
-        const audioStream = await navigator.mediaDevices.getUserMedia({ 
-          audio: { 
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-          } 
-        });
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         myStreamRef.current = audioStream;
         setMyStream(audioStream);
         setMyAudioEnabled(true);
@@ -846,9 +660,9 @@ const Page = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  }, [networkQuality, rtt]);
+  }, [networkQuality]);
 
-  // Debounced API calls (unchanged)
+  // Debounced API calls
   const debouncedFetchProducts = useCallback(
     debounce(async (searchParams) => {
       try {
@@ -892,11 +706,6 @@ const Page = ({ params }) => {
     });
     connectionTimeouts.current = {};
     
-    Object.values(iceGatheringTimeouts.current).forEach(timeout => {
-      clearTimeout(timeout);
-    });
-    iceGatheringTimeouts.current = {};
-    
     // Reset retry attempts
     retryAttempts.current = {};
 
@@ -935,7 +744,7 @@ const Page = ({ params }) => {
     console.log('Cleanup completed');
   }, [roomId, socket]);
 
-  // Socket event listeners setup (unchanged)
+  // Socket event listeners setup
   useEffect(() => {
     if (!socket) return;
 
@@ -965,7 +774,7 @@ const Page = ({ params }) => {
     };
   }, [socket, socketHandlers]);
 
-  // Initialization with better error handling (unchanged)
+  // Initialization with better error handling
   useEffect(() => {
     const init = async () => {
       // Check if user should be in this room
@@ -1004,7 +813,7 @@ const Page = ({ params }) => {
     init();
   }, [roomId, socket, router, x, initializeMedia]);
 
-  // Fetch products when component mounts or data changes (unchanged)
+  // Fetch products when component mounts or data changes
   useEffect(() => {
     if (x.length > 0) {
       debouncedFetchProducts(x);
@@ -1014,12 +823,12 @@ const Page = ({ params }) => {
     }
   }, [x, debouncedFetchProducts, debouncedFetchSimilarProducts]);
 
-  // Cleanup on unmount (unchanged)
+  // Cleanup on unmount
   useEffect(() => {
     return cleanup;
   }, [cleanup]);
 
-  // Control functions (unchanged)
+  // Control functions
   const exitCall = useCallback(() => {
     console.log('Exiting call...');
     cleanup();
@@ -1065,11 +874,7 @@ const Page = ({ params }) => {
     try {
       console.log('Starting screen share...');
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          width: { ideal: networkQuality === 'poor' ? 854 : 1920 },
-          height: { ideal: networkQuality === 'poor' ? 480 : 1080 },
-          frameRate: { ideal: networkQuality === 'poor' ? 15 : 30 }
-        },
+        video: true,
         audio: true
       });
 
@@ -1103,7 +908,7 @@ const Page = ({ params }) => {
       console.error("Error sharing screen:", error);
       alert('Failed to start screen sharing. Please try again.');
     }
-  }, [networkQuality]);
+  }, []);
 
   const stopScreenShare = useCallback(() => {
     console.log('Stopping screen share...');
@@ -1117,7 +922,7 @@ const Page = ({ params }) => {
     router.push("/");
   }, [exitCall, router]);
 
-  // Enhanced video component with error handling (unchanged)
+  // Enhanced video component with error handling
   const VideoComponent = useCallback(({ stream, className, muted = false, userId = null }) => (
     <video
       className={className}
@@ -1144,10 +949,7 @@ const Page = ({ params }) => {
         <div className="text-center">
           <div className="text-xl mb-4">Initializing media...</div>
           <div className="text-sm text-gray-400">
-            Network Quality: {networkQuality} | RTT: {rtt}ms
-          </div>
-          <div className="text-xs text-gray-500 mt-2">
-            Optimizing for {rtt > 300 ? 'distant' : 'local'} connection
+            Network Quality: {networkQuality}
           </div>
         </div>
       </div>
@@ -1174,29 +976,14 @@ const Page = ({ params }) => {
               networkQuality === 'fair' ? 'bg-yellow-500' : 
               networkQuality === 'poor' ? 'bg-red-500' : 'bg-gray-500'
             }`}>
-              Network: {networkQuality.toUpperCase()} | RTT: {rtt}ms
+              Network: {networkQuality.toUpperCase()}
             </div>
-
-            {/* Enhanced connection statistics */}
-            {connectionStats && (
-              <div className="bg-black/70 text-white px-2 py-1 rounded text-xs">
-                Loss: {(connectionStats.lossRate * 100).toFixed(1)}% | 
-                Delay: {(connectionStats.rtt * 1000).toFixed(0)}ms
-              </div>
-            )}
             
             {Object.keys(connectionStatus).length > 0 && (
               <div className="bg-black/70 text-white px-2 py-1 rounded text-xs max-w-xs">
                 Connections: {Object.entries(connectionStatus).map(([userId, status]) => 
                   `${userNames[userId]?.slice(0, 8) || userId.slice(-4)}: ${status}`
                 ).join(', ')}
-              </div>
-            )}
-
-            {/* Distance indicator */}
-            {rtt > 300 && (
-              <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs">
-                Distant Connection Mode
               </div>
             )}
           </div>
