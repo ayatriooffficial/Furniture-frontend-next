@@ -1,4 +1,3 @@
-//web rtc 
 "use client";
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { allSelectedData } from "@/components/Features/Slices/virtualDataSlice";
@@ -10,13 +9,19 @@ import { useRouter } from "next/navigation";
 import { useSocket } from "@/providers/SocketProvider";
 import Image from "next/image";
 
-// Constants
-const MAX_RETRY_ATTEMPTS = 5;        
-const BASE_RETRY_DELAY = 3000;       
-const CONNECTION_TIMEOUT = 30000;    // Increased from 15000 to 30000
-const ICE_GATHERING_TIMEOUT = 25000; // Reduced from 35000 to 25000
-const ICE_RESTART_DELAY = 5000;      
-const RECONNECT_DELAY = 8000;
+// Dynamic constants based on network conditions
+const getConnectionConstants = (networkQuality, rtt = 0) => {
+  const isDistant = rtt > 200 || networkQuality === 'poor';
+  
+  return {
+    MAX_RETRY_ATTEMPTS: isDistant ? 5 : 3,        
+    BASE_RETRY_DELAY: isDistant ? 3000 : 2000,       
+    CONNECTION_TIMEOUT: isDistant ? 30000 : 15000,    
+    ICE_GATHERING_TIMEOUT: isDistant ? 25000 : 15000, 
+    ICE_RESTART_DELAY: isDistant ? 5000 : 3000,      
+    RECONNECT_DELAY: isDistant ? 8000 : 5000,
+  };
+};
 
 // Utility function for debouncing
 const debounce = (func, wait) => {
@@ -31,20 +36,24 @@ const debounce = (func, wait) => {
   };
 };
 
-// Network quality detection hook
+// Enhanced network quality detection hook with RTT
 const useNetworkQuality = () => {
   const [networkQuality, setNetworkQuality] = useState('unknown');
+  const [rtt, setRtt] = useState(0);
   
   useEffect(() => {
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     
     if (connection) {
       const updateNetworkInfo = () => {
-        const { effectiveType, downlink, rtt } = connection;
+        const { effectiveType, downlink, rtt: connectionRtt } = connection;
+        setRtt(connectionRtt || 0);
         
-        if (effectiveType === '4g' && downlink > 5 && rtt < 100) {
+        if (effectiveType === '4g' && downlink > 5 && connectionRtt < 100) {
           setNetworkQuality('excellent');
-        } else if (effectiveType === '3g' || (downlink > 2 && rtt < 200)) {
+        } else if (effectiveType === '4g' && downlink > 2 && connectionRtt < 200) {
+          setNetworkQuality('good');
+        } else if (effectiveType === '3g' || (downlink > 2 && connectionRtt < 200)) {
           setNetworkQuality('good');
         } else {
           setNetworkQuality('poor');
@@ -58,10 +67,10 @@ const useNetworkQuality = () => {
     }
   }, []);
   
-  return networkQuality;
+  return { networkQuality, rtt };
 };
 
-// Connection quality hook with retry limits
+// Connection quality hook
 const useConnectionQuality = (peersRef) => {
   const [quality, setQuality] = useState('good');
   
@@ -142,58 +151,97 @@ const Page = ({ params }) => {
   const retryAttempts = useRef({});
   const connectionTimeouts = useRef({});
 
-  // Hooks
+  // Enhanced hooks
+  const { networkQuality, rtt } = useNetworkQuality();
   const connectionQuality = useConnectionQuality(peersRef);
-  const networkQuality = useNetworkQuality();
 
-  // Enhanced peer configuration with better ICE servers
-// Dynamic peer configuration - PRIORITIZE TURN SERVERS FOR LONG DISTANCE
-const peerConfig = useMemo(() => {
-  const baseConfig = {
-    iceServers: [
-      // TURN servers FIRST for long distance connections
-      {
-        urls: [
-          "turn:relay1.expressturn.com:3478",
-          "turns:relay1.expressturn.com:5349"
-        ],
-        username: "efJT4DT8PZ82L5ZH2Y",
-        credential: "O4f5xoWnWPBtkXRE"
-      },
-      {
-        urls: [
-          "turn:numb.viagenie.ca:3478",
-          "turns:numb.viagenie.ca:5349"
-        ],
-        username: "webrtc@live.com",
-        credential: "muazkh",
-      },
-      {
-        urls: [
-          "turn:openrelay.metered.ca:80",
-          "turn:openrelay.metered.ca:443",
-          "turns:openrelay.metered.ca:443"
-        ],
-        username: "openrelayproject",
-        credential: "openrelayproject",
-      },
-      // STUN servers AFTER TURN servers
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      { urls: "stun:stun2.l.google.com:19302" },
-      { urls: "stun:stun3.l.google.com:19302" },
-      { urls: "stun:stun4.l.google.com:19302" },
-    ],
-    bundlePolicy: 'max-bundle',
-    rtcpMuxPolicy: 'require',
-    iceCandidatePoolSize: 15, // Increased from 10
-    iceTransportPolicy: 'all',
-    iceGatheringTimeout: 25000,
-  };
+  // Get dynamic constants based on network conditions
+  const constants = useMemo(() => 
+    getConnectionConstants(networkQuality, rtt), 
+    [networkQuality, rtt]
+  );
 
-  return baseConfig;
-}, []);
+  // DYNAMIC peer configuration - ADAPTS to network conditions
+  const peerConfig = useMemo(() => {
+    const isDistant = rtt > 200 || networkQuality === 'poor';
+    
+    console.log(`Configuring for ${isDistant ? 'distant' : 'nearby'} connection (RTT: ${rtt}ms, Quality: ${networkQuality})`);
 
+    if (isDistant) {
+      // Configuration optimized for distant connections
+      return {
+        iceServers: [
+          // TURN servers FIRST for long distance
+          {
+            urls: [
+              "turn:relay1.expressturn.com:3478",
+              "turns:relay1.expressturn.com:5349"
+            ],
+            username: "efJT4DT8PZ82L5ZH2Y",
+            credential: "O4f5xoWnWPBtkXRE"
+          },
+          {
+            urls: [
+              "turn:numb.viagenie.ca:3478",
+              "turns:numb.viagenie.ca:5349"
+            ],
+            username: "webrtc@live.com",
+            credential: "muazkh",
+          },
+          {
+            urls: [
+              "turn:openrelay.metered.ca:80",
+              "turn:openrelay.metered.ca:443",
+              "turns:openrelay.metered.ca:443"
+            ],
+            username: "openrelayproject",
+            credential: "openrelayproject",
+          },
+          // STUN servers after TURN
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+        ],
+        bundlePolicy: 'max-bundle',
+        rtcpMuxPolicy: 'require',
+        iceCandidatePoolSize: 20, // More candidates for distant connections
+        iceTransportPolicy: 'all',
+        iceGatheringTimeout: constants.ICE_GATHERING_TIMEOUT,
+      };
+    } else {
+      // Configuration optimized for nearby connections
+      return {
+        iceServers: [
+          // STUN servers FIRST for nearby connections (faster)
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:stun3.l.google.com:19302" },
+          // TURN servers as fallback
+          {
+            urls: [
+              "turn:relay1.expressturn.com:3478",
+              "turns:relay1.expressturn.com:5349"
+            ],
+            username: "efJT4DT8PZ82L5ZH2Y",
+            credential: "O4f5xoWnWPBtkXRE"
+          },
+          {
+            urls: [
+              "turn:numb.viagenie.ca:3478",
+              "turns:numb.viagenie.ca:5349"
+            ],
+            username: "webrtc@live.com",
+            credential: "muazkh",
+          },
+        ],
+        bundlePolicy: 'balanced', // Balanced for nearby connections
+        rtcpMuxPolicy: 'require',
+        iceCandidatePoolSize: 10, // Fewer candidates needed
+        iceTransportPolicy: 'all',
+        iceGatheringTimeout: constants.ICE_GATHERING_TIMEOUT,
+      };
+    }
+  }, [networkQuality, rtt, constants]);
 
   // Memoized arrays and products
   const stars = useMemo(() => 
@@ -278,24 +326,20 @@ const peerConfig = useMemo(() => {
     }
   }, []);
 
-  // Enhanced peer connection recreation with retry limits
+  // Enhanced peer connection recreation with dynamic retry limits
   const recreatePeerConnection = useCallback(async (userId) => {
-    // Initialize retry counter
     if (!retryAttempts.current[userId]) {
       retryAttempts.current[userId] = 0;
     }
     
-    // Check retry limit
-    if (retryAttempts.current[userId] >= MAX_RETRY_ATTEMPTS) {
-      console.log(`Max retry attempts (${MAX_RETRY_ATTEMPTS}) reached for user ${userId}`);
+    if (retryAttempts.current[userId] >= constants.MAX_RETRY_ATTEMPTS) {
+      console.log(`Max retry attempts (${constants.MAX_RETRY_ATTEMPTS}) reached for user ${userId}`);
       
-      // Update connection status
       setConnectionStatus(prev => ({
         ...prev,
         [userId]: 'failed'
       }));
       
-      // Clean up and stop retrying
       if (peersRef.current[userId]) {
         peersRef.current[userId].close();
         delete peersRef.current[userId];
@@ -310,16 +354,15 @@ const peerConfig = useMemo(() => {
     clearUserTimeouts(userId);
     retryAttempts.current[userId]++;
     
-    console.log(`Recreating peer connection for ${userId}, attempt ${retryAttempts.current[userId]}/${MAX_RETRY_ATTEMPTS}`);
+    console.log(`Recreating peer connection for ${userId}, attempt ${retryAttempts.current[userId]}/${constants.MAX_RETRY_ATTEMPTS}`);
     
-    // Update connection status
     setConnectionStatus(prev => ({
       ...prev,
-      [userId]: `retrying (${retryAttempts.current[userId]}/${MAX_RETRY_ATTEMPTS})`
+      [userId]: `retrying (${retryAttempts.current[userId]}/${constants.MAX_RETRY_ATTEMPTS})`
     }));
     
-    // Exponential backoff
-    const delay = BASE_RETRY_DELAY * Math.pow(1.5, retryAttempts.current[userId] - 1);
+    // Dynamic exponential backoff
+    const delay = constants.BASE_RETRY_DELAY * Math.pow(1.5, retryAttempts.current[userId] - 1);
     
     reconnectTimeouts.current[userId] = setTimeout(() => {
       if (peersRef.current[userId]) {
@@ -328,35 +371,32 @@ const peerConfig = useMemo(() => {
       }
       createPeerConnection(userId, false);
     }, delay);
-  }, [clearUserTimeouts]);
+  }, [clearUserTimeouts, constants]);
 
-  // Enhanced peer connection creation
+  // Enhanced peer connection creation with dynamic timeouts
   const createPeerConnection = useCallback((userId, isAnswerer) => {
     if (peersRef.current[userId]) {
       console.log(`Peer connection already exists for ${userId}`);
       return peersRef.current[userId];
     }
 
-    console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}`);
+    console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}, network: ${networkQuality}, RTT: ${rtt}ms`);
     
     const peer = new RTCPeerConnection(peerConfig);
     
-    // Connection timeout
-
-    const timeoutDuration = CONNECTION_TIMEOUT; 
- connectionTimeouts.current[userId] = setTimeout(() => {
-  if (peer.connectionState !== 'connected') {
-    console.log(`Connection timeout for user ${userId} after ${timeoutDuration}ms`);
-    recreatePeerConnection(userId);
-  }
-}, timeoutDuration);
+    // Dynamic connection timeout based on network conditions
+    connectionTimeouts.current[userId] = setTimeout(() => {
+      if (peer.connectionState !== 'connected') {
+        console.log(`Connection timeout for user ${userId} after ${constants.CONNECTION_TIMEOUT}ms`);
+        recreatePeerConnection(userId);
+      }
+    }, constants.CONNECTION_TIMEOUT);
     
     // Enhanced connection state handling
     peer.onconnectionstatechange = () => {
       console.log(`Peer ${userId} connection state:`, peer.connectionState);
       setConnectionState(peer.connectionState);
       
-      // Update individual connection status
       setConnectionStatus(prev => ({
         ...prev,
         [userId]: peer.connectionState
@@ -365,7 +405,6 @@ const peerConfig = useMemo(() => {
       switch (peer.connectionState) {
         case 'connected':
           console.log(`Successfully connected to user ${userId}`);
-          // Reset retry counter on successful connection
           if (retryAttempts.current[userId]) {
             delete retryAttempts.current[userId];
           }
@@ -380,28 +419,30 @@ const peerConfig = useMemo(() => {
           
         case 'disconnected':
           console.log(`Connection disconnected for user ${userId}`);
-          // Wait a bit before retrying on disconnect
+          // Dynamic wait time based on network conditions
           setTimeout(() => {
             if (peer.connectionState === 'disconnected') {
               recreatePeerConnection(userId);
             }
-          }, 3000);
+          }, constants.RECONNECT_DELAY);
           break;
       }
     };
 
-    // ICE connection state monitoring
+    // ICE connection state monitoring with dynamic restart delay
     peer.oniceconnectionstatechange = () => {
       console.log(`ICE connection state for ${userId}:`, peer.iceConnectionState);
       
       if (peer.iceConnectionState === 'failed') {
         console.log(`ICE connection failed for user ${userId}, restarting ICE`);
-        try {
-          peer.restartIce();
-        } catch (error) {
-          console.error('Error restarting ICE:', error);
-          recreatePeerConnection(userId);
-        }
+        setTimeout(() => {
+          try {
+            peer.restartIce();
+          } catch (error) {
+            console.error('Error restarting ICE:', error);
+            recreatePeerConnection(userId);
+          }
+        }, constants.ICE_RESTART_DELAY);
       }
     };
 
@@ -436,7 +477,7 @@ const peerConfig = useMemo(() => {
       });
     }
 
-    // Negotiation handling for offerer
+    // Negotiation handling for offerer with signaling state checks
     if (!isAnswerer) {
       peer.onnegotiationneeded = async () => {
         try {
@@ -464,9 +505,9 @@ const peerConfig = useMemo(() => {
 
     peersRef.current[userId] = peer;
     return peer;
-  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts]);
+  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts, networkQuality, rtt, constants]);
 
-  // Enhanced socket handlers
+  // Enhanced socket handlers with dynamic staggering
   const socketHandlers = useMemo(() => ({
     handleUserJoined: ({ userId, users, userCount, userNames: names }) => {
       console.log('User joined:', userId, 'Total users:', userCount);
@@ -480,11 +521,12 @@ const peerConfig = useMemo(() => {
         id !== socket.id && !peersRef.current[id]
       );
       
-      // Stagger peer creation to avoid overwhelming the connection
+      // Dynamic stagger delay based on network conditions
+      const staggerDelay = rtt > 200 ? 500 : 200;
       newUsers.forEach((id, index) => {
         setTimeout(() => {
           createPeerConnection(id, false);
-        }, 200 * index);
+        }, staggerDelay * index);
       });
     },
 
@@ -492,26 +534,22 @@ const peerConfig = useMemo(() => {
       console.log('User left:', userId);
       setUserCount(userCount);
       
-      // Remove user name
       setUserNames(prev => {
         const { [userId]: removed, ...rest } = prev;
         return rest;
       });
       
-      // Remove connection status
       setConnectionStatus(prev => {
         const { [userId]: removed, ...rest } = prev;
         return rest;
       });
       
-      // Clean up peer connection
       const peer = peersRef.current[userId];
       if (peer) {
         peer.close();
         delete peersRef.current[userId];
       }
       
-      // Clean up stream
       if (streamsRef.current[userId]) {
         delete streamsRef.current[userId];
         setStreams(prev => {
@@ -520,7 +558,6 @@ const peerConfig = useMemo(() => {
         });
       }
       
-      // Clean up timeouts and retry attempts
       clearUserTimeouts(userId);
       if (retryAttempts.current[userId]) {
         delete retryAttempts.current[userId];
@@ -582,14 +619,13 @@ const peerConfig = useMemo(() => {
       alert('Room is full. Please try again later.');
       router.push('/liveroom');
     }
-  }), [socket, router, createPeerConnection, clearUserTimeouts]);
+  }), [socket, router, createPeerConnection, clearUserTimeouts, rtt]);
 
   // Initialize media stream with better error handling
   const initializeMedia = useCallback(async () => {
     try {
       setLoading(true);
       
-      // Adaptive constraints based on network quality
       const getConstraints = () => {
         const baseConstraints = {
           audio: { 
@@ -644,7 +680,6 @@ const peerConfig = useMemo(() => {
     } catch (error) {
       console.error('Error accessing media devices:', error);
       
-      // Fallback: try audio only
       try {
         console.log('Attempting audio-only fallback');
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -662,7 +697,7 @@ const peerConfig = useMemo(() => {
     }
   }, [networkQuality]);
 
-  // Debounced API calls
+  // Debounced API calls (unchanged)
   const debouncedFetchProducts = useCallback(
     debounce(async (searchParams) => {
       try {
@@ -691,11 +726,10 @@ const peerConfig = useMemo(() => {
     []
   );
 
-  // Enhanced cleanup function
+  // Enhanced cleanup function (unchanged)
   const cleanup = useCallback(() => {
     console.log('Cleaning up WebRTC connections...');
     
-    // Clear all timeouts
     Object.values(reconnectTimeouts.current).forEach(timeout => {
       clearTimeout(timeout);
     });
@@ -706,10 +740,8 @@ const peerConfig = useMemo(() => {
     });
     connectionTimeouts.current = {};
     
-    // Reset retry attempts
     retryAttempts.current = {};
 
-    // Close all peer connections
     Object.values(peersRef.current).forEach(peer => {
       if (peer.connectionState !== 'closed') {
         peer.close();
@@ -717,7 +749,6 @@ const peerConfig = useMemo(() => {
     });
     peersRef.current = {};
 
-    // Stop media tracks
     if (myStreamRef.current) {
       myStreamRef.current.getTracks().forEach(track => {
         track.stop();
@@ -726,7 +757,6 @@ const peerConfig = useMemo(() => {
       myStreamRef.current = null;
     }
 
-    // Clear streams and states
     streamsRef.current = {};
     setStreams({});
     setMyStream(null);
@@ -736,7 +766,6 @@ const peerConfig = useMemo(() => {
     setHasCallStarted(false);
     setConnectionState('disconnected');
 
-    // Leave socket room
     if (socket) {
       socket.emit("leave-room", { roomId });
     }
@@ -744,7 +773,7 @@ const peerConfig = useMemo(() => {
     console.log('Cleanup completed');
   }, [roomId, socket]);
 
-  // Socket event listeners setup
+  // Socket event listeners setup (unchanged)
   useEffect(() => {
     if (!socket) return;
 
@@ -774,20 +803,17 @@ const peerConfig = useMemo(() => {
     };
   }, [socket, socketHandlers]);
 
-  // Initialization with better error handling
+  // Initialization (unchanged)
   useEffect(() => {
     const init = async () => {
-      // Check if user should be in this room
       if (sessionStorage.getItem("roomId") !== roomId) {
         router.push("/liveroom");
         return;
       }
 
-      // Get user name
       const userName = sessionStorage.getItem("userName") || `User ${Date.now()}`;
       setCurrentUserName(userName);
 
-      // Redirect if virtual experience data exists
       if (x.length > 0) {
         router.push("/virtualexperience/category");
         return;
@@ -813,7 +839,7 @@ const peerConfig = useMemo(() => {
     init();
   }, [roomId, socket, router, x, initializeMedia]);
 
-  // Fetch products when component mounts or data changes
+  // Fetch products (unchanged)
   useEffect(() => {
     if (x.length > 0) {
       debouncedFetchProducts(x);
@@ -823,12 +849,11 @@ const peerConfig = useMemo(() => {
     }
   }, [x, debouncedFetchProducts, debouncedFetchSimilarProducts]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return cleanup;
   }, [cleanup]);
 
-  // Control functions
+  // Control functions (unchanged)
   const exitCall = useCallback(() => {
     console.log('Exiting call...');
     cleanup();
@@ -893,7 +918,6 @@ const peerConfig = useMemo(() => {
         }
         myStreamRef.current.addTrack(screenStream.getVideoTracks()[0]);
 
-        // Update peer connections
         Object.values(peersRef.current).forEach((peer) => {
           const sender = peer
             .getSenders()
@@ -922,7 +946,6 @@ const peerConfig = useMemo(() => {
     router.push("/");
   }, [exitCall, router]);
 
-  // Enhanced video component with error handling
   const VideoComponent = useCallback(({ stream, className, muted = false, userId = null }) => (
     <video
       className={className}
@@ -949,7 +972,10 @@ const peerConfig = useMemo(() => {
         <div className="text-center">
           <div className="text-xl mb-4">Initializing media...</div>
           <div className="text-sm text-gray-400">
-            Network Quality: {networkQuality}
+            Network Quality: {networkQuality} | RTT: {rtt}ms
+          </div>
+          <div className="text-xs text-gray-500 mt-2">
+            {rtt > 200 ? 'Optimizing for distant connection' : 'Optimizing for nearby connection'}
           </div>
         </div>
       </div>
@@ -976,7 +1002,14 @@ const peerConfig = useMemo(() => {
               networkQuality === 'fair' ? 'bg-yellow-500' : 
               networkQuality === 'poor' ? 'bg-red-500' : 'bg-gray-500'
             }`}>
-              Network: {networkQuality.toUpperCase()}
+              Network: {networkQuality.toUpperCase()} | RTT: {rtt}ms
+            </div>
+
+            {/* Connection Mode Indicator */}
+            <div className={`px-2 py-1 rounded text-xs text-white ${
+              rtt > 200 ? 'bg-orange-600' : 'bg-green-600'
+            }`}>
+              {rtt > 200 ? 'Distant Mode' : 'Nearby Mode'}
             </div>
             
             {Object.keys(connectionStatus).length > 0 && (
@@ -988,7 +1021,7 @@ const peerConfig = useMemo(() => {
             )}
           </div>
 
-          {/* My Video Stream */}
+          {/* My Video Stream (rest unchanged) */}
           {myStream && (
             <div className="relative w-full h-full">
               <VideoComponent 
@@ -996,12 +1029,10 @@ const peerConfig = useMemo(() => {
                 className="w-full h-full object-cover"
                 muted={true}
               />
-              {/* My name overlay */}
               <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
                 {currentUserName || "You"} {isScreenSharing && "(Sharing Screen)"}
               </div>
               
-              {/* Audio/Video status indicators */}
               <div className="absolute bottom-4 right-4 flex space-x-2">
                 {!myAudioEnabled && (
                   <div className="bg-red-500 text-white p-1 rounded-full">
@@ -1017,7 +1048,6 @@ const peerConfig = useMemo(() => {
             </div>
           )}
 
-          {/* No stream message */}
           {!myStream && !loading && (
             <div className="w-full h-full flex items-center justify-center text-white text-xl">
               <div className="text-center">
@@ -1032,14 +1062,13 @@ const peerConfig = useMemo(() => {
             </div>
           )}
 
-          {/* Mobile Product Slider */}
           {memoizedFilteredProducts && memoizedFilteredProducts.length > 0 && (
             <div className="sticky md:hidden bottom-24">
               <LiveRoomProductSlider products={memoizedFilteredProducts} />
             </div>
           )}
 
-          {/* Control Buttons */}
+          {/* Control Buttons (rest unchanged) */}
           <div className="absolute bottom-8 w-full flex gap-2 justify-center">
             <button
               onClick={toggleAudio}
@@ -1077,7 +1106,6 @@ const peerConfig = useMemo(() => {
               />
             </button>
 
-            {/* Join/Exit Call Button */}
             {isStreamActive ? (
               <button
                 onClick={exitCall}
@@ -1115,7 +1143,7 @@ const peerConfig = useMemo(() => {
             </button>
           </div>
 
-          {/* Peer Video Streams */}
+          {/* Peer Video Streams (rest unchanged) */}
           <div className="absolute w-[20%] top-0 right-0 max-h-full overflow-y-auto">
             {Object.entries(streams).map(([userId, stream]) => (
               <div key={userId} className="z-50 relative mb-2 rounded-lg shadow-lg">
@@ -1124,7 +1152,6 @@ const peerConfig = useMemo(() => {
                   className="w-full rounded-lg"
                   userId={userId}
                 />
-                {/* User name and status overlay */}
                 <div className="absolute bottom-1 left-1 right-1 space-y-1">
                   <div className="bg-black/70 text-white px-2 py-1 rounded text-xs font-medium truncate text-center">
                     {userNames[userId] || `User ${userId.slice(-4)}`}
@@ -1143,10 +1170,9 @@ const peerConfig = useMemo(() => {
           </div>
         </div>
 
-        {/* Products Section */}
+        {/* Products Section (unchanged) */}
         <div className="hidden relative md:flex flex-col w-full md:w-[30%] pl-4">
           <div className="relative w-full overflow-y-scroll h-[100%]">
-            {/* Home Button */}
             <button
               onClick={handleHome}
               className="absolute top-0 right-2 bg-black text-white px-2 py-1 rounded-md hover:bg-gray-500 font-semibold cursor-pointer z-10"
@@ -1154,7 +1180,6 @@ const peerConfig = useMemo(() => {
               Home
             </button>
 
-            {/* Related Products */}
             <div>
               <h1 className="text-2xl font-semibold mb-2">Related Products</h1>
               {memoizedFilteredProducts.length > 0 ? (
@@ -1183,7 +1208,6 @@ const peerConfig = useMemo(() => {
               )}
             </div>
 
-            {/* Similar Products */}
             <div className="mt-4">
               <h2 className="text-2xl font-semibold mb-2">Similar Products</h2>
               {memoizedSimilarProducts.length > 0 ? (
