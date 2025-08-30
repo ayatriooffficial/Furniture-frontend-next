@@ -120,6 +120,16 @@ const useConnectionQuality = (peersRef) => {
   return quality;
 };
 
+// Loading Spinner Component
+const LoadingSpinner = ({ text = "Connecting to peers..." }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 text-center">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p className="text-gray-700 font-medium">{text}</p>
+    </div>
+  </div>
+);
+
 const Page = ({ params }) => {
   const router = useRouter();
   const roomId = params.roomId;
@@ -143,6 +153,10 @@ const Page = ({ params }) => {
   const [isStreamActive, setIsStreamActive] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState({});
 
+  // NEW: Peer connection loading state
+  const [peerConnectionLoading, setPeerConnectionLoading] = useState({});
+  const [pendingConnections, setPendingConnections] = useState(new Set());
+
   // Refs for non-reactive values
   const peersRef = useRef({});
   const myStreamRef = useRef(null);
@@ -160,6 +174,32 @@ const Page = ({ params }) => {
     getConnectionConstants(networkQuality, rtt), 
     [networkQuality, rtt]
   );
+
+  // NEW: Check if any peer is still connecting
+  const anyPeerConnecting = useMemo(() => {
+    return Object.values(peerConnectionLoading).some(Boolean) || 
+           pendingConnections.size > 0 ||
+           Object.values(connectionStatus).some(status => 
+             status === 'connecting' || status.includes('retrying')
+           );
+  }, [peerConnectionLoading, pendingConnections, connectionStatus]);
+
+  // NEW: Helper functions for connection loading state
+  const startPeerConnectionLoading = useCallback((peerId) => {
+    setPeerConnectionLoading(prev => ({ ...prev, [peerId]: true }));
+    setPendingConnections(prev => new Set(prev).add(peerId));
+    console.log(`Started connecting to peer ${peerId}`);
+  }, []);
+
+  const finishPeerConnectionLoading = useCallback((peerId) => {
+    setPeerConnectionLoading(prev => ({ ...prev, [peerId]: false }));
+    setPendingConnections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(peerId);
+      return newSet;
+    });
+    console.log(`Finished connecting to peer ${peerId}`);
+  }, []);
 
   // DYNAMIC peer configuration - ADAPTS to network conditions
   const peerConfig = useMemo(() => {
@@ -340,6 +380,9 @@ const Page = ({ params }) => {
         [userId]: 'failed'
       }));
       
+      // NEW: Mark as finished connecting (failed)
+      finishPeerConnectionLoading(userId);
+      
       if (peersRef.current[userId]) {
         peersRef.current[userId].close();
         delete peersRef.current[userId];
@@ -371,7 +414,7 @@ const Page = ({ params }) => {
       }
       createPeerConnection(userId, false);
     }, delay);
-  }, [clearUserTimeouts, constants]);
+  }, [clearUserTimeouts, constants, finishPeerConnectionLoading]);
 
   // Enhanced peer connection creation with dynamic timeouts
   const createPeerConnection = useCallback((userId, isAnswerer) => {
@@ -381,6 +424,9 @@ const Page = ({ params }) => {
     }
 
     console.log(`Creating new peer connection for ${userId}, isAnswerer: ${isAnswerer}, network: ${networkQuality}, RTT: ${rtt}ms`);
+    
+    // NEW: Start connection loading
+    startPeerConnectionLoading(userId);
     
     const peer = new RTCPeerConnection(peerConfig);
     
@@ -405,6 +451,8 @@ const Page = ({ params }) => {
       switch (peer.connectionState) {
         case 'connected':
           console.log(`Successfully connected to user ${userId}`);
+          // NEW: Mark as finished connecting (success)
+          finishPeerConnectionLoading(userId);
           if (retryAttempts.current[userId]) {
             delete retryAttempts.current[userId];
           }
@@ -505,7 +553,7 @@ const Page = ({ params }) => {
 
     peersRef.current[userId] = peer;
     return peer;
-  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts, networkQuality, rtt, constants]);
+  }, [peerConfig, socket, recreatePeerConnection, clearUserTimeouts, networkQuality, rtt, constants, startPeerConnectionLoading, finishPeerConnectionLoading]);
 
   // Enhanced socket handlers with dynamic staggering
   const socketHandlers = useMemo(() => ({
@@ -533,6 +581,9 @@ const Page = ({ params }) => {
     handleUserLeft: ({ userId, userCount }) => {
       console.log('User left:', userId);
       setUserCount(userCount);
+      
+      // NEW: Clean up loading state
+      finishPeerConnectionLoading(userId);
       
       setUserNames(prev => {
         const { [userId]: removed, ...rest } = prev;
@@ -619,7 +670,7 @@ const Page = ({ params }) => {
       alert('Room is full. Please try again later.');
       router.push('/liveroom');
     }
-  }), [socket, router, createPeerConnection, clearUserTimeouts, rtt]);
+  }), [socket, router, createPeerConnection, clearUserTimeouts, rtt, finishPeerConnectionLoading]);
 
   // Initialize media stream with better error handling
   const initializeMedia = useCallback(async () => {
@@ -726,9 +777,13 @@ const Page = ({ params }) => {
     []
   );
 
-  // Enhanced cleanup function (unchanged)
+  // Enhanced cleanup function
   const cleanup = useCallback(() => {
     console.log('Cleaning up WebRTC connections...');
+    
+    // NEW: Clear all loading states
+    setPeerConnectionLoading({});
+    setPendingConnections(new Set());
     
     Object.values(reconnectTimeouts.current).forEach(timeout => {
       clearTimeout(timeout);
@@ -773,7 +828,7 @@ const Page = ({ params }) => {
     console.log('Cleanup completed');
   }, [roomId, socket]);
 
-  // Socket event listeners setup (unchanged)
+  // Socket event listeners setup
   useEffect(() => {
     if (!socket) return;
 
@@ -803,7 +858,7 @@ const Page = ({ params }) => {
     };
   }, [socket, socketHandlers]);
 
-  // Initialization (unchanged)
+  // Initialization
   useEffect(() => {
     const init = async () => {
       if (sessionStorage.getItem("roomId") !== roomId) {
@@ -839,7 +894,7 @@ const Page = ({ params }) => {
     init();
   }, [roomId, socket, router, x, initializeMedia]);
 
-  // Fetch products (unchanged)
+  // Fetch products
   useEffect(() => {
     if (x.length > 0) {
       debouncedFetchProducts(x);
@@ -853,7 +908,7 @@ const Page = ({ params }) => {
     return cleanup;
   }, [cleanup]);
 
-  // Control functions (unchanged)
+  // Control functions
   const exitCall = useCallback(() => {
     console.log('Exiting call...');
     cleanup();
@@ -984,6 +1039,13 @@ const Page = ({ params }) => {
 
   return (
     <div className="">
+      {/* NEW: Peer Connection Loading Overlay */}
+      {anyPeerConnecting && (
+        <LoadingSpinner 
+          text={`Connecting to ${pendingConnections.size} peer${pendingConnections.size !== 1 ? 's' : ''}...`} 
+        />
+      )}
+      
       <div className="sm:px-4 flex px-[20px] h-screen py-4 flex-col md:flex-row overflow-y-hidden">
         {/* Video Section */}
         <div className="relative w-full h-full md:w-[70%] bg-black py-4 border-2 border-black">
@@ -1011,6 +1073,13 @@ const Page = ({ params }) => {
             }`}>
               {rtt > 200 ? 'Distant Mode' : 'Nearby Mode'}
             </div>
+
+            {/* NEW: Connection Progress Indicator */}
+            {anyPeerConnecting && (
+              <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                Connecting: {pendingConnections.size} peer{pendingConnections.size !== 1 ? 's' : ''}
+              </div>
+            )}
             
             {Object.keys(connectionStatus).length > 0 && (
               <div className="bg-black/70 text-white px-2 py-1 rounded text-xs max-w-xs">
@@ -1021,7 +1090,7 @@ const Page = ({ params }) => {
             )}
           </div>
 
-          {/* My Video Stream (rest unchanged) */}
+          {/* My Video Stream */}
           {myStream && (
             <div className="relative w-full h-full">
               <VideoComponent 
@@ -1068,7 +1137,7 @@ const Page = ({ params }) => {
             </div>
           )}
 
-          {/* Control Buttons (rest unchanged) */}
+          {/* Control Buttons */}
           <div className="absolute bottom-8 w-full flex gap-2 justify-center">
             <button
               onClick={toggleAudio}
@@ -1143,7 +1212,7 @@ const Page = ({ params }) => {
             </button>
           </div>
 
-          {/* Peer Video Streams (rest unchanged) */}
+          {/* Peer Video Streams */}
           <div className="absolute w-[20%] top-0 right-0 max-h-full overflow-y-auto">
             {Object.entries(streams).map(([userId, stream]) => (
               <div key={userId} className="z-50 relative mb-2 rounded-lg shadow-lg">
@@ -1159,7 +1228,8 @@ const Page = ({ params }) => {
                   {connectionStatus[userId] && connectionStatus[userId] !== 'connected' && (
                     <div className={`text-xs text-center px-1 py-0.5 rounded ${
                       connectionStatus[userId].includes('retrying') ? 'bg-yellow-500' :
-                      connectionStatus[userId] === 'failed' ? 'bg-red-500' : 'bg-gray-500'
+                      connectionStatus[userId] === 'failed' ? 'bg-red-500' : 
+                      connectionStatus[userId] === 'connecting' ? 'bg-blue-500' : 'bg-gray-500'
                     } text-white`}>
                       {connectionStatus[userId]}
                     </div>
