@@ -13,8 +13,12 @@ const nextConfig = withPWA({
   images: {
     remotePatterns: [
       {
-  protocol: "https",
-  hostname: "ayatrio-bucket-data-data-data.s3.ap-south-1.amazonaws.com",
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ayatrio-bucket-data-data-data.s3.ap-south-1.amazonaws.com",
       },
       {
         protocol: "https",
