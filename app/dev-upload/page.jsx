@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
 
 export default function UploadPage() {
   const [token, setToken] = useState("");
