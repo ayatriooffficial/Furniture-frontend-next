@@ -158,7 +158,6 @@ const nextConfig = withPWA({
       },
     ],
   },
-  distDir: "build",
   experimental: {
     missingSuspenseWithCSRBailout: true,
   },
