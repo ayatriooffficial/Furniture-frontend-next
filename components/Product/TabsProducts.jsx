@@ -32,6 +32,12 @@ import { viewItemList } from "@/tag-manager/events/view_item_list";
 import SubcategorySlider from "./SubcategorySlider";
 import OfferSlider from "./OfferSlider";
 import CardSkeleton from "../Cards/CardSkeleton";
+import { FEATURES } from "@/constants/features";
+import { CORE_VALUES } from "@/constants/coreValues";
+import {
+  smartConvertFeatures,
+  smartConvertCoreValues,
+} from "@/utils/convertIdsToData";
 
 const Tabs = ({
   filteredProductData,
@@ -60,7 +66,6 @@ const Tabs = ({
   const router = useRouter();
   const dispatch = useDispatch();
   const pathname = usePathname();
-
 
   // Combined map state
   const [map, setMap] = useState([
@@ -598,8 +603,9 @@ const Tabs = ({
   useEffect(() => {
     const fetchOfferCategory = async () => {
       try {
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL
-          }/api/getAllCategoryByOffer/${encodeURI(type || "")}`;
+        const apiUrl = `${
+          process.env.NEXT_PUBLIC_API_BASE_URL
+        }/api/getAllCategoryByOffer/${encodeURI(type || "")}`;
         const response = await axios.get(apiUrl);
         setOfferCategoryData(response.data || []);
       } catch (error) {
@@ -900,8 +906,9 @@ const Tabs = ({
         pages.push(
           <button
             key={i}
-            className={`text-center text-[14px] font-semibold border max-w-fit bg-gray-100 cursor-pointer px-[24px] py-[0.65rem] mr-2.5 rounded-full ${currentPage === i ? "bg-gray-200" : ""
-              }`}
+            className={`text-center text-[14px] font-semibold border max-w-fit bg-gray-100 cursor-pointer px-[24px] py-[0.65rem] mr-2.5 rounded-full ${
+              currentPage === i ? "bg-gray-200" : ""
+            }`}
             onClick={() => onPageChange(i)}
           >
             {i}
@@ -915,8 +922,6 @@ const Tabs = ({
   const commonClasses =
     "px-[24px] py-[0.65rem] mr-2.5 rounded-full flex whitespace-nowrap";
 
-
-
   return (
     <main>
       <div className="md:px-[52px] sm:px-[20px] px-[12px]">
@@ -926,8 +931,8 @@ const Tabs = ({
             {!isSubcategoryPage
               ? h1title || heading
               : filteredSubCategory?.length > 0
-                ? filteredSubCategory[0]?.h1title
-                : h1title || heading}
+              ? filteredSubCategory[0]?.h1title
+              : h1title || heading}
           </h1>
           <div className="mt-1 flex items-center pb-[30px]">
             <div className="star-rating flex gap-1">
@@ -961,7 +966,7 @@ const Tabs = ({
                   subCategory={subCategory}
                   filteredSubCategory={filteredSubCategory}
                   setType={setType}
-                  onSubcategoryClick={() => { }}
+                  onSubcategoryClick={() => {}}
                   onSubcategorySelect={handleSubcategorySelect}
                   title={heading}
                   isSubcategoryPage={isSubcategoryPage}
@@ -999,8 +1004,8 @@ const Tabs = ({
           {!isSubcategoryPage
             ? renderPdescDescription(pdesc)
             : filteredSubCategory?.length > 0
-              ? renderPdescDescription(filteredSubCategory[0]?.pdesc)
-              : renderPdescDescription(pdesc)}
+            ? renderPdescDescription(filteredSubCategory[0]?.pdesc)
+            : renderPdescDescription(pdesc)}
         </p>
 
         {openAll && <div className="background-overlay open"></div>}
@@ -1121,10 +1126,11 @@ const Tabs = ({
                     handleAll();
                     setActiveTab("");
                   }}
-                  className={`Tabbtn z-0 gap-[10px]  bg-gray-100 ${openAll
-                    ? "active-tabs border border-black px-[24px]  text-[14px] font-medium"
-                    : "tabS border border-white px-[24px] text-[14px] font-medium"
-                    } ${commonClasses}`}
+                  className={`Tabbtn z-0 gap-[10px]  bg-gray-100 ${
+                    openAll
+                      ? "active-tabs border border-black px-[24px]  text-[14px] font-medium"
+                      : "tabS border border-white px-[24px] text-[14px] font-medium"
+                  } ${commonClasses}`}
                 >
                   All Filters
                   <Image
@@ -1170,8 +1176,9 @@ const Tabs = ({
                       src="/icons/downarrow.svg"
                       width={20}
                       height={20}
-                      className={`w-5 h-5 mt-1 ${openAllSort ? "rotate-90" : "-rotate-90"
-                        }`}
+                      className={`w-5 h-5 mt-1 ${
+                        openAllSort ? "rotate-90" : "-rotate-90"
+                      }`}
                       alt="arrow icon"
                     />
                   </div>
@@ -1197,8 +1204,9 @@ const Tabs = ({
                           src="/icons/downarrow.svg"
                           width={20}
                           height={20}
-                          className={`w-5 h-5 mt-1 ${openAllCategory ? "rotate-45" : "-rotate-180"
-                            }`}
+                          className={`w-5 h-5 mt-1 ${
+                            openAllCategory ? "rotate-45" : "-rotate-180"
+                          }`}
                           alt="arrow icon"
                         />
                       </div>
@@ -1225,8 +1233,9 @@ const Tabs = ({
                         src="/icons/downarrow.svg"
                         width={40}
                         height={40}
-                        className={`w-5 h-5 mt-1 ${openAllColor ? "rotate-90" : "-rotate-90"
-                          }`}
+                        className={`w-5 h-5 mt-1 ${
+                          openAllColor ? "rotate-90" : "-rotate-90"
+                        }`}
                         alt="arrow icon"
                       />
                     </div>
@@ -1252,8 +1261,9 @@ const Tabs = ({
                         src="/icons/downarrow.svg"
                         width={40}
                         height={40}
-                        className={`w-5 h-5 mt-1 ${openAllDemandType ? "rotate-90" : "-rotate-90"
-                          }`}
+                        className={`w-5 h-5 mt-1 ${
+                          openAllDemandType ? "rotate-90" : "-rotate-90"
+                        }`}
                         alt="arrow icon"
                       />
                     </div>
@@ -1279,8 +1289,9 @@ const Tabs = ({
                         src="/icons/downarrow.svg"
                         width={40}
                         height={40}
-                        className={`w-5 h-5 mt-1 ${openAllOfferType ? "rotate-90" : "-rotate-90"
-                          }`}
+                        className={`w-5 h-5 mt-1 ${
+                          openAllOfferType ? "rotate-90" : "-rotate-90"
+                        }`}
                         alt="arrow icon"
                       />
                     </div>
@@ -1306,8 +1317,9 @@ const Tabs = ({
                         src="/icons/downarrow.svg"
                         width={40}
                         height={40}
-                        className={`w-5 h-5 mt-1 ${openAllPrice ? "rotate-90" : "-rotate-90"
-                          }`}
+                        className={`w-5 h-5 mt-1 ${
+                          openAllPrice ? "rotate-90" : "-rotate-90"
+                        }`}
                         alt="arrow icon"
                       />
                     </div>
@@ -1337,10 +1349,11 @@ const Tabs = ({
               </button>
               <button
                 onClick={handleRemoveAllFilters}
-                className={`${clearSelectedResult
-                  ? "bg-white border-[1.5px] border-black"
-                  : "bg-[#929292] opacity-50"
-                  } text-[14px] font-semibold text-black w-full h-9 rounded-full`}
+                className={`${
+                  clearSelectedResult
+                    ? "bg-white border-[1.5px] border-black"
+                    : "bg-[#929292] opacity-50"
+                } text-[14px] font-semibold text-black w-full h-9 rounded-full`}
               >
                 Clear all
               </button>
@@ -1354,8 +1367,9 @@ const Tabs = ({
               <button
                 onClick={handleCompareClick}
                 disabled={selectedpdt.length < 2}
-                className={`bg-black text-white px-3 py-2 whitespace-nowrap rounded-full ${selectedpdt.length < 2 ? "bg-gray-300" : ""
-                  }`}
+                className={`bg-black text-white px-3 py-2 whitespace-nowrap rounded-full ${
+                  selectedpdt.length < 2 ? "bg-gray-300" : ""
+                }`}
               >
                 Compare Products
               </button>
@@ -1363,7 +1377,6 @@ const Tabs = ({
           </div>
           <div className="grid md:grid-cols-4 grid-cols-2 cursor-pointer gap-x-4 py-1 sm:py-3 gap-y-8">
             {filterData && filterData.length > 0 ? (
-        
               filterData.map((text, idx) => {
                 const inCart = isProductInCart(text?._id);
                 return (
@@ -1381,7 +1394,7 @@ const Tabs = ({
                       images={text.images}
                       productId={text.productId}
                       idx={idx}
-                      handlenav={() => { }}
+                      handlenav={() => {}}
                       selectedpdt={selectedpdt}
                       handleCheckbox={handleCheckbox}
                       setShowcompare={setShowCompare}
@@ -1403,13 +1416,12 @@ const Tabs = ({
                     {secondGrid && idx === 6 && (
                       <CategoryGrid grid={secondGrid} />
                     )} */}
-                    {firstGrid && Object.keys(firstGrid).length > 0 && idx === 2 && (
-                      <CategoryGrid grid={firstGrid} />
-                    )}
-                    {secondGrid && Object.keys(secondGrid).length > 0 && idx === 6 && (
-                      <CategoryGrid grid={secondGrid} />
-                    )}
-
+                    {firstGrid &&
+                      Object.keys(firstGrid).length > 0 &&
+                      idx === 2 && <CategoryGrid grid={firstGrid} />}
+                    {secondGrid &&
+                      Object.keys(secondGrid).length > 0 &&
+                      idx === 6 && <CategoryGrid grid={secondGrid} />}
                   </>
                 );
               })
@@ -1439,18 +1451,18 @@ const Tabs = ({
             product={
               filteredProductData && filteredProductData.length > 0
                 ? {
-                  category:
-                    parentCategory || filteredProductData[0]?.category || "",
-                  subcategory: isSubcategoryPage
-                    ? pathname?.split("/")[1]?.replace(/-/g, " ") || ""
-                    : "",
-                  productTitle: "",
-                }
+                    category:
+                      parentCategory || filteredProductData[0]?.category || "",
+                    subcategory: isSubcategoryPage
+                      ? pathname?.split("/")[1]?.replace(/-/g, " ") || ""
+                      : "",
+                    productTitle: "",
+                  }
                 : {
-                  category: parentCategory || "",
-                  subcategory: "",
-                  productTitle: "",
-                }
+                    category: parentCategory || "",
+                    subcategory: "",
+                    productTitle: "",
+                  }
             }
           />
         </div>
@@ -1482,83 +1494,115 @@ const Tabs = ({
         <article className="sm:w-3/4 py-3 w-full ">
           {!isSubcategoryPage && features?.length > 0
             ? features.map((feature, featureIdx) => (
-              <div key={featureIdx} className="">
-                <div className="flex flex-col ">
-                  <div>
-                    <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                      {feature.title || "Feature"}:
-                    </h2>
-                    <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                      {renderFeatureDescription(feature)}
+                <div key={featureIdx} className="">
+                  <div className="flex flex-col ">
+                    <div>
+                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                        {feature.title || "Feature"}:
+                      </h2>
+                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                        {renderFeatureDescription(feature)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {feature.cards &&
-                      feature.cards.map((card, cardIdx) => (
-                        <div
-                          key={cardIdx}
-                          className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-                          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                        >
-                          {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt="" />)}
-                          {cardDescriptionRenderer(card)}
-                          {/* {Array.isArray(card.description)
+                    <div
+                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white"
+                      style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                    >
+                      {feature.cards &&
+                        feature.cards.map((card, cardIdx) => (
+                          <div
+                            key={cardIdx}
+                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                            style={{
+                              scrollbarWidth: "none",
+                              msOverflowStyle: "none",
+                            }}
+                          >
+                            {card.svgUrl && (
+                              <img
+                                className="size-20 text-center mx-auto mt-6"
+                                src={card.svgUrl}
+                                alt=""
+                              />
+                            )}
+                            {cardDescriptionRenderer(card)}
+                            {/* {Array.isArray(card.description)
         ? card.description.map((desc, i) => (
             <div key={i} dangerouslySetInnerHTML={{ __html: desc }} />
           ))
         : <div dangerouslySetInnerHTML={{ __html: card.description }} />} */}
-                        </div>
-                      ))}
-                  </div>
-
-                  {feature.tip && (
-                    <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
-                      <span className="font-bold">{feature.title} Tip :</span> {feature.tip}
+                          </div>
+                        ))}
                     </div>
-                  )}
+
+                    {feature.tip && (
+                      <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
+                        <span className="font-bold">{feature.title} Tip :</span>{" "}
+                        {feature.tip}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))
             : filteredSubCategory &&
-            filteredSubCategory[0]?.features?.length > 0 &&
-            filteredSubCategory[0]?.features.map((feature, featureIdx) => (
-              <div key={featureIdx} className="">
-                <div className="flex flex-col ">
-                  <div>
-                    <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                      {feature.title || "Feature"}:
-                    </h2>
-                    <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                      {renderFeatureDescription(feature)}
+              filteredSubCategory[0]?.features?.length > 0 &&
+              filteredSubCategory[0]?.features.map((feature, featureIdx) => (
+                <div key={featureIdx} className="">
+                  <div className="flex flex-col ">
+                    <div>
+                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                        {feature.title || "Feature"}:
+                      </h2>
+                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                        {renderFeatureDescription(feature)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {feature.cards &&
-                      feature.cards.map((card, cardIdx) => (
-                        <div
-                          key={cardIdx}
-                          className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-                          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                        >
-                          {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt="" />)}
-                          {cardDescriptionRenderer(card)}
-                          {/* {Array.isArray(card.description)
+                    <div
+                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white"
+                      style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                    >
+                      {feature.cards &&
+                        feature.cards.map((card, cardIdx) => (
+                          <div
+                            key={cardIdx}
+                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                            style={{
+                              scrollbarWidth: "none",
+                              msOverflowStyle: "none",
+                            }}
+                          >
+                            {card.svgUrl && (
+                              <img
+                                className="size-20 text-center mx-auto mt-6"
+                                src={card.svgUrl}
+                                alt=""
+                              />
+                            )}
+                            {cardDescriptionRenderer(card)}
+                            {/* {Array.isArray(card.description)
         ? card.description.map((desc, i) => (
             <div key={i} dangerouslySetInnerHTML={{ __html: desc }} />
           ))
         : <div dangerouslySetInnerHTML={{ __html: card.description }} />} */}
-                        </div>
-                      ))}
-                  </div>
-
-                  {feature.tip && (
-                    <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
-                      <span className="font-bold">{feature.title} Tip :</span> {feature.tip}
+                          </div>
+                        ))}
                     </div>
-                  )}
+
+                    {feature.tip && (
+                      <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
+                        <span className="font-bold">{feature.title} Tip :</span>{" "}
+                        {feature.tip}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
         </article>
 
         <article className="sm:w-1/4 py-3 w-full">
@@ -1581,8 +1625,9 @@ const Tabs = ({
 
           {filterData && filterData.length > 0 ? (
             filterData.slice(0, 10).map((text, idx) => {
-              const pageUrl = `/${text.productTitle?.replace(/ /g, "-")}/${text.productId
-                }`;
+              const pageUrl = `/${text.productTitle?.replace(/ /g, "-")}/${
+                text.productId
+              }`;
               return (
                 <div
                   key={text._id}
@@ -1612,38 +1657,38 @@ const Tabs = ({
       <div className="md:px-[52px] sm:ml-[12px] ml-[12px] md:ml-[0px] bg-[#ffffff]">
         {(faq?.length > 0 ||
           (filteredSubCategory && filteredSubCategory[0]?.faq?.length > 0)) && (
-            <h2 className="text-[#000000] font-semibold text-[16px] lg:pt-[30px] capitalize">
-              Question and Answers
-            </h2>
-          )}
+          <h2 className="text-[#000000] font-semibold text-[16px] lg:pt-[30px] capitalize">
+            Question and Answers
+          </h2>
+        )}
 
         {!isSubcategoryPage && faq?.length > 0
           ? faq.map((item, index) => (
-            <div key={`${item._id}_${index}`} className="mt-2">
-              <div className="text-[14px] tracking-normal text-[#000000] py-2">
-                <h2 className="font-medium text-[#6e6e73]">
-                  Q. {item.question || item.heading || "Question"}?
-                </h2>
-                <h3 className="w-4/5 pt-[5px] text-[#6e6e73]">
-                  A. {item.answer || item.description || "Answer"}.
-                </h3>
+              <div key={`${item._id}_${index}`} className="mt-2">
+                <div className="text-[14px] tracking-normal text-[#000000] py-2">
+                  <h2 className="font-medium text-[#6e6e73]">
+                    Q. {item.question || item.heading || "Question"}?
+                  </h2>
+                  <h3 className="w-4/5 pt-[5px] text-[#6e6e73]">
+                    A. {item.answer || item.description || "Answer"}.
+                  </h3>
+                </div>
               </div>
-            </div>
-          ))
+            ))
           : filteredSubCategory &&
-          filteredSubCategory[0]?.faq?.length > 0 &&
-          filteredSubCategory[0]?.faq.map((faqItem) => (
-            <div key={faqItem._id} className="mt-4">
-              <div className="text-[14px] text-[#000000]">
-                <h2 className="text-[14px] font-medium text-[#6e6e73]">
-                  Q. {faqItem.question || faqItem.heading || "Question"}
-                </h2>
-                <h3 className="text-[#6e6e73]">
-                  A. {faqItem.answer || faqItem.description || "Answer"}
-                </h3>
+            filteredSubCategory[0]?.faq?.length > 0 &&
+            filteredSubCategory[0]?.faq.map((faqItem) => (
+              <div key={faqItem._id} className="mt-4">
+                <div className="text-[14px] text-[#000000]">
+                  <h2 className="text-[14px] font-medium text-[#6e6e73]">
+                    Q. {faqItem.question || faqItem.heading || "Question"}
+                  </h2>
+                  <h3 className="text-[#6e6e73]">
+                    A. {faqItem.answer || faqItem.description || "Answer"}
+                  </h3>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
       </div>
     </main>
   );

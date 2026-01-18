@@ -4,29 +4,29 @@ export const FEATURES = {
   high_durability: {
     title: "High Durability",
     description: "Built for long-lasting performance",
-    icon: null,
+    icon: "/features/durable.png",
   },
   premium_quality: {
     title: "Premium Quality",
     description: "Best-in-class materials and craftsmanship",
-    icon: "/icons/quality.svg",
+    icon: "/features/premium.png",
   },
   weatherproof: {
     title: "Weather Resistant",
     description: "Withstands extreme weather conditions",
-    icon: null,
+    icon: "/features/rainprotection.png",
   },
   uv_resistant: {
     title: "UV Resistant",
     description: "Fades resistant for outdoor durability",
-    icon: null,
+    icon: "/features/uvresistant.png",
   },
 
   // FINISH & AESTHETICS
   luxury_finish: {
     title: "Luxury Finish",
     description: "Premium polished surface",
-    icon: null,
+     icon: "/features/finish.png",
   },
   glossy_finish: {
     title: "Glossy Finish",
