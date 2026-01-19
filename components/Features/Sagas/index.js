@@ -13,7 +13,8 @@ import { watchSelectedProductsSaga } from "./compareSaga";
 import { watchVirtualGet } from "./virtualSaga";
 import { watchFetchTrendingData } from "./trendingSaga";
 import { watchFetchRankedProductsData } from "./rankedProductsSaga";
-import { watchMultiCardData } from "./multiCardSaga";
+// REMOVED: multiCardSaga - using local constants instead
+// import { watchMultiCardData } from "./multiCardSaga";
 import { watchFetchImagechangerData } from "./ImageChangerSaga";
 import { watchFetchDisplayData } from "./displaySaga";
 import { watchFetchMusicData } from "./musicSaga";
@@ -42,7 +43,7 @@ export default function* rootSaga() {
     cartSaga(),
     watchVirtualGet(),
     watchSelectedProductsSaga(),
-    watchMultiCardData(),
+    // REMOVED: watchMultiCardData() - using local constants instead
     watchFetchImagechangerData(),
     watchFetchDisplayData(),
     watchFetchMusicData(),

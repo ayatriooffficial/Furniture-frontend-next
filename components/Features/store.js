@@ -19,7 +19,8 @@ import virtualDataReducer from "./Slices/virtualDataSlice";
 import trendingReducer from "./Slices/trendingSlice";
 import rankedProductsReducer from "./Slices/rankedProductsSlice";
 import blogCardReducer from "./Slices/blogCardSlice";
-import multiCardReducer from "./Slices/multiCardSlice";
+// REMOVED: multiCardReducer - using local data from constants instead
+// import multiCardReducer from "./Slices/multiCardSlice";
 import imageChangerReducer from "./Slices/ImagechangerSlice";
 import displayReducer from "./Slices/displaySlice";
 import musicReducer from "./Slices/musicSectionSlice";
@@ -78,7 +79,7 @@ export const store = configureStore({
     trending: trendingReducer,
     rankedProducts: rankedProductsReducer,
     blogCard: blogCardReducer,
-    multiCard: multiCardReducer,
+    // REMOVED: multiCard: multiCardReducer - using local constants instead
     Imagechanger: imageChangerReducer,
     Display: displayReducer,
     music: musicReducer,

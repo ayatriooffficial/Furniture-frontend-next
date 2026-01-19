@@ -2,7 +2,9 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 
 // const BASE_URL = "http://52.66.30.159:8080/api";
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://backend.ayatrio.com"}/api`;
+const BASE_URL = `${
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://backend.ayatrio.com"
+}/api`;
 export const createApiEndpoint = (endpoint) => `${BASE_URL}/${endpoint}`;
 // if (typeof window !== "undefined") {
 //   var id = localStorage.getItem("deviceId");
@@ -36,14 +38,20 @@ export const fetchRecommendedProduct = async () => {
     // console.error(err);
   }
 };
-export const fetchRecommendedProductCategoryWise = async ({ categorySkip = 0, categoryLimit = 1, productLimit = 3 }) => {
+export const fetchRecommendedProductCategoryWise = async ({
+  categorySkip = 0,
+  categoryLimit = 1,
+  productLimit = 3,
+}) => {
   let id;
   if (typeof window !== "undefined") {
     id = localStorage.getItem("deviceId");
   }
   try {
     const response = await axios.get(
-      createApiEndpoint(`getRecommendationCategoryWise?deviceId=${id}&categorySkip=${categorySkip}&categoryLimit=${categoryLimit}&productLimit=${productLimit}`)
+      createApiEndpoint(
+        `getRecommendationCategoryWise?deviceId=${id}&categorySkip=${categorySkip}&categoryLimit=${categoryLimit}&productLimit=${productLimit}`
+      )
     );
     return response.data;
   } catch (err) {
@@ -60,7 +68,7 @@ export const fetchSliderView = async (page, limit) => {
     return response.data;
   } catch (err) {
     console.error(err);
-    return []
+    return [];
   }
 };
 
@@ -76,7 +84,7 @@ export const fetchProductsWithSearch = async (searchQuery) => {
   } catch (error) {
     console.error("Error fetching products:", error);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -87,7 +95,7 @@ export const fetchFirstImgCardSlider = async () => {
   } catch (error) {
     console.error(`Error fetching slider: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -98,7 +106,7 @@ export const fetchBlogCardDataApi = async () => {
   } catch (error) {
     console.error(`Error fetching blogs: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -109,7 +117,7 @@ export const fetchProfileContent = async () => {
   } catch (error) {
     console.error(`Error fetching profile content: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -120,7 +128,7 @@ export const fetchCartData = async () => {
   } catch (error) {
     console.error(`Error fetching cart content: ${error.message} `);
     throw error;
-    return []
+    return [];
   }
 };
 export const virtualGet = async () => {
@@ -130,19 +138,31 @@ export const virtualGet = async () => {
   } catch (error) {
     console.error(`Error fetching virtual content: ${error.message} `);
     throw error;
-    return []
+    return [];
   }
 };
+
+// REMOVED: multiCardData API call - using local constants instead
+// Now data is imported directly from @/constants/multiCardData
+// This eliminates:
+// ❌ Extra API call
+// ❌ Redux boilerplate
+// ❌ Server dependency
+// ❌ Slower page load
+// ✅ Instant data loading from local storage
+/*
+import { MULTICARD_DATA } from "@/constants/multiCardData";
 export const multiCardData = async () => {
   try {
-    const response = await axios.get(createApiEndpoint("getHeaderInfoSection"));
-    return response.data;
+    // Return local data instead of making API call
+    return MULTICARD_DATA;
   } catch (error) {
     console.error(`Error fetching multicard content: ${error.message}`);
     throw error;
     return []
   }
 };
+*/
 
 export const fetchMusicData = async () => {
   try {
@@ -151,7 +171,7 @@ export const fetchMusicData = async () => {
   } catch (error) {
     console.error(`Error fetching music data : ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -162,7 +182,7 @@ export const fetchFirstImageChangerData = async () => {
   } catch (error) {
     console.error(`Error fetching music data : ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -180,15 +200,18 @@ export const fetchFirstImageChangerData = async () => {
 
 export const fetchSuggestionData = async (heading) => {
   try {
-    const response = await axios.get(createApiEndpoint("fetchSuggestionByTitle"), {
-      params: { heading: decodeURI(heading) },
-    });
+    const response = await axios.get(
+      createApiEndpoint("fetchSuggestionByTitle"),
+      {
+        params: { heading: decodeURI(heading) },
+      }
+    );
     console.log("response", response.data);
     return response.data;
   } catch (error) {
     console.error(`Error fetching suggestions: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -202,12 +225,12 @@ export const fetchHeaderCategoryData = async (category) => {
         },
       }
     );
-    console.log(response)
+    console.log(response);
 
     return response.data;
   } catch (error) {
     console.error(`Error fetching header category data: ${error.message}`);
-    return []
+    return [];
   }
 };
 
@@ -225,7 +248,7 @@ export const fetchHeaderCategoryDataOnlyNames = async (category) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching header category data: ${error.message}`);
-    return []
+    return [];
   }
 };
 
@@ -238,7 +261,7 @@ export const fetchProductsFromDemandType = async (type) => {
   } catch (error) {
     console.error(`Error fetching suggestions: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -252,7 +275,7 @@ export const fetchProductsFromOffers = async (type) => {
   } catch (error) {
     console.error(`Error fetching suggestions: ${error.message}`);
     throw error;
-    return []
+    return [];
   }
 };
 
@@ -269,7 +292,7 @@ export const fetchStores = async (search) => {
     }
   } catch (error) {
     console.error(`Error fetching suggestions: ${error.message}`);
-    return []
+    return [];
   }
 };
 
@@ -286,7 +309,7 @@ export const upsertUserLocation = async ({ lat, lng, pincode, deviceId }) => {
     return response.data;
   } catch (error) {
     console.error(`Error storing location: ${error.message}`);
-    return []
+    return [];
   }
 };
 
@@ -332,7 +355,7 @@ export const getCategories = async () => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching categories: ${error.message}`);
-    return []
+    return [];
   }
 };
 
@@ -342,10 +365,9 @@ export const getOffers = async () => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching offers: ${error.message}`);
-    return []
+    return [];
   }
 };
-
 
 export const fetchRankedProductsFoEachCategory = async () => {
   const response = await axios.get(
