@@ -117,7 +117,7 @@ const Tabs = ({
           width={17}
           height={17}
           alt="Full star"
-        />
+        />,
       );
     }
 
@@ -129,7 +129,7 @@ const Tabs = ({
           width={17}
           height={17}
           alt="Half star"
-        />
+        />,
       );
     }
 
@@ -142,7 +142,7 @@ const Tabs = ({
           width={17}
           height={17}
           alt="Empty star"
-        />
+        />,
       );
     }
 
@@ -178,7 +178,7 @@ const Tabs = ({
     setFilterdata(filteredProductData || []);
     if (filteredProductData && filteredProductData.length > 0) {
       const colors = filteredProductData.flatMap(
-        (product) => product.colors || []
+        (product) => product.colors || [],
       );
       const uniqueColors = [...new Set(colors)];
       setAllColors(uniqueColors);
@@ -215,7 +215,7 @@ const Tabs = ({
       filteredProducts = filteredProductData || [];
     } else {
       filteredProducts = (filteredProductData || []).filter((product) =>
-        product.colors?.includes(color)
+        product.colors?.includes(color),
       );
     }
     setFilterdata(filteredProducts);
@@ -229,7 +229,7 @@ const Tabs = ({
       filteredProducts = filteredProductData || [];
     } else {
       filteredProducts = (filteredProductData || []).filter(
-        (product) => product.subcategory === selectedSubCategory
+        (product) => product.subcategory === selectedSubCategory,
       );
     }
     setFilterdata(filteredProducts);
@@ -239,7 +239,7 @@ const Tabs = ({
 
   const handleTypeChange = (type) => {
     const filteredProducts = (filteredProductData || []).filter(
-      (product) => product.type === type
+      (product) => product.type === type,
     );
     setFilterdata(filteredProducts);
   };
@@ -250,7 +250,7 @@ const Tabs = ({
       filteredProducts = filteredProductData || [];
     } else {
       filteredProducts = (filteredProductData || []).filter(
-        (product) => product.offer === offer
+        (product) => product.offer === offer,
       );
     }
     setFilterdata(filteredProducts);
@@ -264,7 +264,7 @@ const Tabs = ({
       filteredProducts = filteredProductData || [];
     } else {
       filteredProducts = (filteredProductData || []).filter(
-        (product) => product.demandtype === demandType
+        (product) => product.demandtype === demandType,
       );
     }
     setFilterdata(filteredProducts);
@@ -500,13 +500,13 @@ const Tabs = ({
 
   const handleClick = (idx) => {
     setSelectedCircle((prev) =>
-      prev.includes(idx) ? prev.filter((item) => item !== idx) : [...prev, idx]
+      prev.includes(idx) ? prev.filter((item) => item !== idx) : [...prev, idx],
     );
   };
 
   const handleCheckbox = (item, isChecked) => {
     setSelectedpdt((prev) =>
-      isChecked ? [...prev, item] : prev.filter((i) => i._id !== item._id)
+      isChecked ? [...prev, item] : prev.filter((i) => i._id !== item._id),
     );
   };
 
@@ -527,7 +527,7 @@ const Tabs = ({
 
   const handleFilterColor = (text) => {
     const newFilteredData = (filterData || []).filter((data) =>
-      data.productImages?.some((imageSet) => imageSet.color === text)
+      data.productImages?.some((imageSet) => imageSet.color === text),
     );
     setFilterdata(newFilteredData);
   };
@@ -555,11 +555,11 @@ const Tabs = ({
       filterer.sort((a, b) => (b.perUnitPrice || 0) - (a.perUnitPrice || 0));
     } else if (selectedOption.name === "Newest") {
       filterer.sort(
-        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
       );
     } else if (selectedOption.name === "Name") {
       filterer.sort((a, b) =>
-        (a.productTitle || "").localeCompare(b.productTitle || "")
+        (a.productTitle || "").localeCompare(b.productTitle || ""),
       );
     }
     setFilterdata(filterer);
@@ -589,12 +589,12 @@ const Tabs = ({
   useEffect(() => {
     if (isSubcategoryPage) {
       const filtered = subCategory?.filter(
-        (sub) => sub.name === pathname?.split("/")[1]?.replace(/-/g, " ")
+        (sub) => sub.name === pathname?.split("/")[1]?.replace(/-/g, " "),
       );
       setFilteredSubCategory(filtered || null);
     } else if (pathname?.split("/")[3] !== "all") {
       const filtered = subCategory?.filter(
-        (data) => data.name === pathname?.split("/")[3]?.replace(/-/g, " ")
+        (data) => data.name === pathname?.split("/")[3]?.replace(/-/g, " "),
       );
       setFilteredSubCategory(filtered || null);
     }
@@ -659,7 +659,6 @@ const Tabs = ({
                 padding: "20px",
                 margin: "10px",
                 borderLeft: "4px solid #0152be",
-                backgroundColor: "#e6f0fa",
                 textAlign: "left",
                 width: "100%",
               }}
@@ -793,15 +792,10 @@ const Tabs = ({
           <div
             key={feature._id}
             style={{
-              flex: "1",
-              minWidth: "200px",
-              maxWidth: "300px",
-              padding: "20px",
-              margin: "10px",
+              width: "100%",
+             
               borderRadius: "10px",
-              backgroundColor: "#f9f9f9",
-              textAlign: "center",
-              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+              textAlign: "left",
             }}
           >
             {feature.svg && (
@@ -813,26 +807,27 @@ const Tabs = ({
                   height: "40px",
                   marginBottom: "10px",
                   display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  marginLeft: "0",
                 }}
               />
             )}
-            <h3
+            {/* <h3
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "bold",
                 marginBottom: "10px",
                 color: "#333",
+                textAlign: "left",
               }}
             >
               {feature.title}
-            </h3>
+            </h3> */}
             <p
               style={{
                 fontSize: "14px",
                 color: "#666",
                 lineHeight: "1.5",
+                textAlign: "left",
               }}
             >
               {descriptionText}
@@ -882,8 +877,9 @@ const Tabs = ({
     // Default plain text fallback
     return (
       <div
-        className="card-description text-[12px] text-gray-700"
+        className="card-description text-[12px] text-gray-700 w-full"
         style={{
+          width: "100%",
           padding: "10px",
           borderRadius: "5px",
           backgroundColor: "#f9f9f9",
@@ -912,7 +908,7 @@ const Tabs = ({
             onClick={() => onPageChange(i)}
           >
             {i}
-          </button>
+          </button>,
         );
       }
     }
@@ -931,8 +927,8 @@ const Tabs = ({
             {!isSubcategoryPage
               ? h1title || heading
               : filteredSubCategory?.length > 0
-              ? filteredSubCategory[0]?.h1title
-              : h1title || heading}
+                ? filteredSubCategory[0]?.h1title
+                : h1title || heading}
           </h1>
           <div className="mt-1 flex items-center pb-[30px]">
             <div className="star-rating flex gap-1">
@@ -1004,8 +1000,8 @@ const Tabs = ({
           {!isSubcategoryPage
             ? renderPdescDescription(pdesc)
             : filteredSubCategory?.length > 0
-            ? renderPdescDescription(filteredSubCategory[0]?.pdesc)
-            : renderPdescDescription(pdesc)}
+              ? renderPdescDescription(filteredSubCategory[0]?.pdesc)
+              : renderPdescDescription(pdesc)}
         </p>
 
         {openAll && <div className="background-overlay open"></div>}
@@ -1048,7 +1044,7 @@ const Tabs = ({
                       text,
                       idx,
                       handleSubCategoryChange,
-                      allSubCategory.length
+                      allSubCategory.length,
                     )
                   }
                 />
@@ -1100,7 +1096,7 @@ const Tabs = ({
                       text,
                       idx,
                       handleDemandTypeChange,
-                      allDemandType.length
+                      allDemandType.length,
                     )
                   }
                 />
@@ -1185,7 +1181,7 @@ const Tabs = ({
                   {openAllSort && (
                     <div className="flex flex-col gap-7">
                       {srtarr.map((text, idx) =>
-                        renderSortItem(text, idx, handleSorting)
+                        renderSortItem(text, idx, handleSorting),
                       )}
                     </div>
                   )}
@@ -1242,7 +1238,7 @@ const Tabs = ({
                     {openAllColor && (
                       <div className="flex flex-col gap-7">
                         {allColors.map((text, idx) =>
-                          renderColor(text, idx, handleColorChange)
+                          renderColor(text, idx, handleColorChange),
                         )}
                       </div>
                     )}
@@ -1270,7 +1266,7 @@ const Tabs = ({
                     {openAllDemandType && (
                       <div className="flex flex-col gap-7">
                         {allDemandType.map((text, idx) =>
-                          renderDemand(text, idx, handleDemandTypeChange)
+                          renderDemand(text, idx, handleDemandTypeChange),
                         )}
                       </div>
                     )}
@@ -1298,7 +1294,7 @@ const Tabs = ({
                     {openAllOfferType && (
                       <div className="flex flex-col gap-7">
                         {allOffers.map((text, idx) =>
-                          renderOffer(text, idx, handleOfferChange)
+                          renderOffer(text, idx, handleOfferChange),
                         )}
                       </div>
                     )}
@@ -1330,8 +1326,8 @@ const Tabs = ({
                             text,
                             idx,
                             handlePriceChange,
-                            allPrices.length
-                          )
+                            allPrices.length,
+                          ),
                         )}
                       </div>
                     )}
@@ -1472,7 +1468,7 @@ const Tabs = ({
             subCategory.map((sub) => {
               const pageUrl = `/${sub.name?.replace(
                 / /g,
-                "-"
+                "-",
               )}/subcollection/${parentCategory?.replace(/ /g, "-")}`;
               return (
                 <a
@@ -1491,16 +1487,16 @@ const Tabs = ({
       </div>
 
       <section className="md:mx-[52px] sm:mx-[20px] mx-[10px] bg-[#ffffff] sm:flex-row flex flex-col gap-7 mt-6">
-        <article className="sm:w-3/4 py-3 w-full ">
+        <article className="sm:w-3/4  w-full ">
           {!isSubcategoryPage && features?.length > 0
             ? features.map((feature, featureIdx) => (
                 <div key={featureIdx} className="">
                   <div className="flex flex-col ">
                     <div>
-                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                      <h2 className="text-[14px] font-bold text-[#414040] mt-2">
                         {feature.title || "Feature"}:
                       </h2>
-                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                      <div className="text-[13px] text-[#6e6e73]">
                         {renderFeatureDescription(feature)}
                       </div>
                     </div>
