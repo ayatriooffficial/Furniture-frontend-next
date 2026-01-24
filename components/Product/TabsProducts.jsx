@@ -793,7 +793,7 @@ const Tabs = ({
             key={feature._id}
             style={{
               width: "100%",
-             
+
               borderRadius: "10px",
               textAlign: "left",
             }}
@@ -1511,7 +1511,7 @@ const Tabs = ({
                         feature.cards.map((card, cardIdx) => (
                           <div
                             key={cardIdx}
-                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-full" : "min-w-[240px] max-w-[240px]"} overflow-auto rounded-xl `}
                             style={{
                               scrollbarWidth: "none",
                               msOverflowStyle: "none",
@@ -1567,7 +1567,7 @@ const Tabs = ({
                         feature.cards.map((card, cardIdx) => (
                           <div
                             key={cardIdx}
-                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-full" : "min-w-[240px] max-w-[240px]"} overflow-auto p-2 rounded-xl px-8`}
                             style={{
                               scrollbarWidth: "none",
                               msOverflowStyle: "none",

@@ -259,3 +259,38 @@ input[type="radio"] {
   opacity: 1;
   pointer-events: auto; /* Enable interaction with the overlay */
 }
+
+/* Table Styling for Card Descriptions and Features */
+.card-description table,
+div[dangerouslySetInnerHTML] table,
+table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 10px 0 !important;
+  background-color: #fff !important;
+}
+
+.card-description table th,
+.card-description table td,
+div[dangerouslySetInnerHTML] table th,
+div[dangerouslySetInnerHTML] table td,
+table th,
+table td {
+  border: 2px solid #838383 !important;
+  padding: 12px 15px !important;
+  text-align: left !important;
+}
+
+.card-description table th,
+div[dangerouslySetInnerHTML] table th,
+table th {
+  background-color: #f0f0f0 !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+.card-description table tr:hover,
+div[dangerouslySetInnerHTML] table tr:hover,
+table tr:hover {
+  background-color: #f9f9f9 !important;
+}
