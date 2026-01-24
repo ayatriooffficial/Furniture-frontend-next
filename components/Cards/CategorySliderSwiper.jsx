@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import fixImageUrl from '@/utils/modifyUrl.js'
+import fixImageUrl from "@/utils/modifyUrl.js";
 
 const CategorySliderSwiper = ({ categories }) => {
   const swiperRef = useRef(null);
@@ -45,7 +45,7 @@ const CategorySliderSwiper = ({ categories }) => {
 
   return (
     <div
-      className="w-full category-slider"
+      className="w-full category-slider flex justify-center"
       role="region"
       aria-label="Product categories carousel"
       data-component="category-carousel"
@@ -58,44 +58,48 @@ const CategorySliderSwiper = ({ categories }) => {
           "--swiper-navigation-size": "24px",
           maxHeight: "180px",
           marginTop: "15px",
+          width: "100%",
         }}
         aria-live="polite"
         data-component="swiper-container"
       >
-        {categories && categories?.map((curElement, idx) => (
-          <swiper-slide
-            key={idx}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`Category ${idx + 1} of ${categories.length}`}
-            data-component="category-slide"
-            data-category-id={curElement.name.replace(/ /g, "-").toLowerCase()}
-          >
-            <Link
-              href={`/${curElement.name.replace(/ /g, "-")}/collection/all`}
-              aria-label={`Browse ${curElement.name} collection`}
-              data-component="category-link"
+        {categories &&
+          categories?.map((curElement, idx) => (
+            <swiper-slide
+              key={idx}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`Category ${idx + 1} of ${categories.length}`}
+              data-component="category-slide"
+              data-category-id={curElement.name
+                .replace(/ /g, "-")
+                .toLowerCase()}
             >
-              <div className="flex flex-col items-center">
-                <figure className="mb-[12px]">
-                  <Image
-                    src={fixImageUrl(curElement.image) || "/images/temp.svg"}
-                    width={120}
-                    height={70}
-                      quality={75} 
-                    priority
-                    alt=""
-                    className="w-[120px] h-[70px]"
-                    aria-hidden="true"
-                  />
-                </figure>
-                <h2 className="text-[#333333] lg:text-center line-clamp-1 font-semibold text-[14px] hover:underline">
-                  {curElement.name}
-                </h2>
-              </div>
-            </Link>
-          </swiper-slide>
-        ))}
+              <Link
+                href={`/${curElement.name.replace(/ /g, "-")}/collection/all`}
+                aria-label={`Browse ${curElement.name} collection`}
+                data-component="category-link"
+              >
+                <div className="flex flex-col items-center">
+                  <figure className="mb-[12px]">
+                    <Image
+                      src={fixImageUrl(curElement.image) || "/images/temp.svg"}
+                      width={120}
+                      height={70}
+                      quality={75}
+                      priority
+                      alt=""
+                      className="w-[120px] h-[70px]"
+                      aria-hidden="true"
+                    />
+                  </figure>
+                  <h2 className="text-[#333333] lg:text-center line-clamp-1 font-semibold text-[14px] hover:underline">
+                    {curElement.name}
+                  </h2>
+                </div>
+              </Link>
+            </swiper-slide>
+          ))}
       </swiper-container>
     </div>
   );

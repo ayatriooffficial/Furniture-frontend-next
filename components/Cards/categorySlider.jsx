@@ -11,7 +11,9 @@ const CategoriesSlider = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/homeTrendingCategoriesImgAndType`);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/homeTrendingCategoriesImgAndType`,
+        );
         setCategories(res.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -27,8 +29,8 @@ const CategoriesSlider = () => {
       aria-label="Category navigation"
       data-component="category-slider-nav"
     >
-      <div className="flex items-center justify-start">
-        <div className="sm:pt-[1rem] lg:pt-[20px] lg:pl-[52px] md:pl-[20px] pl-[12px] overflow-x-auto relative w-full">
+      <div className="flex items-center justify-center w-full">
+        <div className="sm:pt-[1rem] lg:pt-[20px] overflow-x-auto relative">
           {error ? (
             <div className="text-red-500 p-4">Unable to load categories</div>
           ) : categories.length > 0 ? (
