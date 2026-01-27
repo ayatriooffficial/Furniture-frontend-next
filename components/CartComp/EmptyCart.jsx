@@ -13,7 +13,7 @@ export default function Emptycart() {
         data-component="empty-cart-image"
       >
         <Image
-          src="/images/empty_bag.webp"
+          src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769553372/empty_bag_qfqbdj.avif"
           className="md:w-[80%] h-full object-cover md:ml-[140px]"
           alt="Illustration of an empty shopping bag"
           width={250}

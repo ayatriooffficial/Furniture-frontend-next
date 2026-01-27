@@ -95,7 +95,7 @@ const ThisIsAyatrioPage = () => {
             {/* Right side: Image */}
             <div className="md:w-2/3 p-[30px]">
               <img
-                src="/images/thisIsAyatrio/ayatrio-local-business-google-map.jpg"
+                src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769553289/ayatrio-local-business-google-map_edswam.avif"
                 alt="AYATRIO India Presence Map"
                 className="w-[95%] h-full  rounded-[30px] object-cover"
               />

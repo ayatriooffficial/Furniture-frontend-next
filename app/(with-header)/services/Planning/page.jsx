@@ -9,17 +9,17 @@ export default function PlanningServicesPage() {
         <div className="flex flex-wrap md:flex-nowrap gap-y-3 gap-12">
           <div className=" w-full md:w-1/2">
             <h2 className="text-black text-2xl font-semibold mb-12 mt[20px] ">
-              Planning services
+              Ayatrio Planning services
             </h2>
-            <p className="text-justify px-3 opacity-90">
+            <p className="text-justify opacity-90">
               We can help you create inspiring and functional solutions for
               different areas of your home or business. Whether you're planning
-              a new kitchen or creating a much-needed storage solution, our
+              a new room design or planning flooring, wallpaper, curtain, blinds or home decorration, our
               planning specialist can assist with your project, big or small.
               Schedule an online, or in-store planning appointment and our
               planning specialists will help you design your ideal space.
             </p>
-            <ul className="flex gap-x-1 mt-3 px-3 flex-wrap">
+            <ul className="flex gap-x-1 mt-3 flex-wrap">
               <li>
                 <a
                   href="#works"
@@ -51,7 +51,7 @@ export default function PlanningServicesPage() {
           <div className="w-full md:w-1/2 mt-3 md:mt-0">
             <Image
               loading="lazy"
-              src="/images/services/PlanningServices/services.jpg"
+              src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769549996/ayatrio_planning_service_sneslq.avif"
               alt="Planning service example"
               width={800}
               height={800}
@@ -76,7 +76,7 @@ export default function PlanningServicesPage() {
           </li>
           <li className="ml-4 my-4 opacity-70 text-[15px]">
             <strong>Choose a need.</strong> Do you want help with a space or
-            whole room? A particular furniture system? For your home or
+            whole room? A particular furnishing system? For your home or
             business? Browse the furnishing areas below to find the planning
             service you need.
           </li>
