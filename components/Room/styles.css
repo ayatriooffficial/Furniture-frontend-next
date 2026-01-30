@@ -222,3 +222,70 @@
   transform: scale(2);
   cursor: url("/icons/single line.svg"), auto;
 }
+/* Product Description Content Styling */
+.product-description-content {
+  color: #222222;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.product-description-content p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #222222;
+  line-height: 1.6;
+}
+
+.product-description-content strong,
+.product-description-content b {
+  font-weight: 600;
+}
+
+.product-description-content em,
+.product-description-content i {
+  font-style: italic;
+}
+
+.product-description-content ul,
+.product-description-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.product-description-content li {
+  margin: 6px 0;
+  font-size: 16px;
+  color: #222222;
+  line-height: 1.5;
+}
+
+.product-description-content ul {
+  list-style-type: disc;
+}
+
+.product-description-content ol {
+  list-style-type: decimal;
+}
+
+.product-description-content br {
+  display: block;
+  height: 8px;
+}
+
+.product-description-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.product-description-content th,
+.product-description-content td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.product-description-content th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}

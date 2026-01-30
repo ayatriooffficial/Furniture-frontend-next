@@ -51,15 +51,17 @@ const MainSliderWrapper = () => {
   const handleFirstImageLoad = () => setFirstImageLoaded(true);
   const handleSwiperReady = () => setSwiperReady(true);
 
-  const showFallback = !swiperReady || !firstImageLoaded;
-
   return (
     <div className="w-full px-[6px] sm:px-0 mt-0 sm:mt-[96px]">
       <div
-        className="relative w-full overflow-hidden"
+        className="relative w-full overflow-hidden bg-white"
         style={{ height: maxHeight, maxHeight }}
       >
-        {/* Fallback image layer */}
+        {!firstImageLoaded && !fallbackImage && (
+          <div className="absolute top-0 left-0 w-full h-full z-0">
+            <MainSliderSkeleton />
+          </div>
+        )}
         {fallbackImage && (
           <div
             className={`absolute top-0 left-0 w-full h-full z-0 transition-opacity duration-500 ${
@@ -81,10 +83,9 @@ const MainSliderWrapper = () => {
           </div>
         )}
 
-        {/* Swiper slider layer */}
         {firstImageLoaded && (
           <div
-            className={`absolute  top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${
+            className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${
               swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >

@@ -16,7 +16,7 @@ const RoomInfo = ({ data, accessories }) => {
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${data._id}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${data._id}`,
       );
 
       setReviews(response.data);
@@ -35,7 +35,7 @@ const RoomInfo = ({ data, accessories }) => {
 
   const fetchCategoryDetails = async () => {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getCategoryByName/${data?.category}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getCategoryByName/${data?.category}`,
     );
 
     setCategoryDetails(response.data);
@@ -53,12 +53,12 @@ const RoomInfo = ({ data, accessories }) => {
   const [otherProductByAuthorId, setOtherProductByAuthorId] = useState([]);
   const fetchOtherProductByAuthorId = async (authorId) => {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllProductByAuthorId/${authorId}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllProductByAuthorId/${authorId}`,
     );
     // store only those product which are not the current product
 
     setOtherProductByAuthorId(
-      response.data.filter((item) => item._id !== data._id)
+      response.data.filter((item) => item._id !== data._id),
     );
   };
 
@@ -90,7 +90,7 @@ const RoomInfo = ({ data, accessories }) => {
         body: JSON.stringify({
           productId: data._id,
         }),
-      }
+      },
     );
 
     const blob = await response.blob();
@@ -117,7 +117,7 @@ const RoomInfo = ({ data, accessories }) => {
         body: JSON.stringify({
           productId: data._id,
         }),
-      }
+      },
     );
 
     const blob = await response.blob();
@@ -146,15 +146,15 @@ const RoomInfo = ({ data, accessories }) => {
             <div
               className={`relative md:w-[80%] w-full ${
                 showMore ? "" : "line-clamp-3"
-              } overflow-hidden`}
+              } overflow-hidden product-description-content`}
               ref={descriptionRef}
             >
-              <p
-                className="text-[16px] text-[#222222]"
+              <div
+                className="product-description-content"
                 dangerouslySetInnerHTML={{
                   __html: data?.productDescription,
                 }}
-              ></p>
+              ></div>
             </div>
             {isClamped && (
               <span
@@ -413,13 +413,13 @@ const RoomInfo = ({ data, accessories }) => {
                     <p className="hidden md:block text-[#1D1D1F] font-semibold text-sm pt-3 line-clamp-5 md:w-[80%]">
                       {`${data.author.authorDetails?.description.slice(
                         0,
-                        180
+                        180,
                       )}...`}
                     </p>
                     <p className="md:hidden text-[#1D1D1F] font-semibold text-sm pt-3 line-clamp-5 md:w-[80%]">
                       {`${data.author.authorDetails?.description.slice(
                         0,
-                        50
+                        50,
                       )}...`}
                     </p>
                   </div>

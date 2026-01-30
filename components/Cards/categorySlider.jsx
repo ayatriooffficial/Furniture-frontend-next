@@ -6,7 +6,6 @@ import CategorySliderSwiper from "./CategorySliderSwiper";
 
 const CategoriesSlider = () => {
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -17,7 +16,7 @@ const CategoriesSlider = () => {
         setCategories(res.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError(true);
+        setCategories([]);
       }
     };
     fetchCategories();
@@ -31,9 +30,7 @@ const CategoriesSlider = () => {
     >
       <div className="flex items-center justify-center w-full">
         <div className="sm:pt-[1rem] lg:pt-[20px] overflow-x-auto relative">
-          {error ? (
-            <div className="text-red-500 p-4">Unable to load categories</div>
-          ) : categories.length > 0 ? (
+          {categories.length > 0 ? (
             <div
               className="categories-slider"
               aria-live="polite"

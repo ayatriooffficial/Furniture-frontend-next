@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 const MainSliderSkeleton = () => {
   return (
-    <div
-      className="w-full h-full px-[12px] sm:px-0 relative"
-    >
-      <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg" />
+    <div className="w-full h-full px-[12px] sm:px-0 relative">
+      <div className="w-full h-full bg-[#f1f1f1] animate-pulse rounded-sm overflow-hidden" />
+      <div className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-gray-200 rounded-full animate-pulse" />
+      <div className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-gray-200 rounded-full animate-pulse" />
     </div>
   );
 };
