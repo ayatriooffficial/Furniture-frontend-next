@@ -28,7 +28,7 @@ const AddCart = () => {
   const dispatch = useDispatch();
   const selectedItems = useSelector((state) => state.rooms.selectedActivity);
   const roomData = useSelector(selectRoomData);
-  
+
   const quantity = useSelector(selectQuantity);
   // const [cartdata, setcartdata] = useState("");
   const [cartStatus, setCartStaus] = useState("");
@@ -66,7 +66,7 @@ const AddCart = () => {
   let id;
   if (typeof window !== "undefined") {
     id = localStorage.getItem("deviceId");
-    
+
   }
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const AddCart = () => {
       async function getExtoffersApplicablePrice() {
         // My Code################
         //check any offer applicable price
-        
+
         if (userId && !otherApplicableExternalOffers) {
           //if user is registered
           // check fro first and second purcahse offer
@@ -193,7 +193,7 @@ const AddCart = () => {
   const quantityCart = useSelector(selectQuantity);
 
   const handleDelete = async (itemid) => {
- 
+
     try {
       const response = await axios.delete(postUrl, {
         params: {
@@ -382,16 +382,14 @@ const AddCart = () => {
           aria-label="Bag items"
           data-component="cart-items"
         >
-          <h1 className="text-xl font-semibold mb-6">Bag</h1>
           {cartdata && cartdata?.items?.length > 0 ? (
             <>
               {cartdata.items.map((item) => (
                 <div
                   key={item.productId._id}
                   data-component="cart-item"
-                  aria-label={`Cart item: ${
-                    item.productId?.productTitle || ""
-                  }`}
+                  aria-label={`Cart item: ${item.productId?.productTitle || ""
+                    }`}
                 >
                   <CartProduct
                     cartItem={item}
@@ -476,14 +474,14 @@ const AddCart = () => {
                       </div>
                       {otherApplicableExternalOffers
                         ? otherApplicableExternalOffers?.discountedAmount +
-                          bankDiscountedAmount
+                        bankDiscountedAmount
                         : bankDiscountedAmount}
                     </div>
                   </div>
                 </div>
                 <p className="text-xs text-[#767677] pb-3">
                   {selectedBank.length > 0 ||
-                  otherApplicableExternalOffers?.discountedAmount > 0 ? (
+                    otherApplicableExternalOffers?.discountedAmount > 0 ? (
                     <ul>
                       {appliedExternalOffers.map((offer, ind) => (
                         <li key={offer + ind}>{offer}</li>
@@ -514,8 +512,8 @@ const AddCart = () => {
                 />
                 {otherApplicableExternalOffers
                   ? SumtotalPrice -
-                    bankDiscountedAmount -
-                    otherApplicableExternalOffers.discountedAmount
+                  bankDiscountedAmount -
+                  otherApplicableExternalOffers.discountedAmount
                   : SumtotalPrice - bankDiscountedAmount}
               </div>
             </div>

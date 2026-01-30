@@ -1,19 +1,19 @@
 {
     "plannings": [
         {
-            "image": "/images/services/PlanningServices/kitchen.jpg",
-            "title": "Kitchen planning",
+            "image": "https://res.cloudinary.com/dcvabpy6e/image/upload/v1769550671/floor_flooring_planner_szqrpf.avif",
+            "title": "Floor planning",
             "subtitle": "Free, available online or at an Ayatrio location",
-            "description": "Book a kitchen planning appointment and an Ayatrio kitchen planning expert will help you design your dream kitchen. Bring measurements of your space and a drawing or picture of the area and we will tailor your plan to meet your needs.",
-            "button": "Book a kitchen planning appointment",
+            "description": "Book a Floor planning appointment and an Ayatrio Floor planning expert will help you design your dream floor. Bring measurements of your space and a drawing or picture of the area and we will tailor your plan to meet your needs.",
+            "button": "Book a Floor planning appointment",
             "links": [
-                "Try online kitchen planners",
-                "Learn more about kitchen services",
-                "Browse kitchen ideas"
+                "Try online Floor planning",
+                "Learn more about Floor services",
+                "Browse Floor planning ideas"
             ]
         },
         {
-            "image": "/images/services/PlanningServices/Business.jpg",
+            "image": "https://res.cloudinary.com/dcvabpy6e/image/upload/v1769550840/Business_tlp86f.avif",
             "title": "Ayatrio for Business",
             "subtitle": "Free, available online or at an Ayatrio location",
             "description": "Book an appointment with an Ayatrio Business specialist who will help you plan furniture and storage solutions for your business. Whether you need help setting up a new office, creating a kitchenette in your breakroom, organizing your storage room or setting up a display area to showcase your products. Bring measurements of your space, and our specialists will help you create functional solutions for your business.",
@@ -23,53 +23,31 @@
             ]
         },
         {
-            "image": "/images/services/PlanningServices/wardrobe.jpg",
-            "title": "Wardrobe planning",
+            "image": "https://res.cloudinary.com/dcvabpy6e/image/upload/v1769551324/curtain_and_blinds_planner_dbmdsc.avif",
+            "title": "Cuetain and blinds planning",
             "subtitle": "Free, available online or at an Ayatrio location",
-            "description": "Book an appointment with an Ayatrio wardrobe expert who will assist you in planning your dream wardrobe or closet solution. You provide measurements of your space, and we will help you design a functional storage solution that suits your needs.",
-            "button": "Book a wardrobe planning appointment",
+            "description": "Book an appointment with an Ayatrio Cuetain and blinds expert who will assist you in planning your dream Cuetain and blinds or closet solution. You provide measurements of your space, and we will help you design a functional storage solution that suits your needs.",
+            "button": "Book a Cuetain and blinds planning appointment",
             "links": [
-                "Try online clothing storage planners",
-                "Browse clothing storage ideas"
+                "Try online Cuetain and blinds planners",
+                "Browse Cuetain and blinds ideas"
             ]
         },
         {
-            "image": "/images/services/PlanningServices/livingroom.jpg",
-            "title": "Living room storage planning",
+            "image": "https://res.cloudinary.com/dcvabpy6e/image/upload/v1769551690/room_design_aspwfa.avif",
+            "title": "Room design planning",
             "subtitle": "Free, available online or at an Ayatrio location",
-            "description": "Book an appointment with an Ayatrio living room expert who will assist you in planning your living room storage needs. You provide measurements of your space, and we will tailor your storage solution to display what you want and hide the rest.",
-            "button": "Book a living room planning appointment",
+            "description": "Book an appointment with an Ayatrio Room design expert who will assist you in planning your Room design needs. You provide measurements of your space, and we will tailor your storage solution to display what you want and hide the rest.",
+            "button": "Book a living/bed/kids/office room planning appointment",
             "links": [
-                "Try online living room storage planners",
-                "Browse living room storage ideas"
-            ]
-        },
-        {
-            "image": "/images/services/PlanningServices/Home.jpg",
-            "title": "Home office planning",
-            "subtitle": "Free, available online",
-            "description": "Book an appointment and an Ayatrio home office specialist will assist you in planning your home office, study or gaming space. You provide us with measurements of your area, and we will plan a functional solution that meets your needs.",
-            "button": "Book a home office planning appointment",
-            "links": [
-                "Try online home office planners",
-                "Browse home office ideas"
-            ]
-        },
-        {
-            "image": "/images/services/PlanningServices/bathroom.jpg",
-            "title": "Bathroom planning",
-            "subtitle": "Free, available online",
-            "description": "Book an appointment with an Ayatrio bathroom specialist who will provide advice and inspiration while planning your ideal bathroom. You provide measurements of your space, and we will help you design a functional solution that suits your needs.",
-            "button": "Book a bathroom planning appointment",
-            "links": [
-                "Try online bathroom planner",
-                "Browse bathroom ideas"
+                "Try online room planners",
+                "Browse room ideas"
             ]
         }
     ],
     "checkout": [
         {
-            "icon": "/icons/click-and-collect.svg",
+            "icon": "/icons/click and collect.svg",
             "title": "Click & Collect",
             "description": "Buy online, pick-up in-store and we will bring it to you.",
             "linkText": "Learn more",

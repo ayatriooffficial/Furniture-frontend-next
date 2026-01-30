@@ -114,7 +114,7 @@ const LoginComponent = () => {
                   className="rounded-md"
                   width={200}
                   height={256}
-                  src="/images/login/login1.jpg"
+                  src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769554275/ayatrio_family_b2goe4.avif"
                   alt="login image"
                 />
                 <Image
@@ -122,7 +122,7 @@ const LoginComponent = () => {
                   className="rounded-md"
                   width={200}
                   height={256}
-                  src="/images/login/login3.jpg"
+                  src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769554621/ayatrio_consultation_zwsnoe.avif"
                   alt="login image"
                 />
               </div>
@@ -132,7 +132,7 @@ const LoginComponent = () => {
                   className="rounded-md"
                   width={200}
                   height={240}
-                  src="/images/login/login2.jpg"
+                  src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769555073/floor_planning_h5znbz.avif"
                   alt="login image"
                 />
                 <Image
@@ -140,7 +140,7 @@ const LoginComponent = () => {
                   className="rounded-md"
                   width={200}
                   height={240}
-                  src="/images/login/login4.jpg"
+                  src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769549996/ayatrio_planning_service_sneslq.avif"
                   alt="login image"
                 />
               </div>
@@ -152,7 +152,7 @@ const LoginComponent = () => {
             data-component="login-legal"
           >
             <p>Ayatrio.com - Cookie Policy and Privacy Policy</p>
-            <p> © Inter Ayatrio Systems B.V. 1999-2024</p>
+            <p> © Inter Ayatrio Systems B.V. 1999-2026</p>
           </div>
         </div>
       </article>
