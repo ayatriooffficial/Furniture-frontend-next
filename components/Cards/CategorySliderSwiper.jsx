@@ -3,12 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import fixImageUrl from "@/utils/modifyUrl.js";
+import { register } from "swiper/element/bundle";
+
+// Register Swiper modules
+register();
 
 const CategorySliderSwiper = ({ categories }) => {
   const swiperRef = useRef(null);
 
   useEffect(() => {
+    if (!categories || categories.length === 0) return;
+
     const params = {
+      init: false,
       slidesPerView: 4.08,
       centeredSlides: false,
       spaceBetween: 5,
@@ -16,32 +23,51 @@ const CategorySliderSwiper = ({ categories }) => {
         nextEl: ".right",
         prevEl: ".back",
       },
-      draggable: true,
-      breakpoints: {
-        300: {
-          slidesPerView: Math.min(categories?.length, 3.2),
-          spaceBetween: 10,
-        },
-        768: {
-          slidesPerView: Math.min(categories?.length, 3),
-          spaceBetween: 10,
-        },
-        1024: {
-          slidesPerView: Math.min(categories?.length, 8),
-          spaceBetween: 10,
-        },
-      },
       mousewheel: {
         forceToAxis: true,
         invert: false,
       },
+      breakpoints: {
+        300: {
+          slidesPerView: Math.min(categories.length, 3.2),
+          spaceBetween: 10,
+        },
+        640: {
+          slidesPerView: Math.min(categories.length, 4),
+          spaceBetween: 10,
+        },
+        768: {
+          slidesPerView: Math.min(categories.length, 5),
+          spaceBetween: 10,
+        },
+        1024: {
+          slidesPerView: Math.min(categories.length, 6),
+          spaceBetween: 10,
+        },
+        1440: {
+          slidesPerView: Math.min(categories.length, 8),
+          spaceBetween: 10,
+        },
+      },
     };
 
     if (swiperRef.current) {
+      // Clear previous initialization
       Object.assign(swiperRef.current, params);
-      swiperRef.current.initialize?.();
+
+      // Force re-initialization
+      if (swiperRef.current.swiper) {
+        swiperRef.current.swiper.destroy(true, true);
+      }
+
+      // Initialize after a short delay to ensure DOM is ready
+      setTimeout(() => {
+        if (swiperRef.current) {
+          swiperRef.current.initialize?.();
+        }
+      }, 100);
     }
-  }, [swiperRef, swiperRef.current]);
+  }, [categories]);
 
   return (
     <div
@@ -53,12 +79,12 @@ const CategorySliderSwiper = ({ categories }) => {
       <swiper-container
         ref={swiperRef}
         init="false"
-        className="swiper-test"
+        class="swiper-test"
         style={{
           "--swiper-navigation-size": "24px",
-          maxHeight: "180px",
-          marginTop: "15px",
           width: "100%",
+          height: "auto",
+          paddingTop: "15px",
         }}
         aria-live="polite"
         data-component="swiper-container"
@@ -74,6 +100,12 @@ const CategorySliderSwiper = ({ categories }) => {
               data-category-id={curElement.name
                 .replace(/ /g, "-")
                 .toLowerCase()}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
               <Link
                 href={`/${curElement.name.replace(/ /g, "-")}/collection/all`}
@@ -89,7 +121,7 @@ const CategorySliderSwiper = ({ categories }) => {
                       quality={75}
                       priority
                       alt=""
-                      className="w-[120px] h-[70px]"
+                      className="w-[120px] h-[70px] object-contain"
                       aria-hidden="true"
                     />
                   </figure>

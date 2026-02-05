@@ -13,17 +13,22 @@ function Banner() {
     const fetchBanner = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getPosterSection`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getPosterSection`,
         );
-       
+
         setBanners(response.data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
     };
-    fetchBanner();
+
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => fetchBanner(), { timeout: 2500 });
+    } else {
+      setTimeout(() => fetchBanner(), 2000);
+    }
   }, []);
-  
+
   return (
     <aside className="w-full h-auto md:px-[52px] px-[20px]">
       {banners.length > 0 && (
@@ -32,22 +37,28 @@ function Banner() {
             {/* Desktop Image */}
             <Image
               src={fixImageUrl(banners[0]?.desktopImgSrc)}
-              loading="lazy"
               alt="Ayatrio Offer - Desktop Version"
               width={1920}
               height={1080}
+              priority
+              fetchPriority="high"
+              sizes="(min-width: 768px) 100vw"
               className="md:block hidden py-6"
-              quality={75}
+              quality={70}
+              placeholder="empty"
             />
             {/* Mobile Image */}
             <Image
               src={fixImageUrl(banners[0]?.mobileImgSrc)}
-              loading="lazy"
               alt="Ayatrio Offer - Mobile Version"
               width={1920}
               height={1080}
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 767px) 100vw"
               className="md:hidden py-6"
-               quality={75}
+              quality={70}
+              placeholder="empty"
             />
             <figcaption className="sr-only">
               Special Ayatrio Bank Offer Banner

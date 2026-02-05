@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import TabImage from "./TabImage";
 import "./tabs.css";
 
+// ⚡ FIX: Prevent 404 image requests - Always have valid fallback
+const FALLBACK_IMAGE = "/images/temp.svg";
+
 const Tabs = ({ data }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
@@ -23,16 +26,13 @@ const Tabs = ({ data }) => {
   const fetchAllRoom = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getTabsRoom`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getTabsRoom`,
       );
       setNewData(response.data);
     } catch (error) {
       // console.log(error);
     }
-    
   };
-
-
 
   // useEffect(() => {
   //   if (data) {
@@ -117,9 +117,8 @@ const Tabs = ({ data }) => {
     }
   });
 
-
   uniqueRoomCategories = uniqueRoomCategories.map((category) =>
-    category.toLowerCase()
+    category.toLowerCase(),
   );
 
   const handleTabClick = (tab) => {
@@ -150,7 +149,7 @@ const Tabs = ({ data }) => {
     <>
       <section className="g mr-[12px] sm:mr-[22px] md:mr-[0px]  ml-[12px] sm:ml-[20px] md:ml-[0px] md:px-[52px] pb-20 pt-10 h-full ">
         <div className="text-2xl font-semibold mb-5">
-          <h2 >Design inspiration and modern home ideas</h2>
+          <h2>Design inspiration and modern home ideas</h2>
         </div>
         <div
           className={`pt-2.5 pb-4 bloc-tabsnone flex flex-row  ${
@@ -166,26 +165,26 @@ const Tabs = ({ data }) => {
             // }`}
             className={`px-5 py-2 tabS mr-2.5 cursor-pointer font-extrabold text-sm rounded-full whitespace-nowrap ${
               activeTab === "all"
-      ? ' bg-gray-100 text-black border-2 border-black' 
-    : ' bg-gray-100 text-black border-2 border-transparent'
+                ? " bg-gray-100 text-black border-2 border-black"
+                : " bg-gray-100 text-black border-2 border-transparent"
             }`}
             onClick={() => setActiveTab("all")}
           >
             All
           </div>
-         {tabsData.map((tab, i) => (
-  <div
-    key={i}
-    className={`px-5 py-2 tabS cursor-pointer font-extrabold text-sm rounded-full whitespace-nowrap ${
-      activeTab === tab.key
-        ? 'bg-gray-100 mr-2.5 text-black border-2 border-black'
-        : 'bg-gray-100 mr-2.5 text-black border-2 border-transparent'
-    }`}
-    onClick={() => setActiveTab(tab.key)}
-  >
-    {tab.label}
-  </div>
-))}
+          {tabsData.map((tab, i) => (
+            <div
+              key={i}
+              className={`px-5 py-2 tabS cursor-pointer font-extrabold text-sm rounded-full whitespace-nowrap ${
+                activeTab === tab.key
+                  ? "bg-gray-100 mr-2.5 text-black border-2 border-black"
+                  : "bg-gray-100 mr-2.5 text-black border-2 border-transparent"
+              }`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </div>
+          ))}
         </div>
 
         {activeTab === "all" ? (
@@ -198,67 +197,68 @@ const Tabs = ({ data }) => {
                 width={450}
                 height={700}
                 href={labelData[uniqueRoomCategories[0]]?.[0]?.productLink}
-                src={tabImages[uniqueRoomCategories[0]]?.[0] || ""}
+                src={tabImages[uniqueRoomCategories[0]]?.[0] || FALLBACK_IMAGE}
                 alt="Room"
                 handleTab={handleTab}
                 labelData={labelData[uniqueRoomCategories[0]]?.[0] || []}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
 
               <div className="overflow-hidden relative ">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover "
-                  src={tabImages[uniqueRoomCategories[1]]?.[0] || ""}
+                  src={
+                    tabImages[uniqueRoomCategories[1]]?.[0] || FALLBACK_IMAGE
+                  }
                   alt="Room"
                   width={450}
                   height={350}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
 
               <TabImage
-                src={tabImages[uniqueRoomCategories[2]]?.[0] || ""}
+                src={tabImages[uniqueRoomCategories[2]]?.[0] || FALLBACK_IMAGE}
                 href={labelData[uniqueRoomCategories[2]]?.[0]?.productLink}
                 labelData={labelData[uniqueRoomCategories[2]]?.[0] || []}
                 alt="Room"
                 width={450}
                 height={700}
                 handleTab={handleTab}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
-              
 
               <TabImage
-               src={tabImages[uniqueRoomCategories[3]]?.[0] || ""}
+                src={tabImages[uniqueRoomCategories[3]]?.[0] || FALLBACK_IMAGE}
                 labelData={labelData[uniqueRoomCategories[3]]?.[0] || []}
                 href={labelData[uniqueRoomCategories[3]]?.[0]?.productLink}
                 alt="Room"
                 handleTab={handleTab}
                 width={450}
                 height={700}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
 
               <div className="overflow-hidden ">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover 11"
-                  src={tabImages[uniqueRoomCategories[4]]?.[0] || ""}
+                  src={tabImages[uniqueRoomCategories[4]]?.[0]}
                   alt="Room"
                   width={450}
                   height={350}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
               <div className=" overflow-hidden ">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover"
-                  src={tabImages[uniqueRoomCategories[5]]?.[0] || ""}
+                  src={tabImages[uniqueRoomCategories[5]]?.[0]}
                   alt="Room"
                   width={450}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                   height={350}
                 />
               </div>
@@ -266,11 +266,11 @@ const Tabs = ({ data }) => {
                 <TabImage
                   width={450}
                   height={700}
-                  src={tabImages[uniqueRoomCategories[6]]?.[0] || ""}
+                  src={tabImages[uniqueRoomCategories[6]]?.[0]}
                   alt="Room"
                   handleTab={handleTab}
                   labelData={labelData[uniqueRoomCategories[6]]?.[0] || []}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
 
@@ -279,25 +279,25 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover "
-                    src={tabImages[uniqueRoomCategories[7]]?.[0] || ""}
+                    src={tabImages[uniqueRoomCategories[7]]?.[0]}
                     alt="Room"
                     width={450}
                     height={350}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
 
               {loadMoreAll && (
                 <TabImage
-                src={tabImages[uniqueRoomCategories[8]]?.[0] || ""}
+                  src={tabImages[uniqueRoomCategories[8]]?.[0]}
                   labelData={labelData[uniqueRoomCategories[8]]?.[0] || []}
                   href={labelData[uniqueRoomCategories[8]]?.[0]?.productLink}
                   alt="Room"
                   width={450}
                   height={700}
                   handleTab={handleTab}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
               {loadMoreAll && (
@@ -309,21 +309,21 @@ const Tabs = ({ data }) => {
                     alt="Room"
                     width={200}
                     height={200}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
 
               {loadMoreAll && (
                 <TabImage
-                src={tabImages[uniqueRoomCategories[9]]?.[0] || ""}
+                  src={tabImages[uniqueRoomCategories[9]]?.[0]}
                   href={labelData[uniqueRoomCategories[9]]?.[0]?.productLink}
                   labelData={labelData[uniqueRoomCategories[9]]?.[0] || []}
                   alt="Room"
                   handleTab={handleTab}
                   width={450}
                   height={700}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
 
@@ -332,12 +332,13 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover 11"
-                    src={tabImages[uniqueRoomCategories[10]]?.[0] || ""}
-
+                    src={
+                      tabImages[uniqueRoomCategories[10]]?.[0] || FALLBACK_IMAGE
+                    }
                     alt="Room"
                     width={450}
                     height={350}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
@@ -346,11 +347,13 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover"
-                    src={tabImages[uniqueRoomCategories[11]]?.[0] || ""}
+                    src={
+                      tabImages[uniqueRoomCategories[11]]?.[0] || FALLBACK_IMAGE
+                    }
                     alt="Room"
                     width={450}
                     height={350}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
@@ -375,41 +378,35 @@ const Tabs = ({ data }) => {
               <TabImage
                 width={450}
                 height={700}
-                src={
-                  tabImages[activeTab] ? tabImages[activeTab][0] :""
-                }
+                src={tabImages[activeTab] ? tabImages[activeTab][0] : ""}
                 href={labelData[activeTab]?.[0]?.productLink}
                 alt="Room"
                 handleTab={handleTab}
                 labelData={labelData[activeTab]?.[0] || []}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
 
               <div className="overflow-hidden relative">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover "
-                  src={
-                    tabImages[activeTab] ? tabImages[activeTab][1] : "" 
-                  }
+                  src={tabImages[activeTab] ? tabImages[activeTab][1] : ""}
                   alt="Room"
                   width={450}
                   height={350}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
 
               <TabImage
-                src={
-                  tabImages[activeTab] ? tabImages[activeTab][2] : ""
-                }
+                src={tabImages[activeTab] ? tabImages[activeTab][2] : ""}
                 href={labelData[activeTab]?.[2]?.productLink}
                 labelData={labelData[activeTab]?.[2] || []}
                 alt="Room"
                 width={450}
                 height={700}
                 handleTab={handleTab}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
               <div className="overflow-hidden sm:hidden block">
                 <Image
@@ -419,60 +416,52 @@ const Tabs = ({ data }) => {
                   alt="Room"
                   width={200}
                   height={200}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
 
               <TabImage
-                src={
-                  tabImages[activeTab] ? tabImages[activeTab][3] : ""
-                }
+                src={tabImages[activeTab] ? tabImages[activeTab][3] : ""}
                 href={labelData[activeTab]?.[3]?.productLink}
                 labelData={labelData[activeTab]?.[3] || []}
                 alt="Room"
                 handleTab={handleTab}
                 width={450}
                 height={700}
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = "none")}
               />
               <div className="overflow-hidden">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover"
-                  src={
-                    tabImages[activeTab] ? tabImages[activeTab][4] : "" 
-                  }
+                  src={tabImages[activeTab] ? tabImages[activeTab][4] : ""}
                   alt="Room"
                   width={450}
                   height={350}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
               <div className=" overflow-hidden ">
                 <Image
                   loading="lazy"
                   className="h-full w-full object-cover"
-                  src={
-                    tabImages[activeTab] ? tabImages[activeTab][5] :"" 
-                  }
+                  src={tabImages[activeTab] ? tabImages[activeTab][5] : ""}
                   alt="Room"
                   width={450}
                   height={350}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
               {loadMore && (
                 <TabImage
                   width={450}
                   height={700}
-                  src={
-                    tabImages[activeTab] ? tabImages[activeTab][6] :""
-                  }
+                  src={tabImages[activeTab] ? tabImages[activeTab][6] : ""}
                   href={labelData[activeTab]?.[6]?.productLink}
                   alt="Room"
                   handleTab={handleTab}
                   labelData={labelData[activeTab]?.[6] || []}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
 
@@ -481,29 +470,25 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover "
-                    src={
-                      tabImages[activeTab] ? tabImages[activeTab][7] :"" 
-                    }
+                    src={tabImages[activeTab] ? tabImages[activeTab][7] : ""}
                     alt="Room"
                     width={450}
                     height={350}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
 
               {loadMore && (
                 <TabImage
-                src={
-                  tabImages[activeTab] ? tabImages[activeTab][8] : "" 
-                }
+                  src={tabImages[activeTab] ? tabImages[activeTab][8] : ""}
                   labelData={labelData[activeTab]?.[8] || []}
                   href={labelData[activeTab]?.[8]?.productLink}
                   alt="Room"
                   width={450}
                   height={700}
                   handleTab={handleTab}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
               {loadMore && (
@@ -515,24 +500,21 @@ const Tabs = ({ data }) => {
                     alt="Room"
                     width={200}
                     height={200}
-                    
-                  onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
 
               {loadMore && (
                 <TabImage
-                src={
-                  tabImages[activeTab] ? tabImages[activeTab][9] : "" 
-                }
+                  src={tabImages[activeTab] ? tabImages[activeTab][9] : ""}
                   labelData={labelData[activeTab]?.[9] || []}
                   href={labelData[activeTab]?.[9]?.productLink}
                   alt="Room"
                   handleTab={handleTab}
                   width={450}
                   height={700}
-                  onError={(e) => e.target.style.display = 'none'}
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               )}
               {loadMore && (
@@ -540,13 +522,11 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover"
-                    src={
-                      tabImages[activeTab] ? tabImages[activeTab][10] : "" 
-                    }
+                    src={tabImages[activeTab] ? tabImages[activeTab][10] : ""}
                     alt="Room"
                     width={450}
                     height={350}
-                    onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
@@ -555,13 +535,11 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover"
-                    src={
-                      tabImages[activeTab] ? tabImages[activeTab][11] : ""
-                    }
+                    src={tabImages[activeTab] ? tabImages[activeTab][11] : ""}
                     alt="Room"
                     width={450}
                     height={350}
-                     onError={(e) => e.target.style.display = 'none'}
+                    onError={(e) => (e.target.style.display = "none")}
                   />
                 </div>
               )}
@@ -583,4 +561,4 @@ const Tabs = ({ data }) => {
   );
 };
 
-export default Tabs;
+export default Tabs;

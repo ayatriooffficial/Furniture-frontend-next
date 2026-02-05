@@ -1,9 +1,12 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
-// const BASE_URL = "http://52.66.30.159:8080/api";
+// ✅ FIX: Use localhost:4000 by default during development
+// During SSR, must resolve to actual backend URL
 const BASE_URL = `${
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://backend.ayatrio.com"
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.REACT_APP_API_BASE_URL ||
+  "http://localhost:4000"
 }/api`;
 export const createApiEndpoint = (endpoint) => `${BASE_URL}/${endpoint}`;
 // if (typeof window !== "undefined") {
@@ -14,7 +17,7 @@ export const createApiEndpoint = (endpoint) => `${BASE_URL}/${endpoint}`;
 export const fetchAllProducts = async (limit) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`products?limit=${limit}`)
+      createApiEndpoint(`products?limit=${limit}`),
     );
     return response.data;
   } catch (error) {
@@ -30,7 +33,7 @@ export const fetchRecommendedProduct = async () => {
   }
   try {
     const response = await axios.get(
-      createApiEndpoint(`getRecommendation?deviceId=${id}`)
+      createApiEndpoint(`getRecommendation?deviceId=${id}`),
     );
     // console.log(response.data);
     return response.data;
@@ -50,8 +53,8 @@ export const fetchRecommendedProductCategoryWise = async ({
   try {
     const response = await axios.get(
       createApiEndpoint(
-        `getRecommendationCategoryWise?deviceId=${id}&categorySkip=${categorySkip}&categoryLimit=${categoryLimit}&productLimit=${productLimit}`
-      )
+        `getRecommendationCategoryWise?deviceId=${id}&categorySkip=${categorySkip}&categoryLimit=${categoryLimit}&productLimit=${productLimit}`,
+      ),
     );
     return response.data;
   } catch (err) {
@@ -62,7 +65,7 @@ export const fetchRecommendedProductCategoryWise = async ({
 export const fetchSliderView = async (page, limit) => {
   try {
     const response = await axios.get(
-      createApiEndpoint("getImgCircle?limit=" + limit + "&page=" + page)
+      createApiEndpoint("getImgCircle?limit=" + limit + "&page=" + page),
     );
     // console.log("response",response.data);
     return response.data;
@@ -204,7 +207,7 @@ export const fetchSuggestionData = async (heading) => {
       createApiEndpoint("fetchSuggestionByTitle"),
       {
         params: { heading: decodeURI(heading) },
-      }
+      },
     );
     console.log("response", response.data);
     return response.data;
@@ -223,7 +226,7 @@ export const fetchHeaderCategoryData = async (category) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     console.log(response);
 
@@ -242,7 +245,7 @@ export const fetchHeaderCategoryDataOnlyNames = async (category) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     return response.data;
@@ -255,7 +258,7 @@ export const fetchHeaderCategoryDataOnlyNames = async (category) => {
 export const fetchProductsFromDemandType = async (type) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getAllProductsByDemandType/${type}`)
+      createApiEndpoint(`getAllProductsByDemandType/${type}`),
     );
     return response.data;
   } catch (error) {
@@ -268,7 +271,7 @@ export const fetchProductsFromDemandType = async (type) => {
 export const fetchProductsFromOffers = async (type) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getAllProductsByOffer/${type}`)
+      createApiEndpoint(`getAllProductsByOffer/${type}`),
     );
     // dispatch(setOfferTotalPages(response.data.Totalproducts))
     return response.data.products;
@@ -286,7 +289,7 @@ export const fetchStores = async (search) => {
       return response.data;
     } else {
       const response = await axios.get(
-        createApiEndpoint(`searchStore?search=${search}`)
+        createApiEndpoint(`searchStore?search=${search}`),
       );
       return response.data;
     }
@@ -304,7 +307,7 @@ export const upsertUserLocation = async ({ lat, lng, pincode, deviceId }) => {
         lat,
         lng,
         pincode,
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -316,7 +319,7 @@ export const upsertUserLocation = async ({ lat, lng, pincode, deviceId }) => {
 export const getCategoryByName = async (categoryName) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getCategoryByName/${categoryName}`)
+      createApiEndpoint(`getCategoryByName/${categoryName}`),
     );
 
     // 🛑 If it's an array, return first object (if needed)
@@ -334,7 +337,7 @@ export const getCategoryByName = async (categoryName) => {
 export const getCategoryByNameModified = async (categoryName) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getCategoryByName/${categoryName}`)
+      createApiEndpoint(`getCategoryByName/${categoryName}`),
     );
 
     // 🛑 If it's an array, return first object (if needed)
@@ -371,7 +374,7 @@ export const getOffers = async () => {
 
 export const fetchRankedProductsFoEachCategory = async () => {
   const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRankedProductsFoEachCategory`
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRankedProductsFoEachCategory`,
   );
   return response.data;
 };

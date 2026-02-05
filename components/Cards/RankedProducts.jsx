@@ -31,20 +31,45 @@ const RankedProducts = () => {
   const dispatch = useDispatch();
 
 
-  // Fetch recommended categories if not already loading or loaded
+  // ⚡ DEFERRED: Fetch recommended categories after interactive
   useEffect(() => {
     if (Object.keys(recommended).length === 0 && recommendedStatus === "idle" && !isRecommendedLoading) {
-      dispatch({
-        type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
-        payload: { categoryLimit: 3, productLimit: 12 },
-      });
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(
+          () => {
+            dispatch({
+              type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
+              payload: { categoryLimit: 3, productLimit: 12 },
+            });
+          },
+          { timeout: 3000 }
+        );
+      } else {
+        setTimeout(() => {
+          dispatch({
+            type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
+            payload: { categoryLimit: 3, productLimit: 12 },
+          });
+        }, 2500);
+      }
     }
   }, [dispatch, isRecommendedLoading, recommendedStatus]);
 
-  // Fetch ranked data only when recommended categories are loaded
+  // ⚡ DEFERRED: Fetch ranked data after recommended loaded
   useEffect(() => {
     if (Object.keys(recommended).length > 0 && rankedData.length === 0) {
-      dispatch({ type: "FETCH_RANKED_DATA", payload: "rankedProducts" });
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(
+          () => {
+            dispatch({ type: "FETCH_RANKED_DATA", payload: "rankedProducts" });
+          },
+          { timeout: 3000 }
+        );
+      } else {
+        setTimeout(() => {
+          dispatch({ type: "FETCH_RANKED_DATA", payload: "rankedProducts" });
+        }, 2500);
+      }
     }
   }, [dispatch, recommended, rankedData]);
 

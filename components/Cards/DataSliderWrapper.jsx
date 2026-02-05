@@ -20,15 +20,28 @@ const DataSliderWrapper = ({
   const [filteredData, setFilteredData] = useState({});
   const datasliderRefs = useRef([]);
 
- useEffect(() => {
-  // console.log("recommendedStatus:", recommendedStatus);
-  if (recommendedStatus === "idle") {
-    dispatch({
-      type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
-      payload: { categoryLimit: 3, productLimit: 10 },
-    });
-  }
-}, [dispatch, recommendedStatus]);
+  useEffect(() => {
+    if (recommendedStatus === "idle") {
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(
+          () => {
+            dispatch({
+              type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
+              payload: { categoryLimit: 3, productLimit: 10 },
+            });
+          },
+          { timeout: 2500 },
+        );
+      } else {
+        setTimeout(() => {
+          dispatch({
+            type: "RECOMMENDATION_CATEGORYWISE_REQUEST",
+            payload: { categoryLimit: 3, productLimit: 10 },
+          });
+        }, 2000);
+      }
+    }
+  }, [dispatch, recommendedStatus]);
 
   useEffect(() => {
     if (recommended) {

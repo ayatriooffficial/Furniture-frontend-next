@@ -14,9 +14,23 @@ const Profile = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.ayatrio.com";
 
   useEffect(() => {
-    fetchProfileData().then((data) => {
-      setProfileData(data);
-    });
+    // ⚡ DEFERRED: Load profile data after interactive
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(
+        () => {
+          fetchProfileData().then((data) => {
+            setProfileData(data);
+          });
+        },
+        { timeout: 2500 },
+      );
+    } else {
+      setTimeout(() => {
+        fetchProfileData().then((data) => {
+          setProfileData(data);
+        });
+      }, 2000);
+    }
   }, []);
 
   // Generate Organization Schema
@@ -78,7 +92,7 @@ const Profile = () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }}
       /> */}
-      
+
       {/* Person List Schema */}
       {/* <script
         type="application/ld+json"
@@ -125,7 +139,9 @@ const Profile = () => {
                     <figcaption className="ml-1 font-bold text-[18px]">
                       4.93
                     </figcaption>
-                    <p className="lg:text-[13px] text-[13px] ">(37.6k+ Happy Ayatrio Member)</p>
+                    <p className="lg:text-[13px] text-[13px] ">
+                      (37.6k+ Happy Ayatrio Member)
+                    </p>
                   </figure>
                 </div>
               </div>

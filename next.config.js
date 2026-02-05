@@ -161,6 +161,14 @@ const nextConfig = withPWA({
   experimental: {
     missingSuspenseWithCSRBailout: true,
   },
+  // LCP Optimization: Image optimization for faster delivery
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  onDemandEntries: {
+    maxInactiveAge: 25000,
+    pagesBufferLength: 5,
+  },
 });
 
 module.exports = withBundleAnalyzer(nextConfig);

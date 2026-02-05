@@ -1,4 +1,3 @@
-//"use client";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import RoomCardSkeleton from "./../Skeleton/RoomCardSkeleton";
@@ -12,7 +11,9 @@ import MainSliderWrapper from "../MainSlider/MainSliderWrapper";
 // Lazy-loaded components
 const Cookies = dynamic(() => import("./Cookies"), { ssr: false });
 const Trending = dynamic(() => import("./Trending"), { ssr: false });
-const CategoriesSlider = dynamic(() => import("./categorySlider"), { ssr: false });
+const CategoriesSlider = dynamic(() => import("./categorySlider"), {
+  ssr: false,
+});
 
 const Banner = dynamic(() => import("./Banner"), {
   ssr: false,
@@ -63,10 +64,6 @@ const RankedProducts = dynamic(() => import("./RankedProducts"), {
 const UserReviewPosts = dynamic(() => import("./UserReviewPosts"));
 
 function Cards() {
-  if (typeof window !== "undefined") {
-    sessionStorage.removeItem("navigationItem");
-  }
-
   return (
     <div className="w-full h-auto">
       <MainSliderWrapper />

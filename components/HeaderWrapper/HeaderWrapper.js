@@ -1,28 +1,17 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
-import Splashscreen from "../Splashscreen/Splashscreen";
-import HomeSkeleton from "./../Skeleton/HomeSkeleton";
-import Loader from "./../Cards/Loader";
-
 import Header from "../Header";
+import { Suspense } from "react";
+import StaticHeaderSkeleton from "../Header/StaticHeaderSkeleton";
 
+/**
+ * Server-side HeaderWrapper - eliminates hydration mismatch
+ * Uses Suspense boundary with static skeleton fallback for fast FCP
+ * Header component handles client interactivity directly
+ */
 const HeaderWrapper = () => {
-  const [isHeaderMounted, setIsHeaderMounted] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   return (
-    <>
-      {isClient && <Header setIsHeaderMounted={setIsHeaderMounted} />}
-      {/* <Header /> */}
-      {/* {isHeaderMounted ? null : <Splashscreen />} */}
-      {/* {isHeaderMounted ? null : <HomeSkeleton />} */}
-    </>
+    <Suspense fallback={<StaticHeaderSkeleton />}>
+      <Header />
+    </Suspense>
   );
 };
 

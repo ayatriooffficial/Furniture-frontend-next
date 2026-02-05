@@ -15,7 +15,7 @@ const MainSliderWrapper = () => {
   const [sliderData, setSliderData] = useState([]);
   const [isDesktop, setIsDesktop] = useState(true);
   const [maxHeight, setMaxHeight] = useState("70vh");
-  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [swiperReady, setSwiperReady] = useState(false);
 
   useEffect(() => {
@@ -37,18 +37,15 @@ const MainSliderWrapper = () => {
         setSliderData(data?.result || []);
       } catch (err) {
         console.error("Slider data error:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  const fallbackImage = sliderData?.[0]
-    ? isDesktop
-      ? sliderData[0].desktopImgSrc
-      : sliderData[0].mobileImgSrc
-    : null;
+  const fallbackImage = null;
 
-  const handleFirstImageLoad = () => setFirstImageLoaded(true);
   const handleSwiperReady = () => setSwiperReady(true);
 
   return (
@@ -57,38 +54,12 @@ const MainSliderWrapper = () => {
         className="relative w-full overflow-hidden bg-white"
         style={{ height: maxHeight, maxHeight }}
       >
-        {!firstImageLoaded && !fallbackImage && (
+        {isLoading ? (
           <div className="absolute top-0 left-0 w-full h-full z-0">
             <MainSliderSkeleton />
           </div>
-        )}
-        {fallbackImage && (
-          <div
-            className={`absolute top-0 left-0 w-full h-full z-0 transition-opacity duration-500 ${
-              swiperReady ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <div className="relative w-[98%] h-full mx-auto overflow-hidden">
-              <Image
-                src={fixImgUrl(fallbackImage)}
-                alt="slider fallback"
-                fill
-                priority
-                onLoad={handleFirstImageLoad}
-                className="object-cover"
-                style={{ maxHeight }}
-                quality={75}
-              />
-            </div>
-          </div>
-        )}
-
-        {firstImageLoaded && (
-          <div
-            className={`absolute top-0 left-0 w-full h-full z-10 transition-opacity duration-500 ${
-              swiperReady ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          >
+        ) : (
+          <div className="absolute top-0 left-0 w-full h-full z-10">
             <MainSlider
               sliderData={sliderData}
               onSwiperReady={handleSwiperReady}

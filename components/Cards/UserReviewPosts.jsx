@@ -40,7 +40,12 @@ const UserReviewPosts = ({ slidesPerView, SubcategoryName }) => {
   }, [SubcategoryName, postDetails]);
 
   useEffect(() => {
-    fetchDetails();
+    // ⚡ DEFERRED: Load user reviews after interactive
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => fetchDetails(), { timeout: 2500 });
+    } else {
+      setTimeout(() => fetchDetails(), 2000);
+    }
   }, []);
 
   const handleClick = (post) => {

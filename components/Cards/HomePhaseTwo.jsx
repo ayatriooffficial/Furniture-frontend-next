@@ -49,23 +49,44 @@ function HomePhaseTwo() {
     () => <Footer />,
   ];
 
+
   useEffect(() => {
-    let isMounted = true;
+  let cancelled = false;
+  let step = 0;
 
-    const loadSequentially = async () => {
-      for (let i = 0; i < components.length; i++) {
-        if (!isMounted) break;
-        await delay(1000); // Delay of 1 second between components
-        if (isMounted) setCurrentStep((prev) => prev + 1);
-      }
-    };
+  const load = () => {
+    if (cancelled || step >= components.length) return;
 
-    loadSequentially();
+    setCurrentStep(step + 1);
+    step++;
 
-    return () => {
-      isMounted = false; // Cleanup to prevent updates after unmount
-    };
-  }, []);
+    requestIdleCallback(load);
+  };
+
+  requestIdleCallback(load);
+
+  return () => {
+    cancelled = true;
+  };
+}, [components.length]);
+
+  // useEffect(() => {
+  //   let isMounted = true;
+
+  //   const loadSequentially = async () => {
+  //     for (let i = 0; i < components.length; i++) {
+  //       if (!isMounted) break;
+  //       await delay(1000); // Delay of 1 second between components
+  //       if (isMounted) setCurrentStep((prev) => prev + 1);
+  //     }
+  //   };
+
+  //   loadSequentially();
+
+  //   return () => {
+  //     isMounted = false; // Cleanup to prevent updates after unmount
+  //   };
+  // }, []);
 
   return (
     <main

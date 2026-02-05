@@ -17,7 +17,20 @@ const Trending = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_TRENDING_DATA", payload: "trending" });
+    // ⚡ DEFERRED: Load trending data AFTER first paint using requestIdleCallback
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(
+        () => {
+          dispatch({ type: "FETCH_TRENDING_DATA", payload: "trending" });
+        },
+        { timeout: 2000 }
+      );
+    } else {
+      // Fallback for older browsers
+      setTimeout(() => {
+        dispatch({ type: "FETCH_TRENDING_DATA", payload: "trending" });
+      }, 1500);
+    }
   }, [dispatch]);
 
   useEffect(() => {

@@ -30,6 +30,7 @@ const ShopByRoomSlider = () => {
   const swiper1Ref = useRef(null);
 
   useEffect(() => {
+    // ⚡ DEFERRED: Load room data after interactive
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -42,7 +43,12 @@ const ShopByRoomSlider = () => {
         // console.log("Error fetching room main data:", error);
       }
     };
-    fetchData();
+
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => fetchData(), { timeout: 2500 });
+    } else {
+      setTimeout(() => fetchData(), 2000);
+    }
   }, []);
 
   const swiperOptions2 = {
