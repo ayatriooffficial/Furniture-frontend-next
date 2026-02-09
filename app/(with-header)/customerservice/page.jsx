@@ -14,28 +14,16 @@ const CustomerServicePage = () => {
   const handleOptionClick = (id) => {
     switch (id) {
       case 1:
-        router.push("/");
-        break;
-      case 2:
         router.push("/customerservice/services");
         break;
-      case 3:
-        router.push("/customerservice/shoppinginfo");
-        break;
-      case 4:
-        router.push("/faq");
-        break;
-      case 5:
-        router.push("/customerservice/returnpolicy");
-        break;
-      case 6:
+      case 2:
         router.push("/customerservice/giftcards");
         break;
-      case 7:
-        router.push("/customerservice/priceguarantee");
+      case 3:
+        router.push("/customerservice/returnpolicy");
         break;
-      case 8:
-        router.push("/customerservice/contact");
+      case 4:
+        router.push("/customerservice/priceguarantee");
         break;
       default:
         router.push("/");

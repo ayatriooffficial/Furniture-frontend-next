@@ -8,12 +8,12 @@ const Recomend = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-black gap-8 m-4 md:m-10">
         <div>
           <img
-            src="/images/Business/bag.jpg"
-            className="w-full h-auto"
+            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669317/ayatrio-slider-offedadwr-M-_24.11.2025_gs51l0.avif"
+            className="w-full h-[195px]"
             alt="Loadin....
             cursor-pointer"
           />
-          <h3 className="text-xl">Become an Ayatrio Business Member</h3>
+          <h3 className="text-xl pt-[15px]">Become an Ayatrio Business Member</h3>
           <p>
             We're dedicated to helping SMEs thrive. Register to enjoy 11
             exclusive benefits and receive membership gifts available for a
@@ -28,12 +28,12 @@ const Recomend = () => {
         </div>
         <div>
           <img
-            src="/images/Business/person.jpg"
+            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669195/ayatrio_busness_to_busniess_s3mhzq.avif"
             className="w-full h-auto"
             alt="Loading...Ayatrio
             cursor-pointer"
           />
-          <h3 className="text-xl">
+          <h3 className="text-xl pt-[15px]">
             Join Ayatrio engineering channel service provider
           </h3>
           <p>
@@ -48,28 +48,10 @@ const Recomend = () => {
             learn more.....
           </Link>
         </div>
-        <div>
-          <img
-            src="/images/Business/irons.jpg"
-            className="w-full h-auto"
-            alt="Loading...Blue Box
-            cursor-pointer"
-          />
-          <h3 className="text-xl">Ayatrio Blue Box for a Beautiful Life</h3>
-          <p>
-            The new Ayatrio for Business gift box, sending you heartfelt wishes for
-            a beautiful life!
-          </p>
-          <Link
-            href="#"
-            className="cursor-pointer text-blue-500"
-          >
-            learn more.....
-          </Link>
-        </div>
+
         <div>
           <img src="/images/Business/room.gif" className="w-full h-auto" alt="Loading...." />
-          <h3 className="text-xl">3D rendering example</h3>
+          <h3 className="text-xl pt-[15px]">3D rendering example</h3>
           <p>15㎡ Apartment: Fully Utilizing a Small Space</p>
           <Link
             href="#"

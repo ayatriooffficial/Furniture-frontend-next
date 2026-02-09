@@ -3,7 +3,7 @@
 const MainSliderSkeleton = () => {
   return (
     <div className="w-full h-full px-[12px] sm:px-0 relative">
-      <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg" />
+      <div className="w-full h-full bg-[#f1f1f1] animate-pulse" />
     </div>
   );
 };

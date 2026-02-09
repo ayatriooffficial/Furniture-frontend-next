@@ -2,20 +2,20 @@ import React from "react";
 
 const Commercial = () => {
   return (
-    <div className=" justify-between md:p-10 bg-white animate-slide-in">
-      <h1 className="text-black ms-10 text-xl sm:text-2xl md:text-3xl text-black m-9">
+    <div className=" justify-between md:p-12 bg-white animate-slide-in">
+      <h1 className="text-black font-bold text-xl sm:text-2xl md:text-3xl text-black py-9">
         Help you run your business smoothly
       </h1>
       <div className="flex">
-        <div className="m-10 ">
+        <div className="m-2 w-full md:w-[55%]  ">
           <img
-            src="/images/Business/furniture.jpg"
+            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669575/ayatrio_furnishing_for_office_pmesfr.avif"
             alt="Loadin..Furinture"
             className="w-[620px]
             cursor-pointer"
           ></img>
         </div>
-        <div className="text-black w-80 m-40 my-24 gap-20 ">
+        <div className=" w-full md:w-[55%]  text-black w-80 m-10 my-24 gap-20 ">
           <h1 className="text-1xl sm:text-xl text-black font-bold ">
             Commercial Spaces for MSMEs
           </h1>

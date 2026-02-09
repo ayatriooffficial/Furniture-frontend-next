@@ -30,7 +30,7 @@ export const metadata = {
       "India's biggest home furnishing & decor solutions: Get Upto 50% Off on Wallpaper, Flooring, Curtain, Bedding, Mattresses, Cushion & Covers, Dinner & Kitchenware.",
     images: [
       {
-        url: "/ayatrio-room.jpg",
+        url: "https://res.cloudinary.com/dcvabpy6e/image/upload/v1770676180/ayatrio-room-furnishing_m29isq.avif",
         width: 600,
         height: 600,
         alt: "Ayatrio: Buy Home Furnishing & Decor Products Online at Best Price",

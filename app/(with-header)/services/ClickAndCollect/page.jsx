@@ -5,7 +5,7 @@ export default function ClickAndCollectServicePage() {
         <div className='md:px-[60px] mx-auto px-[20px] sm:px-[50px] lg:px-[27px]'>
             <section className="w-full pt-40 px-6">
                 <div className="flex flex-wrap md:flex-nowrap gap-y-3 md:gap-12  justify-between">
-                    <div className="w-full md:w-3/5 flex flex-col justify-center ">
+                    <div className="w-full md:w-1/2 flex flex-col justify-center ">
                         <h2 className="text-black text-2xl font-semibold mb-12  ">
                             Click and collect
                         </h2>
@@ -13,89 +13,52 @@ export default function ClickAndCollectServicePage() {
                             With Ayatrio Click and collect, you’re in control. Place an order online when it’s convenient and choose when and where to collect it. You’ll still make a trip, but we’ll gather your items so that you have more time and energy for assembling instead.
                         </p>
                         <p className="text-justify opacity-80 mb-3 px-3">
-                        Contactless Click and collect service is available at select Pick-up locations nationwide.
-                        <strong> Starting at $5</strong>, you can place an order online and collect it from your local
-                        <a href="" className="underline">Ayatrio store</a>,
-                        <a href="" className="underline">Pick-up locker*</a>
-                        (free for Ayatrio Family members) or an external
-                        <a href="" className="underline"> Pick-up location</a>.
-                    </p>
+                            Contactless Click and collect service is available at select Pick-up locations nationwide.
+                            <strong> Starting at Rs 100</strong>, you can place an order online and collect it from your local
+                            <a href="" className="underline">Ayatrio store</a>,
+                            <a href="" className="underline">Pick-up locker*</a>
+                            (free for Ayatrio Family members) or an external
+                            <a href="" className="underline"> Pick-up location</a>.
+                        </p>
 
-                    <p className="text-justify px-3 opacity-80 mb-3">
-                        *Pick-up lockers are only available at select stores.
-                        <a href="" className="underline">
-                            Click here for details.
-                        </a>
-                    </p>
-                    <ul className="flex gap-x-1 mt-3 px-3 flex-wrap">
-                        <li>
-                            <a href="#options" className="underline opacity-90 hover:opacity-100">Options and pricing</a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#works" className="underline opacity-90 hover:opacity-100"> How it works </a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#know" className="underline opacity-90 hover:opacity-100"> Good to know </a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#faq" className="underline opacity-90 hover:opacity-100">FAQ</a>
-                        </li>
-                    </ul>
+                        <p className="text-justify px-3 opacity-80 mb-3">
+                            *Pick-up lockers are only available at select stores.
+                            <a href="" className="underline">
+                                Click here for details.
+                            </a>
+                        </p>
+                        <ul className="flex gap-x-1 mt-3 px-3 flex-wrap">
+                            <li>
+                                <a href="#options" className="underline opacity-90 hover:opacity-100">Options and pricing</a>
+                            </li>
+                            <li className="opacity-50"> | </li>
+                            <li>
+                                <a href="#works" className="underline opacity-90 hover:opacity-100"> How it works </a>
+                            </li>
+                            <li className="opacity-50"> | </li>
+                            <li>
+                                <a href="#know" className="underline opacity-90 hover:opacity-100"> Good to know </a>
+                            </li>
+                            <li className="opacity-50"> | </li>
+                            <li>
+                                <a href="#faq" className="underline opacity-90 hover:opacity-100">FAQ</a>
+                            </li>
+                        </ul>
 
-                       
+
 
                     </div>
                     <div className="w-full md:w-1/2 flex items-center justify-center">
                         <Image loading="lazy"
-                            src="/images/services/ClickCollectService/services.jpg"
+                            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770662114/instoreshoping_oz3ije.avif"
                             alt="Financial service"
                             width={300}
                             height={300}
                             className="w-[800px] h-[400px] object-cover"
                         />
                     </div>
-                    
+
                 </div>
-                {/* <div className="md:w-[60%] ">
-                    <p className="text-justify px-3 opacity-80 mb-3">
-                        Contactless Click and collect service is available at select Pick-up locations nationwide.
-                        <strong> Starting at $5</strong>, you can place an order online and collect it from your local
-                        <a href="" className="underline">Ayatrio store</a>,
-                        <a href="" className="underline">Pick-up locker*</a>
-                        (free for Ayatrio Family members) or an external
-                        <a href="" className="underline"> Pick-up location</a>.
-                    </p>
-
-                    <p className="text-justify px-3 opacity-80 mb-3">
-                        *Pick-up lockers are only available at select stores.
-                        <a href="" className="underline">
-                            Click here for details.
-                        </a>
-                    </p>
-                    <ul className="flex gap-x-1 mt-3 px-3 flex-wrap">
-                        <li>
-                            <a href="#options" className="underline opacity-90 hover:opacity-100">Options and pricing</a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#works" className="underline opacity-90 hover:opacity-100"> How it works </a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#know" className="underline opacity-90 hover:opacity-100"> Good to know </a>
-                        </li>
-                        <li className="opacity-50"> | </li>
-                        <li>
-                            <a href="#faq" className="underline opacity-90 hover:opacity-100">FAQ</a>
-                        </li>
-                    </ul>
-
-                </div> */}
-
-                <hr className="mt-20" />
 
             </section>
 
@@ -108,17 +71,10 @@ export default function ClickAndCollectServicePage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="col-span-1 border">
-                        <div className="pb-[56.49761904761905%] relative">
-                            <Image loading="lazy" src="/images/services/ClickCollectService/car.jpg"
-                                alt="Cars parked in front of an Ayatrio store"
-                                width={300}
-                                height={300}
-                                className="absolute inset-0 w-full h-full object-cover"  />
-                        </div>
                         <div className="p-4">
                             <h3 className="text-lg font-semibold">Collect at an Ayatrio store</h3>
                             <ul className="mt-2 list-disc pl-4">
-                                <li>$5 flat rate (<a href="">free for Ayatrio Family members</a>)</li>
+                                <li>Rs 100 flat rate (<a href="">free for Ayatrio Family members</a>)</li>
                                 <li>Approximate lead time: Two hours to two days after placing order</li>
                                 <li>Maximum package size: No limit</li>
                                 <li>Maximum package weight: No limit</li>
@@ -129,16 +85,7 @@ export default function ClickAndCollectServicePage() {
                         >View all Ayatrio store locations</a>
                     </div>
                     <div className="col-span-1 border">
-                        <div className="pb-[56.2%] relative">
-                            <Image loading="lazy" 
-                            src="/images/services/ClickCollectService/pickup.jpg"
-                                alt="A person riding a cargo bicycle with Ayatrio boxes"
-                                className="absolute inset-0 w-full h-full object-cover"
-                                width={300}
-                                height={300}
-                                 />
 
-                        </div>
                         <div className="p-4">
                             <h3 className="text-lg font-semibold">Use a Pick-up location</h3>
                             <p className="mt-2">Enjoy flat-rate shipping with our Pick-up locations. Collect your online orders at convenient partner locations.</p>
@@ -148,14 +95,7 @@ export default function ClickAndCollectServicePage() {
                         >View all Pick-up locations</a>
                     </div>
                     <div className="col-span-1 border">
-                        <div className="pb-[56.2%] relative">
-                            <Image loading="lazy" src="/images/services/ClickCollectService/deliver.jpg"
-                                alt="FedEx worker helping a customer"
-                                width={300}
-                                height={300}
-                                className="absolute inset-0 w-full h-full object-cover"  />
 
-                        </div>
                         <div className="p-4">
                             <h3 className="text-lg font-semibold">Pickup your small packages at a FedEx retail location near you</h3>
                             <p className="mt-2">Enhance your Ayatrio online shopping experience with convenient package pickup service. Choose your preferred pickup location during checkout.</p>

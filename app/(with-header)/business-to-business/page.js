@@ -4,7 +4,6 @@ import Nav from "@/components/Business/Nav";
 import Projects from "@/components/Business/Projects";
 import Recomend from "@/components/Business/Recomend";
 
-import Purchasing from "@/components/Business/Purchasing";
 
 import MulticardService from "@/components/Cards/MultiCardService";
 
@@ -14,11 +13,11 @@ const page = () => {
       <Nav />
       <Home />
       <Recomend />
+       <MulticardService />
       <Commercial />
       <Projects />
-      <Purchasing />
 
-      <MulticardService />
+     
     </div>
   );
 };
