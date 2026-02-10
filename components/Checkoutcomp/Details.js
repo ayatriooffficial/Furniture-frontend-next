@@ -3,6 +3,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { formatPrice, roundToTwo } from "../../utils/price";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useRouter } from "next/navigation";
@@ -22,7 +23,7 @@ import {
 } from "@/components/Features/Slices/externalOfferSlice";
 import { BASE_URL } from "@/constants/base-url";
 import { useSearchParams } from "next/navigation";
-import { setDbItems } from "../Features/Slices/cartSlice";
+import { setDbItems, selecteddbItems } from "../Features/Slices/cartSlice";
 import {
   selectFreeSampleItems,
   setFreeSamples,
@@ -39,7 +40,8 @@ const Details = () => {
   const [form, setForm] = useState({});
   const [isDeliveryLoading, setIsDeliveryLoading] = useState(true);
 
-  const [cartdata, setcartdata] = useState("");
+  // ✅ Get cart data from Redux instead of local state
+  const cartdata = useSelector(selecteddbItems);
 
   const searchParams = useSearchParams();
 
@@ -52,7 +54,7 @@ const Details = () => {
   const bankDiscountedAmount = useSelector(selectBankDiscountedAmount);
   const [userId, setUserId] = useState(null);
   const otherApplicableExternalOffers = useSelector(
-    selectOtherApplicableExternalOffers
+    selectOtherApplicableExternalOffers,
   );
   const appliedOffers = useSelector(selectAppliedOffers);
   // #########################
@@ -71,7 +73,7 @@ const Details = () => {
 
     getUserId();
   }, []);
-  
+
   // #################################
 
   useEffect(() => {
@@ -91,7 +93,7 @@ const Details = () => {
           params: {
             deviceId,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -115,20 +117,15 @@ const Details = () => {
           params: {
             deviceId: id,
           },
-        }
+        },
       );
       // console.log(response);
       if (response.status !== 200) {
         throw new Error("HTTP status " + response.status);
       }
       const data = response.data; // Extract JSON from the response
-      // console.log("response from DB", data);
-
-      setcartdata(data);
-      // console.log("response from DB", cartdata);
-      // console.log("cartStatus", cartStatus);
+      // ✅ ONLY update Redux - local cartdata will auto-update via selector
       dispatch(setDbItems(data));
-      // console.log("this is data from redux (db)", dbItems);
     } catch (error) {
       console.error("Error Fetching data from DB : ", error);
     }
@@ -143,7 +140,7 @@ const Details = () => {
   const fetchMapData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/mapPlaces`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/mapPlaces`,
       );
       // console.log(response.data);
       SET_STORE_MAP_DATA(response.data);
@@ -165,7 +162,7 @@ const Details = () => {
                 origins: origins,
                 destinations: store.pincode,
               },
-            }
+            },
           );
 
           const distanceText = response.data.rows[0].elements[0].distance.text;
@@ -179,7 +176,7 @@ const Details = () => {
             distanceText: distanceText,
             distanceValue: distanceValue,
           };
-        })
+        }),
       );
 
       distances.sort((a, b) => a.distanceValue - b.distanceValue);
@@ -201,7 +198,7 @@ const Details = () => {
           JSON.stringify({
             nearestStore: distances[0],
             userPincode,
-          })
+          }),
         );
       }
     } catch (error) {
@@ -209,28 +206,28 @@ const Details = () => {
     }
   };
 
-const FetchCost = async (distance) => {
-  // console.log("FetchCost called with distance:", distance);
-  setIsDeliveryLoading(true);
-  // console.log("nearestDistance:", nearestDistance);
-  if (nearestDistance === null) {
-    // console.log("nearestDistance is null, returning early");
-    setIsDeliveryLoading(false);
-    return;
-  }
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/calculateShippingDetails/${distance}`
-    );
-    // console.log("API response:", response.data);
-    setDeliveryCost(response.data.charge);
-    setDeliveryPrice(response.data.charge);
-    setIsDeliveryLoading(false);
-  } catch (error) {
-    console.error("Error in FetchCost:", error.message, error.response?.data);
-    setIsDeliveryLoading(false);
-  }
-};
+  const FetchCost = async (distance) => {
+    // console.log("FetchCost called with distance:", distance);
+    setIsDeliveryLoading(true);
+    // console.log("nearestDistance:", nearestDistance);
+    if (nearestDistance === null) {
+      // console.log("nearestDistance is null, returning early");
+      setIsDeliveryLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/calculateShippingDetails/${distance}`,
+      );
+      // console.log("API response:", response.data);
+      setDeliveryCost(response.data.charge);
+      setDeliveryPrice(response.data.charge);
+      setIsDeliveryLoading(false);
+    } catch (error) {
+      console.error("Error in FetchCost:", error.message, error.response?.data);
+      setIsDeliveryLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchMapData();
@@ -276,9 +273,10 @@ const FetchCost = async (distance) => {
       //   (serviceTotal, service) => serviceTotal + parseFloat(service.cost),
       //   0
       // );
-      const itemTotalPrice = item.price * item.quantity;
+      const itemTotalPrice = roundToTwo(item.price * item.quantity);
       return total + itemTotalPrice;
     }, 0);
+    totalPrice = roundToTwo(totalPrice);
   }
   // if (CartData && CartData.items) {
   //   totalPrice = CartData.items.reduce(
@@ -294,11 +292,13 @@ const FetchCost = async (distance) => {
     totalServicesPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalServicesPrice = roundToTwo(totalServicesPrice);
   }
 
   // console.log(cartdata);
@@ -311,11 +311,13 @@ const FetchCost = async (distance) => {
     totalAccessoryPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedAccessories.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.perUnitPrice * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.perUnitPrice * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalAccessoryPrice = roundToTwo(totalAccessoryPrice);
   }
 
   // console.log(totalAccessoryPrice);
@@ -327,20 +329,20 @@ const FetchCost = async (distance) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
           serviceTotal + parseFloat(service.cost * service?.quantity),
-        0
+        0,
       );
       const accessoriesTotalCost = item.selectedAccessories.reduce(
         (accessoryTotal, accessory) =>
           accessoryTotal +
           parseFloat(accessory.totalPrice * accessory?.quantity),
-        0
+        0,
       );
       const itemTotalPrice =
         (item.price + serviceTotalCost + accessoriesTotalCost) * item.quantity;
       return total + itemTotalPrice;
     }, 0);
   }
-  dispatch(setSumTotalPrice(SumtotalPrice));
+  dispatch(setSumTotalPrice(roundToTwo(SumtotalPrice)));
 
   //my Code##############
   useEffect(
@@ -357,7 +359,7 @@ const FetchCost = async (distance) => {
               process.env.NEXT_PUBLIC_API_BASE_URL
             }/api/getExternalOfferApplicablePrice/${userId}/${
               isFreeSample ? 0 : SumtotalPrice
-            }`
+            }`,
           );
           const externalOffersData = await externalOfferPriceResponse.json();
 
@@ -378,7 +380,7 @@ const FetchCost = async (distance) => {
       if (userId && SumtotalPrice > 0 && !otherApplicableExternalOffers)
         getExtoffersApplicablePrice();
     },
-    [userId, SumtotalPrice]
+    [userId, SumtotalPrice],
   );
 
   //#####################
@@ -474,125 +476,132 @@ const FetchCost = async (distance) => {
       phone: updatedForm.number,
     };
 
-
-try {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        address,
-        deviceId: id,
-        userId: userId,
-        cartId,
-        isFreeSample,
-        freeSampleCartId: freeSamples?._id,
-        bankId: selectedBank !== "" ? selectedBank : null,
-        amount: {
-          deliveryPrice: deliveryPrice,
-          productPrice: isFreeSample ? 0 : SumtotalPrice,
-          discount: otherApplicableExternalOffers,
-          totalPrice: isFreeSample
-            ? deliveryPrice
-            : SumtotalPrice + deliveryPrice,
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            address,
+            deviceId: id,
+            userId: userId,
+            cartId,
+            isFreeSample,
+            freeSampleCartId: freeSamples?._id,
+            bankId: selectedBank !== "" ? selectedBank : null,
+            amount: {
+              deliveryPrice: deliveryPrice,
+              productPrice: isFreeSample ? 0 : SumtotalPrice,
+              discount: otherApplicableExternalOffers,
+              totalPrice: isFreeSample
+                ? deliveryPrice
+                : SumtotalPrice + deliveryPrice,
+            },
+          }),
         },
-      }),
-    }
-  );
+      );
 
-  if (response.ok && isFreeSample && deliveryPrice === 0) {
-    return router.push("/freesamplesuccess");
-  }
+      if (response.ok && isFreeSample && deliveryPrice === 0) {
+        return router.push("/freesamplesuccess");
+      }
 
-  if (response.ok) {
-    const data = await response.json();
-    const orderId = data.orderId;
+      if (response.ok) {
+        const data = await response.json();
+        const orderId = data.orderId;
 
-    const paymentResponse = await axios.request({
-      method: "POST",
-      url: `${apiBaseUrl}/api/makepayment`,
-      data: {
-        amount: isFreeSample
-          ? deliveryPrice
-          : SumtotalPrice + deliveryPrice, // Send in rupees
-        deliveryPrice: deliveryPrice, // Send in rupees
-        bankId: selectedBank !== "" ? selectedBank : null,
-        otherExternalOffersDiscount: otherApplicableExternalOffers
-          ? otherApplicableExternalOffers.discountedAmount
-          : 0, // Send in rupees
-        callbackUrl: `${BASE_URL}/api/paymentcallback/${orderId}`,
-        redirectUrl: `${BASE_URL}/api/paymentcallback/${orderId}`,
-      },
-    });
+        const paymentResponse = await axios.request({
+          method: "POST",
+          url: `${apiBaseUrl}/api/makepayment`,
+          data: {
+            amount: isFreeSample
+              ? deliveryPrice
+              : SumtotalPrice + deliveryPrice, // Send in rupees
+            deliveryPrice: deliveryPrice, // Send in rupees
+            bankId: selectedBank !== "" ? selectedBank : null,
+            otherExternalOffersDiscount: otherApplicableExternalOffers
+              ? otherApplicableExternalOffers.discountedAmount
+              : 0, // Send in rupees
+            callbackUrl: `${BASE_URL}/api/paymentcallback/${orderId}`,
+            redirectUrl: `${BASE_URL}/api/paymentcallback/${orderId}`,
+          },
+        });
 
-    // console.log("paymentResponse:", paymentResponse.data); // Debug response
+        // console.log("paymentResponse:", paymentResponse.data); // Debug response
 
-    // Initialize Razorpay Checkout
-    const { orderId: razorpayOrderId, amount, currency, key } = paymentResponse.data.data;
-    const options = {
-      key,
-      amount,
-      currency,
-      order_id: razorpayOrderId,
-      name: "Ayatrio",
-      description: "Order Payment",
-      handler: async function (paymentResponse) {
-        try {
-          // console.log("Razorpay Payment Details:", paymentResponse);
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/paymentcallback/${orderId}`,
-            {
-              razorpay_payment_id: paymentResponse.razorpay_payment_id,
-              razorpay_order_id: paymentResponse.razorpay_order_id,
-              razorpay_signature: paymentResponse.razorpay_signature,
+        // Initialize Razorpay Checkout
+        const {
+          orderId: razorpayOrderId,
+          amount,
+          currency,
+          key,
+        } = paymentResponse.data.data;
+        const options = {
+          key,
+          amount,
+          currency,
+          order_id: razorpayOrderId,
+          name: "Ayatrio",
+          description: "Order Payment",
+          handler: async function (paymentResponse) {
+            try {
+              // console.log("Razorpay Payment Details:", paymentResponse);
+              const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/paymentcallback/${orderId}`,
+                {
+                  razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                  razorpay_order_id: paymentResponse.razorpay_order_id,
+                  razorpay_signature: paymentResponse.razorpay_signature,
+                },
+              );
+              // console.log("paymentCallback response:", response.data);
+              router.push("/paymentsuccess");
+            } catch (err) {
+              console.error(
+                "Payment verification failed:",
+                err.response?.data || err.message,
+              );
+              router.push("/paymentfailed");
             }
-          );
-          // console.log("paymentCallback response:", response.data);
-          router.push("/paymentsuccess");
-        } catch (err) {
-          console.error("Payment verification failed:", err.response?.data || err.message);
-          router.push("/paymentfailed");
+          },
+          prefill: {
+            email: "",
+            contact: "",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        // Ensure Razorpay script is loaded
+        if (!window.Razorpay) {
+          const script = document.createElement("script");
+          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+          script.async = true;
+          document.body.appendChild(script);
+          script.onload = () => {
+            // console.log("Razorpay script loaded");
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+          };
+        } else {
+          // console.log("Razorpay script already loaded");
+          const rzp = new window.Razorpay(options);
+          rzp.open();
         }
-      },
-      prefill: {
-        email: "", 
-        contact: "", 
-      },
-      theme: {
-        color: "#3399cc",
-      },
-    };
-
-    // Ensure Razorpay script is loaded
-    if (!window.Razorpay) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      document.body.appendChild(script);
-      script.onload = () => {
-        // console.log("Razorpay script loaded");
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      };
-    } else {
-      // console.log("Razorpay script already loaded");
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      } else {
+        console.error("Order creation failed:", response.status);
+        router.push("/paymentfailed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      router.push("/paymentfailed");
     }
-  } else {
-    console.error("Order creation failed:", response.status);
-    router.push("/paymentfailed");
-  }
-} catch (error) {
-  console.error("Error:", error);
-  router.push("/paymentfailed");
-}
-};
+  };
 
-const [userCoordinates, setUserCoordinates] = useState(null);
+  const [userCoordinates, setUserCoordinates] = useState(null);
   const [location, setLocation] = useState(null);
 
   const getDataFromCoordinates = async (lat, lng) => {
@@ -648,7 +657,7 @@ const [userCoordinates, setUserCoordinates] = useState(null);
             }));
             localStorage.setItem("userPincode", data);
           }
-        }
+        },
       );
     }
   }, [userCoordinates]);
@@ -1099,13 +1108,13 @@ const [userCoordinates, setUserCoordinates] = useState(null);
                   {isFreeSample
                     ? deliveryPrice
                     : otherApplicableExternalOffers
-                    ? SumtotalPrice +
-                      deliveryPrice -
-                      bankDiscountedAmount -
-                      otherApplicableExternalOffers.discountedAmount
-                    : SumtotalPrice +
-                      deliveryPrice -
-                      (bankDiscountedAmount ? bankDiscountedAmount : 0)}
+                      ? SumtotalPrice +
+                        deliveryPrice -
+                        bankDiscountedAmount -
+                        otherApplicableExternalOffers.discountedAmount
+                      : SumtotalPrice +
+                        deliveryPrice -
+                        (bankDiscountedAmount ? bankDiscountedAmount : 0)}
                 </div>
               </div>
             </div>

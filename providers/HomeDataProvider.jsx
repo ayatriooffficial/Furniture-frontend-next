@@ -71,7 +71,7 @@ export const HomeDataProvider = ({ children }) => {
       const [rankedRes, trendingRes, bannerRes, tabsRes] = await Promise.all([
         // 2. Ranked Products
         fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/rankedProductsFoEachCategory`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRankedProductsFoEachCategory`,
           {
             cache: "force-cache",
             next: { revalidate: 3600 },
