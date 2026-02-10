@@ -3,7 +3,7 @@ import React from "react";
 const Projects = () => {
   return (
     <div className="justify-between md:40 p-10 bg-white flex">
-      <div className="text-black w-[1200px] m-10  gap-10 my-24">
+      <div className="w-full md:w-[55%] text-black w-[1200px] m-10  gap-10 my-24">
         <h1 className="text-black">Engineering Projects</h1>
         <p>
           Ayatrio is committed to promoting large-scale collaborative engineering
@@ -18,13 +18,13 @@ const Projects = () => {
           shopping experiences.
         </p>
         <a href="#">
-            <button className="bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-10">
-              Know More ....
-            </button>
-          </a>
+          <button className="bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-10">
+            Know More ....
+          </button>
+        </a>
       </div>
-      <div>
-        <img src="/images/Business/project.jpg" alt="Loading...."  className="w-[1600px] mb-8"></img>
+      <div className="w-full md:w-[45%]">
+        <img src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669627/ayatrio_offer_wlxo8f.avif" alt="Loading...." className="w-[1600px] mb-8"></img>
       </div>
     </div>
   );

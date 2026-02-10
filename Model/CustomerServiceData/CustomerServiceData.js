@@ -1,43 +1,19 @@
 export const servicesData = [
   {
     id: 1,
-    image: "/images/customerservice/service1.jpg",
-    text: "Home",
-  },
-  {
-    id: 2,
-    image: "/images/customerservice/service2.jpg",
     text: "Services",
   },
   {
-    id: 3,
-    image: "/images/customerservice/service3.jpg",
-    text: "How to shop",
-  },
-  {
-    id: 4,
-    image: "/images/customerservice/service4.jpg",
-    text: "FAQs",
-  },
-  {
-    id: 5,
-    image: "/images/customerservice/service5.jpg",
-    text: "Return Policy",
-  },
-  {
-    id: 6,
-    image: "/images/customerservice/service6.jpg",
+    id: 2,
     text: "Gift Cards",
   },
   {
-    id: 7,
-    image: "/images/customerservice/service7.jpg",
-    text: "Price Guarantee",
+    id: 3,
+    text: "Return Policy",
   },
   {
-    id: 8,
-    image: "/images/customerservice/service8.jpg",
-    text: "Contact us",
+    id: 4,
+    text: "Price Guarantee",
   },
 ];
 

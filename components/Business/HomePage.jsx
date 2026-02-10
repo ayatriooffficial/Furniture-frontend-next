@@ -1,7 +1,7 @@
 const Home = () => {
   return (
     <main className="flex flex-col md:flex-row items-center justify-between p-10 bg-white gap-8 " >
-      <div className="text-black w-full md:w-[800px] p-4 ml-10 me-8">
+      <div className="text-black w-full md:w-[55%] ">
         <div className="mb-14">
           <p className="text-xl text-current">
             Professional, reliable, and time-efficient
@@ -27,7 +27,7 @@ const Home = () => {
       </div>
       <div className="w-full md:w-[45%] flex justify-center">
         <img
-          src="/images/Business/prakash.jpg"
+          src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669484/ayatrio_office_axig8q.avif"
           alt="Loading..."
           className="w-full object-cover"
         />

@@ -66,7 +66,7 @@ export async function generateMetadata({ params }) {
         description: offerDescription,
         images: [
           {
-            url: "/ayatrio-room.jpg",
+            url: "https://res.cloudinary.com/dcvabpy6e/image/upload/v1770676180/ayatrio-room-furnishing_m29isq.avif",
             width: 600,
             height: 600,
             alt: "Ayatrio India-Affordable Home Furnishing & Decor designs & ideas",

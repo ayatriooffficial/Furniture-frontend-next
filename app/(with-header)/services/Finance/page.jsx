@@ -37,7 +37,7 @@ export default function FinanceServicesPage() {
                     </div>
                     <div className="w-full md:w-1/2 flex items-center justify-center">
                         <Image loading="lazy"
-                            src="/images/services/FinanceServices/services.jpg"
+                            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1769554621/ayatrio_consultation_zwsnoe.avif"
                             width={300}
                             height={300}
                             alt="Financial service"
@@ -56,7 +56,7 @@ export default function FinanceServicesPage() {
             <section className="flex flex-col md:flex-row bg-gray-100 my-12" id='payment'>
                 <div className="w-full md:w-[70%]">
                     <Image loading="lazy"
-                        src="/images/services/FinanceServices/a-man-tossing-a-plush-toy-to-a-young-child.jpg"
+                        src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770664746/a-man-tossing-a-plush-toy-to-a-young-child_ibmlit.avif"
                         alt="A man tossing a plush toy to a young child."
                         width={300}
                         height={300}
@@ -70,7 +70,7 @@ export default function FinanceServicesPage() {
                     <div className="text-gray-900 space-y-4">
                         <p>Afterpay allows you to split your purchase into four interest-free* payments.</p>
                         <p>The first payment is taken when the order is placed and the remaining three are automatically processed every two weeks.</p>
-                        <p>Available for purchases between $50 and $1,000 including services and taxes.&nbsp;</p>
+                        <p>Available for purchases between Rs:10k and Rs:50k including services and taxes.&nbsp;</p>
                         <p>Currently available for online purchases only.</p>
                     </div>
                     <a
@@ -90,7 +90,7 @@ export default function FinanceServicesPage() {
 
                 <div className="w-full md:w-[70%]">
                     <Image loading="lazy"
-                        src="/images/services/FinanceServices/a-couple-inside-an-store.jpg"
+                        src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770664673/a-couple-inside-an-store_gnwtbt.avif"
                         alt="A couple inside an Ayatrio store shopping for a kitchen sink."
                         width={300}
                         height={300}
@@ -134,12 +134,12 @@ export default function FinanceServicesPage() {
 
                 <div className="flex flex-col justify-center lg:col-span-1 border rounded-sm max-h-fit">
                     <div className="flex justify-center mb-6">
-                        <Image loading="lazy" src="/images/services/FinanceServices/in-store-payment-options.jpg"
+                        <Image loading="lazy" src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770664807/in-store-payment-options_jgw5oq.avif"
                             alt="In store payment options"
                             width={800}
                             height={500}
-                            className="max-w-full h-auto" 
-                            
+                            className="max-w-full h-auto"
+
                         />
                     </div>
                     <div className="opacity-90 mb-4 px-3">
@@ -161,7 +161,7 @@ export default function FinanceServicesPage() {
                 <div className="flex flex-col justify-center lg:col-span-1 lg:mb-20 rounded-sm border max-h-fit">
                     <div className="flex justify-center mb-6">
                         <Image loading="lazy"
-                            src="/images/services/FinanceServices/online-payment-options.jpg"
+                            src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770664865/online-payment-options_hklhup.avif"
                             alt="Online payment options"
                             width={800}
                             height={500}
