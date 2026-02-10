@@ -43,7 +43,7 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
         // });
         try {
           const responce = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchMapStore?search=${searchQuery}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchMapStore?search=${searchQuery}`,
           );
           // console.log(responce.data);
           setStores(responce.data);
@@ -59,7 +59,6 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
 
   let cacheddata = JSON.parse(sessionStorage.getItem("cachedData"));
 
- 
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -69,7 +68,7 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
       if (debouncedSearchQuery !== cachedSearchText) {
         // Perform the search and update the cache
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?search=${searchQuery}`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?search=${searchQuery}`,
         );
         // sessionStorage.setItem("cachedData", JSON.stringify(response.data));
         // console.log(response.data);
@@ -94,7 +93,7 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
   const fetchPopularSearchProducts = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/popularSearchProducts`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/popularSearchProducts`,
       );
       setPopularSearchProducts(response.data);
     } catch (error) {
@@ -223,7 +222,6 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
   };
 
   const handlePopularSearch = (search) => {
-    
     setSearchQuery(search);
     setIsStoreLoading(true);
     fetchStores(search).then((stores) => {
@@ -232,19 +230,15 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
     });
   };
 
-
-
   return (
     <>
       {isModalOpen && (
-        <div className="md:fixed md:inset-0 md:bg-black md:opacity-50 md:z-[9998]"></div>
+        <div className="fixed inset-0 bg-black opacity-50 z-[9998]"></div>
       )}
       <div
         className={`expanded-search-box block ${
           path === "/ayatrio-map" ? "lg:pt-[50px] pt-[12px]" : "pt-[12px]"
-        }  bg-white sm:h-310px h-full  sm:w-full w-[100vw]  absolute right-0 top-0  z-[9999] md:mt-[-36px] ${
-          path == "/" ? "sm:mt-[-36px]" : ""
-        } `}
+        }  bg-white h-screen sm:h-auto sm:max-h-[90vh] w-full fixed left-0 top-0 z-[9999] overflow-y-auto`}
         style={overflowStyle}
       >
         <div className="flex flex-row pl-[24px] lg:pl-[0px] items-center  justify-between bg-white  w-full absolute left-0 ">
@@ -335,13 +329,13 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
                     searchQuery ? "max-w-[300px]" : ""
                   }`}
                 >
-                  {popularSearchProducts.map((item,index) => (
+                  {popularSearchProducts.map((item, index) => (
                     <Link
                       key={`${item._id}_${index}`}
                       className="dropdown-item sm:font-medium   py-2  text-[20px] font-medium "
                       href={`/${item.subcategory.replace(
                         /\s/g,
-                        "-"
+                        "-",
                       )}/subcollection/${item.category.replace(/\s/g, "-")}`}
                       onClick={onClose}
                     >
@@ -350,13 +344,13 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
                   ))}
                 </div>
                 <div className="flex flex-col md:hidden y h-full">
-                  {popularSearchProducts.slice(0, 3).map((item,index) => (
+                  {popularSearchProducts.slice(0, 3).map((item, index) => (
                     <Link
                       key={`${item._id}_${index}`}
                       className="dropdown-item sm:font-medium   py-2  text-[20px] font-medium "
                       href={`/${item.subcategory.replace(
                         /\s/g,
-                        "-"
+                        "-",
                       )}/subcollection/${item.category.replace(/\s/g, "-")}`}
                       onClick={onClose}
                     >
@@ -423,47 +417,48 @@ const Expandedbar = ({ searchText, onClose, onSearch }) => {
                   No results found
                 </p>
               ) : (
-                (stores && stores?.length > 0 ? stores : []).map((item,index) => {
-
-                  return (
-                    <div>
-                      <div
-                        key={`${item._id}_${index}`}
-                        className="col-span-1 cursor-pointer"
-                        // onClick={() => handleRoute(item)}
-                        onClick={() =>
-                          handleResultClick(
-                            {
-                              lat: item.geo_location.latitude,
-                              lng: item.geo_location.longitude,
-                            },
-                            item
-                          )
-                        }
-                      >
-                        <div className="lg:w-[170px] w-[150px] h-[150px] lg:h-[170px]">
-                          <Image
-                            loading="lazy"
-                            src={item.images[0]}
-                            width={170}
-                            height={170}
-                            alt={item.name}
-                            className="w-[100%] h-[100%] object-fill"
-                          />
-                        </div>
-                        <div className="lg:text-[16px] text-[14px] font-medium text-black pt-2 ">
-                          {item.name}
-                        </div>
-                        <div className="lg:text-[12px] text-[12px]  font-normal py-[2px] line-clamp-2 text-[#707072]">
-                          {item.address}
-                        </div>
-                        <div className="lg:text-[12px] text-[12px]  font-semibold  text-black">
-                          {item.phone}
+                (stores && stores?.length > 0 ? stores : []).map(
+                  (item, index) => {
+                    return (
+                      <div>
+                        <div
+                          key={`${item._id}_${index}`}
+                          className="col-span-1 cursor-pointer"
+                          // onClick={() => handleRoute(item)}
+                          onClick={() =>
+                            handleResultClick(
+                              {
+                                lat: item.geo_location.latitude,
+                                lng: item.geo_location.longitude,
+                              },
+                              item,
+                            )
+                          }
+                        >
+                          <div className="lg:w-[170px] w-[150px] h-[150px] lg:h-[170px]">
+                            <Image
+                              loading="lazy"
+                              src={item.images[0]}
+                              width={170}
+                              height={170}
+                              alt={item.name}
+                              className="w-[100%] h-[100%] object-fill"
+                            />
+                          </div>
+                          <div className="lg:text-[16px] text-[14px] font-medium text-black pt-2 ">
+                            {item.name}
+                          </div>
+                          <div className="lg:text-[12px] text-[12px]  font-normal py-[2px] line-clamp-2 text-[#707072]">
+                            {item.address}
+                          </div>
+                          <div className="lg:text-[12px] text-[12px]  font-semibold  text-black">
+                            {item.phone}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })
+                    );
+                  },
+                )
               )}
             </div>
           )}

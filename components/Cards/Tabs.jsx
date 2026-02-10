@@ -8,8 +8,7 @@ import { useRouter } from "next/navigation";
 import TabImage from "./TabImage";
 import "./tabs.css";
 
-// ⚡ FIX: Prevent 404 image requests - Always have valid fallback
-const FALLBACK_IMAGE = "/images/temp.svg";
+const FALLBACK_IMAGE = "";
 
 const Tabs = ({ data }) => {
   const router = useRouter();
@@ -305,7 +304,7 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover "
-                    src="/images/temp.svg"
+                    src=""
                     alt="Room"
                     width={200}
                     height={200}
@@ -496,7 +495,7 @@ const Tabs = ({ data }) => {
                   <Image
                     loading="lazy"
                     className="h-full w-full object-cover "
-                    src="/images/temp.svg"
+                    src=""
                     alt="Room"
                     width={200}
                     height={200}

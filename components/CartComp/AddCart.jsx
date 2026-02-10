@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import { formatPrice, roundToTwo } from "../../utils/price";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRoomData } from "../Features/Slices/roomSlice";
 import {
@@ -40,7 +41,7 @@ const AddCart = () => {
   // #####################My Code
   const [userId, setUserId] = useState(null);
   const otherApplicableExternalOffers = useSelector(
-    selectOtherApplicableExternalOffers
+    selectOtherApplicableExternalOffers,
   );
   const bankDiscountedAmount = useSelector(selectBankDiscountedAmount);
   const selectedBank = useSelector(selectSelectedBank);
@@ -66,7 +67,6 @@ const AddCart = () => {
   let id;
   if (typeof window !== "undefined") {
     id = localStorage.getItem("deviceId");
-
   }
 
   useEffect(() => {
@@ -83,11 +83,13 @@ const AddCart = () => {
     totalServicesPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalServicesPrice = roundToTwo(totalServicesPrice);
   }
 
   // console.log(cartdata);
@@ -100,11 +102,13 @@ const AddCart = () => {
     totalAccessoryPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedAccessories.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.perUnitPrice * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.perUnitPrice * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalAccessoryPrice = roundToTwo(totalAccessoryPrice);
   }
 
   // console.log(totalAccessoryPrice);
@@ -118,13 +122,13 @@ const AddCart = () => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
           serviceTotal + parseFloat(service.cost * service?.quantity),
-        0
+        0,
       );
       const accessoriesTotalCost = item.selectedAccessories.reduce(
         (accessoryTotal, accessory) =>
           accessoryTotal +
           parseFloat(accessory.totalPrice * accessory?.quantity),
-        0
+        0,
       );
       const itemTotalPrice =
         (item.price + serviceTotalCost + accessoriesTotalCost) * item.quantity;
@@ -132,12 +136,13 @@ const AddCart = () => {
     }, 0);
   }
 
-  dispatch(setSumTotalPrice(SumtotalPrice));
+  dispatch(setSumTotalPrice(roundToTwo(SumtotalPrice)));
 
   if (cartdata && cartdata.items) {
     totalPrice = cartdata.items.reduce((total, item) => {
-      return total + (item?.price || 0) * (item?.quantity || 0);
+      return total + roundToTwo((item?.price || 0) * (item?.quantity || 0));
     }, 0);
+    totalPrice = roundToTwo(totalPrice);
     quantities = cartdata.items.reduce((total, item) => {
       return total + (item?.quantity || 0);
     }, 0);
@@ -155,7 +160,7 @@ const AddCart = () => {
           // check fro first and second purcahse offer
 
           const externalOfferPriceResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getExternalOfferApplicablePrice/${userId}/${SumtotalPrice}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getExternalOfferApplicablePrice/${userId}/${SumtotalPrice}`,
           );
           const externalOffersData = await externalOfferPriceResponse.json();
           // console.log("externalOffersData");
@@ -178,7 +183,7 @@ const AddCart = () => {
       if (userId && SumtotalPrice > 0 && !otherApplicableExternalOffers)
         getExtoffersApplicablePrice();
     },
-    [userId, SumtotalPrice]
+    [userId, SumtotalPrice],
   );
 
   //#####################
@@ -193,7 +198,6 @@ const AddCart = () => {
   const quantityCart = useSelector(selectQuantity);
 
   const handleDelete = async (itemid) => {
-
     try {
       const response = await axios.delete(postUrl, {
         params: {
@@ -209,7 +213,7 @@ const AddCart = () => {
       }
 
       const updatedItems = cartdata.items.filter(
-        (item) => item.productId._id !== itemid
+        (item) => item.productId._id !== itemid,
       );
 
       // Check if there are no items left
@@ -246,7 +250,7 @@ const AddCart = () => {
             owner: id,
             productId: productId,
           },
-        }
+        },
       );
       if (response.status === 200) {
         setCartStaus("succeeded");
@@ -388,8 +392,9 @@ const AddCart = () => {
                 <div
                   key={item.productId._id}
                   data-component="cart-item"
-                  aria-label={`Cart item: ${item.productId?.productTitle || ""
-                    }`}
+                  aria-label={`Cart item: ${
+                    item.productId?.productTitle || ""
+                  }`}
                 >
                   <CartProduct
                     cartItem={item}
@@ -426,7 +431,7 @@ const AddCart = () => {
                   alt="rupees"
                   loading="lazy"
                 />
-                {totalPrice}
+                {formatPrice(totalPrice)}
               </div>
             </div>
             <div className="subtotal flex justify-between items-center mb-3 opacity-70">
@@ -439,7 +444,7 @@ const AddCart = () => {
                   alt="rupees"
                   loading="lazy"
                 />
-                {totalServicesPrice}
+                {formatPrice(totalServicesPrice)}
               </div>
             </div>
             <div className="subtotal flex justify-between items-center mb-3 opacity-70">
@@ -452,7 +457,7 @@ const AddCart = () => {
                   alt="rupees"
                   loading="lazy"
                 />
-                {totalAccessoryPrice}
+                {formatPrice(totalAccessoryPrice)}
               </div>
             </div>
             {userId && (
@@ -474,14 +479,14 @@ const AddCart = () => {
                       </div>
                       {otherApplicableExternalOffers
                         ? otherApplicableExternalOffers?.discountedAmount +
-                        bankDiscountedAmount
+                          bankDiscountedAmount
                         : bankDiscountedAmount}
                     </div>
                   </div>
                 </div>
                 <p className="text-xs text-[#767677] pb-3">
                   {selectedBank.length > 0 ||
-                    otherApplicableExternalOffers?.discountedAmount > 0 ? (
+                  otherApplicableExternalOffers?.discountedAmount > 0 ? (
                     <ul>
                       {appliedExternalOffers.map((offer, ind) => (
                         <li key={offer + ind}>{offer}</li>
@@ -510,11 +515,15 @@ const AddCart = () => {
                   alt="rupees"
                   loading="lazy"
                 />
-                {otherApplicableExternalOffers
-                  ? SumtotalPrice -
-                  bankDiscountedAmount -
-                  otherApplicableExternalOffers.discountedAmount
-                  : SumtotalPrice - bankDiscountedAmount}
+                {formatPrice(
+                  otherApplicableExternalOffers
+                    ? roundToTwo(
+                        SumtotalPrice -
+                          bankDiscountedAmount -
+                          otherApplicableExternalOffers.discountedAmount,
+                      )
+                    : roundToTwo(SumtotalPrice - bankDiscountedAmount),
+                )}
               </div>
             </div>
             <div className="text-sm mb-4">Quantity: {quantities}</div>

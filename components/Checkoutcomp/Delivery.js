@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import { formatPrice, roundToTwo } from "../../utils/price";
 import Link from "next/link";
 import { selectRoomData } from "../Features/Slices/roomSlice";
 import Calender from "../Calenders/Calender";
@@ -12,7 +13,7 @@ import {
 } from "../Features/Slices/calculationSlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setDbItems } from "../Features/Slices/cartSlice";
+import { setDbItems, selecteddbItems } from "../Features/Slices/cartSlice";
 import { getPinFromCoordinates } from "@/utils/getPinFromCoordinates";
 import { upsertUserLocation } from "../Features/api";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -35,7 +36,8 @@ import {
 const Delivery = () => {
   const [selectedOption, setSelectedOption] = useState("option3");
   const dispatch = useDispatch();
-  const [cartdata, setcartdata] = useState("");
+  // ✅ Get cart data from Redux instead of local state
+  const cartdata = useSelector(selecteddbItems);
   const [cartStatus, setCartStaus] = useState("");
   const [deliveryChoice, setDeliveryChoice] = useState(99);
   const [STORE_MAP_DATA, SET_STORE_MAP_DATA] = useState([]);
@@ -52,7 +54,7 @@ const Delivery = () => {
   const bankDiscountedAmount = useSelector(selectBankDiscountedAmount);
   const [userId, setUserId] = useState(null);
   const otherApplicableExternalOffers = useSelector(
-    selectOtherApplicableExternalOffers
+    selectOtherApplicableExternalOffers,
   );
   const appliedOffers = useSelector(selectAppliedOffers);
   const [nearestDistance, setNearestDistance] = useState(null);
@@ -88,7 +90,7 @@ const Delivery = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart/freeSampling`,
         {
           params: { deviceId },
-        }
+        },
       );
       const data = response.data;
       dispatch(setFreeSamples(data));
@@ -108,7 +110,7 @@ const Delivery = () => {
     if (window !== "undefined") {
       localStorage?.getItem("userCoordinates") &&
         setUserCoordinates(
-          JSON.parse(localStorage?.getItem("userCoordinates"))
+          JSON.parse(localStorage?.getItem("userCoordinates")),
         );
       setPreviousUserPinCode(localStorage?.getItem("userPincode"));
     }
@@ -138,7 +140,7 @@ const Delivery = () => {
                   console.error(`Error saving user location: ${error.message}`);
                 });
             }
-          }
+          },
         );
       }
     }
@@ -166,14 +168,14 @@ const Delivery = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
         {
           params: { deviceId: id },
-        }
+        },
       );
       if (response.status !== 200) {
         throw new Error("HTTP status " + response.status);
       }
       const data = response.data;
-      setcartdata(data);
       setCartStaus("succeeded");
+      // ✅ ONLY update Redux - local cartdata will auto-update via selector
       dispatch(setDbItems(data));
     } catch (error) {
       console.error("Error Fetching data from DB : ", error);
@@ -182,18 +184,25 @@ const Delivery = () => {
   };
 
   useEffect(() => {
-    if (deviceId && !isFreeSample) {
-      fetchData();
+    // ✅ Only fetch if Redux data is not available
+    if (!cartdata || !cartdata.items) {
+      if (deviceId && !isFreeSample) {
+        fetchData();
+      }
+    } else {
+      // ✅ Redux data already exists, mark as succeeded
+      setCartStaus("succeeded");
     }
-  }, [deviceId, isFreeSample]);
+  }, [deviceId, isFreeSample, cartdata]);
 
   // Calculate total prices
   let totalPrice = 0;
   if (cartStatus === "succeeded" && cartdata) {
     totalPrice = cartdata.items.reduce((total, item) => {
-      const itemTotalPrice = item.price * item.quantity;
+      const itemTotalPrice = roundToTwo(item.price * item.quantity);
       return total + itemTotalPrice;
     }, 0);
+    totalPrice = roundToTwo(totalPrice);
   }
 
   let SumtotalPrice = 0;
@@ -201,33 +210,37 @@ const Delivery = () => {
     SumtotalPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service?.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service?.quantity)),
+        0,
       );
       const accessoriesTotalCost = item.selectedAccessories.reduce(
         (accessoryTotal, accessory) =>
           accessoryTotal +
-          parseFloat(accessory.totalPrice * accessory?.quantity),
-        0
+          roundToTwo(parseFloat(accessory.totalPrice * accessory?.quantity)),
+        0,
       );
       const itemTotalPrice =
         (item.price + serviceTotalCost + accessoriesTotalCost) * item.quantity;
-      return total + itemTotalPrice;
+      return total + roundToTwo(itemTotalPrice);
     }, 0);
+    SumtotalPrice = roundToTwo(SumtotalPrice);
   }
 
-  dispatch(setSumTotalPrice(SumtotalPrice));
+  dispatch(setSumTotalPrice(roundToTwo(SumtotalPrice)));
 
   let totalServicesPrice = 0;
   if (cartStatus === "succeeded" && cartdata) {
     totalServicesPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalServicesPrice = roundToTwo(totalServicesPrice);
   }
 
   let totalAccessoryPrice = 0;
@@ -235,11 +248,13 @@ const Delivery = () => {
     totalAccessoryPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedAccessories.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.perUnitPrice * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.perUnitPrice * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalAccessoryPrice = roundToTwo(totalAccessoryPrice);
   }
 
   // Fetch external offers
@@ -251,7 +266,7 @@ const Delivery = () => {
             process.env.NEXT_PUBLIC_API_BASE_URL
           }/api/getExternalOfferApplicablePrice/${userId}/${
             isFreeSample ? 0 : SumtotalPrice
-          }`
+          }`,
         );
         const externalOffersData = await externalOfferPriceResponse.json();
         if (
@@ -274,7 +289,7 @@ const Delivery = () => {
   const fetchMapData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/mapPlaces`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/mapPlaces`,
       );
       SET_STORE_MAP_DATA(response.data);
     } catch (error) {
@@ -300,11 +315,12 @@ const Delivery = () => {
           params: {
             userPincode,
           },
-        }
+        },
       );
       console.log("Shipping details response:", response.data);
 
-      const { closestStore, distance, charge, estimatedDelivery } = response.data;
+      const { closestStore, distance, charge, estimatedDelivery } =
+        response.data;
 
       setNearestStore(closestStore);
       setNearestDistance(distance);
@@ -318,7 +334,7 @@ const Delivery = () => {
           JSON.stringify({
             nearestStore: closestStore,
             userPincode,
-          })
+          }),
         );
       }
     } catch (error) {
@@ -446,7 +462,8 @@ const Delivery = () => {
                 <div className="bg-[#e5e5e5] flex justify-center items-center p-[16px] rounded-tr-md rounded-tl-md">
                   <h3>
                     <span className="text-[16px] font-semibold text-black">
-                      Order online and collect from an Ayatrio store or a point near you
+                      Order online and collect from an Ayatrio store or a point
+                      near you
                     </span>{" "}
                     <a href="e" className="text-[#707072] underline">
                       nearby {userPincode}
@@ -763,7 +780,7 @@ const Delivery = () => {
                   alt="rupees"
                   className="mr-1"
                 />
-                {isFreeSample ? 0 : totalPrice}
+                {isFreeSample ? 0 : formatPrice(totalPrice)}
               </div>
             </div>
           </div>
@@ -779,7 +796,7 @@ const Delivery = () => {
                   alt="rupees"
                   className="mr-1"
                 />
-                {isFreeSample ? 0 : totalServicesPrice}
+                {isFreeSample ? 0 : formatPrice(totalServicesPrice)}
               </div>
             </div>
           </div>
@@ -795,7 +812,7 @@ const Delivery = () => {
                   alt="rupees"
                   className="mr-1"
                 />
-                {isFreeSample ? 0 : totalAccessoryPrice}
+                {isFreeSample ? 0 : formatPrice(totalAccessoryPrice)}
               </div>
             </div>
           </div>
@@ -849,7 +866,7 @@ const Delivery = () => {
                   alt="rupees"
                   className="mr-1"
                 />
-                {deliveryCost}
+                {formatPrice(deliveryCost)}
               </div>
             </span>
           </div>
@@ -868,16 +885,18 @@ const Delivery = () => {
                   alt="rupees"
                   className="mr-1"
                 />
-                {isFreeSample
-                  ? deliveryCost
-                  : otherApplicableExternalOffers
-                  ? SumtotalPrice +
-                    deliveryCost -
-                    bankDiscountedAmount -
-                    otherApplicableExternalOffers.discountedAmount
-                  : SumtotalPrice +
-                    deliveryCost -
-                    (bankDiscountedAmount ? bankDiscountedAmount : 0)}
+                {formatPrice(
+                  isFreeSample
+                    ? deliveryCost
+                    : otherApplicableExternalOffers
+                      ? SumtotalPrice +
+                        deliveryCost -
+                        bankDiscountedAmount -
+                        otherApplicableExternalOffers.discountedAmount
+                      : SumtotalPrice +
+                        deliveryCost -
+                        (bankDiscountedAmount ? bankDiscountedAmount : 0),
+                )}
               </div>
             </span>
           </div>
@@ -890,7 +909,8 @@ const Delivery = () => {
               Make the most of delivery charges
             </p>
             <p className="text-[#757575] text-[12px] pt-[5px]">
-              The current delivery price of your order is Rs. {deliveryCost} for up to 5 kg.
+              The current delivery price of your order is Rs.{" "}
+              {formatPrice(deliveryCost)} for up to 5 kg.
             </p>
           </div>
           {!userId && (

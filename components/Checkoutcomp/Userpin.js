@@ -8,6 +8,7 @@ import axios from "axios";
 import { getPinFromCoordinates } from "@/utils/getPinFromCoordinates";
 import { upsertUserLocation } from "../Features/api";
 import { useRouter, useSearchParams } from "next/navigation";
+import { roundToTwo, formatPrice } from "../../utils/price";
 import {
   selectFreeSampleItems,
   setFreeSamples,
@@ -45,7 +46,7 @@ const Userpin = () => {
   const bankDiscountedAmount = useSelector(selectBankDiscountedAmount);
   const [userId, setUserId] = useState(null);
   const otherApplicableExternalOffers = useSelector(
-    selectOtherApplicableExternalOffers
+    selectOtherApplicableExternalOffers,
   );
   const appliedOffers = useSelector(selectAppliedOffers);
   // #########################
@@ -76,7 +77,7 @@ const Userpin = () => {
           params: {
             deviceId: deviceId,
           },
-        }
+        },
       );
       // console.log(response);
       if (response.status !== 200) {
@@ -84,11 +85,9 @@ const Userpin = () => {
       }
       const data = response.data; // Extract JSON from the response
       // console.log("response from DB", data);
-
       setcartdata(data);
-      // console.log("response from DB", cartdata);
       setCartStaus("succeeded");
-      // console.log("cartStatus", cartStatus);
+      // ✅ Also keep Redux in sync for header/other components
       dispatch(setDbItems(data));
       // console.log("this is data from redux (db)", dbItems);
     } catch (error) {
@@ -115,7 +114,7 @@ const Userpin = () => {
           params: {
             deviceId,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -154,14 +153,12 @@ const Userpin = () => {
               lat: userCoordinates.lat,
               lng: userCoordinates.lng,
             })
-              .then(() => {
-                
-              })
+              .then(() => {})
               .catch((error) => {
                 console.error(`Error saving user location: ${error.message}`);
               });
           }
-        }
+        },
       );
     }
   }, [userCoordinates]);
@@ -172,9 +169,7 @@ const Userpin = () => {
     }
   }, [deviceId]);
 
-  useEffect(() => {
-   
-  }, [cartdata, cartStatus]);
+  useEffect(() => {}, [cartdata, cartStatus]);
   let totalPrice = 0;
   // if (cartStatus === "succeeded" && cartdata) {
   //   totalPrice = cartdata.items.reduce(
@@ -188,9 +183,10 @@ const Userpin = () => {
       //   (serviceTotal, service) => serviceTotal + parseFloat(service.cost),
       //   0
       // );
-      const itemTotalPrice = item.price * item.quantity;
+      const itemTotalPrice = roundToTwo(item.price * item.quantity);
       return total + itemTotalPrice;
     }, 0);
+    totalPrice = roundToTwo(totalPrice);
   }
 
   let SumtotalPrice = 0;
@@ -199,22 +195,24 @@ const Userpin = () => {
     SumtotalPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service?.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service?.quantity)),
+        0,
       );
       const accessoriesTotalCost = item.selectedAccessories.reduce(
         (accessoryTotal, accessory) =>
           accessoryTotal +
-          parseFloat(accessory.totalPrice * accessory?.quantity),
-        0
+          roundToTwo(parseFloat(accessory.totalPrice * accessory?.quantity)),
+        0,
       );
       const itemTotalPrice =
         (item.price + serviceTotalCost + accessoriesTotalCost) * item.quantity;
-      return total + itemTotalPrice;
+      return total + roundToTwo(itemTotalPrice);
     }, 0);
+    SumtotalPrice = roundToTwo(SumtotalPrice);
   }
 
-  dispatch(setSumTotalPrice(SumtotalPrice));
+  dispatch(setSumTotalPrice(roundToTwo(SumtotalPrice)));
 
   let totalServicesPrice = 0;
 
@@ -222,11 +220,13 @@ const Userpin = () => {
     totalServicesPrice = cartdata.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalServicesPrice = roundToTwo(totalServicesPrice);
   }
 
   //my Code##############
@@ -235,7 +235,7 @@ const Userpin = () => {
       async function getExtoffersApplicablePrice() {
         // My Code################
         //check any offer applicable price
-       
+
         if (userId && !otherApplicableExternalOffers) {
           //if user is registered
           // check fro first and second purcahse offer
@@ -245,10 +245,10 @@ const Userpin = () => {
               process.env.NEXT_PUBLIC_API_BASE_URL
             }/api/getExternalOfferApplicablePrice/${userId}/${
               isFreeSample ? 0 : SumtotalPrice
-            }`
+            }`,
           );
           const externalOffersData = await externalOfferPriceResponse.json();
-          
+
           if (
             externalOfferPriceResponse.ok &&
             externalOfferPriceResponse.status === 200
@@ -266,12 +266,10 @@ const Userpin = () => {
       if (userId && SumtotalPrice > 0 && !otherApplicableExternalOffers)
         getExtoffersApplicablePrice();
     },
-    [userId, SumtotalPrice]
+    [userId, SumtotalPrice],
   );
 
   //#####################
-
- 
 
   let totalAccessoryPrice = 0;
 
@@ -280,20 +278,18 @@ const Userpin = () => {
       const serviceTotalCost = item.selectedAccessories.reduce(
         (serviceTotal, service) =>
           serviceTotal + parseFloat(service.perUnitPrice * service.quantity),
-        0
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
   }
-
-
 
   const delcharge = 100;
 
   const handleClick = () => {
     if (newUserPin !== "") {
       const currentPinCode = localStorage.getItem("userPincode");
-      
+
       localStorage.setItem("userPincode", newUserPin);
     }
     if (isFreeSample) {
@@ -664,11 +660,11 @@ const Userpin = () => {
                 {isFreeSample
                   ? 0
                   : otherApplicableExternalOffers
-                  ? SumtotalPrice +
-                    -bankDiscountedAmount -
-                    otherApplicableExternalOffers.discountedAmount
-                  : SumtotalPrice +
-                    -(bankDiscountedAmount ? bankDiscountedAmount : 0)}
+                    ? SumtotalPrice +
+                      -bankDiscountedAmount -
+                      otherApplicableExternalOffers.discountedAmount
+                    : SumtotalPrice +
+                      -(bankDiscountedAmount ? bankDiscountedAmount : 0)}
               </div>
             </div>
           </div>

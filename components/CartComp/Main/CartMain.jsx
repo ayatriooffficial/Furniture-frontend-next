@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import { formatPrice, roundToTwo } from "../../../utils/price";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRoomData } from "../../Features/Slices/roomSlice";
 import {
@@ -52,7 +53,7 @@ const CartMain = () => {
   // #####################My Code
   const [userId, setUserId] = useState(null);
   const otherApplicableExternalOffers = useSelector(
-    selectOtherApplicableExternalOffers
+    selectOtherApplicableExternalOffers,
   );
   const bankDiscountedAmount = useSelector(selectBankDiscountedAmount);
   const selectedBank = useSelector(selectSelectedBank);
@@ -93,7 +94,7 @@ const CartMain = () => {
           params: {
             deviceId,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -134,7 +135,7 @@ const CartMain = () => {
           params: {
             deviceId: id,
           },
-        }
+        },
       );
       // console.log(response);
       if (response.status !== 200) {
@@ -151,11 +152,11 @@ const CartMain = () => {
   };
 
   useEffect(() => {
-    if (!isFreeSample) {
+    if (deviceId && !isFreeSample) {
       setCartStaus("loading");
       fetchData();
     }
-  }, [isFreeSample]);
+  }, [deviceId, isFreeSample]);
 
   let totalPrice = 0;
 
@@ -169,9 +170,10 @@ const CartMain = () => {
       //   (accessoryTotal, accessory) => accessoryTotal + parseFloat(accessory.totalPrice),
       //   0
       // );
-      const itemTotalPrice = item.price * item.quantity;
+      const itemTotalPrice = roundToTwo(item.price * item.quantity);
       return total + itemTotalPrice;
     }, 0);
+    totalPrice = roundToTwo(totalPrice);
   }
   let SumtotalPrice = 0;
 
@@ -179,22 +181,24 @@ const CartMain = () => {
     SumtotalPrice = selectedItems.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service?.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service?.quantity)),
+        0,
       );
       const accessoriesTotalCost = item.selectedAccessories.reduce(
         (accessoryTotal, accessory) =>
           accessoryTotal +
-          parseFloat(accessory.totalPrice * accessory?.quantity),
-        0
+          roundToTwo(parseFloat(accessory.totalPrice * accessory?.quantity)),
+        0,
       );
       const itemTotalPrice =
         (item.price + serviceTotalCost + accessoriesTotalCost) * item.quantity;
-      return total + itemTotalPrice;
+      return total + roundToTwo(itemTotalPrice);
     }, 0);
+    SumtotalPrice = roundToTwo(SumtotalPrice);
   }
 
-  dispatch(setSumTotalPrice(SumtotalPrice));
+  dispatch(setSumTotalPrice(roundToTwo(SumtotalPrice)));
 
   //my Code##############
   useEffect(
@@ -202,13 +206,13 @@ const CartMain = () => {
       async function getExtoffersApplicablePrice() {
         // My Code################
         //check any offer applicable price
-        
+
         if (userId && !otherApplicableExternalOffers) {
           //if user is registered
           // check fro first and second purcahse offer
 
           const externalOfferPriceResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getExternalOfferApplicablePrice/${userId}/${SumtotalPrice}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getExternalOfferApplicablePrice/${userId}/${SumtotalPrice}`,
           );
           const externalOffersData = await externalOfferPriceResponse.json();
           // console.log("externalOffersData");
@@ -231,7 +235,7 @@ const CartMain = () => {
       if (userId && SumtotalPrice > 0 && !otherApplicableExternalOffers)
         getExtoffersApplicablePrice();
     },
-    [userId, SumtotalPrice]
+    [userId, SumtotalPrice],
   );
 
   //#####################
@@ -242,11 +246,13 @@ const CartMain = () => {
     totalServicesPrice = selectedItems.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedServices.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.cost * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.cost * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalServicesPrice = roundToTwo(totalServicesPrice);
   }
 
   let totalAccessoryPrice = 0;
@@ -255,11 +261,13 @@ const CartMain = () => {
     totalAccessoryPrice = selectedItems.items.reduce((total, item) => {
       const serviceTotalCost = item.selectedAccessories.reduce(
         (serviceTotal, service) =>
-          serviceTotal + parseFloat(service.perUnitPrice * service.quantity),
-        0
+          serviceTotal +
+          roundToTwo(parseFloat(service.perUnitPrice * service.quantity)),
+        0,
       );
       return total + serviceTotalCost;
     }, 0);
+    totalAccessoryPrice = roundToTwo(totalAccessoryPrice);
   }
 
   //delete items from DB
@@ -284,7 +292,7 @@ const CartMain = () => {
             owner: id,
             productId: productId,
           },
-        }
+        },
       );
       // console.log(response.data);
       if (response.status === 200) {
@@ -353,7 +361,6 @@ const CartMain = () => {
       quantity: Quant,
     };
 
-    
     try {
       const response = await axios.post(postUrl, postData);
       // console.log(response.data);
@@ -449,7 +456,7 @@ const CartMain = () => {
             deviceId: id,
             freeSampleId: sampleId,
           },
-        }
+        },
       );
 
       // console.log(responce.data);
@@ -491,12 +498,10 @@ const CartMain = () => {
                 console.error(`Error saving user location: ${error.message}`);
               });
           }
-        }
+        },
       );
     }
   }, [userCoordinates]);
-
-
 
   return (
     <>
@@ -975,7 +980,7 @@ const CartMain = () => {
                       className="mr-1"
                       loading="lazy"
                     />
-                    {totalPrice}
+                    {formatPrice(totalPrice)}
                   </div>
                 </div>
               </div>
@@ -991,7 +996,7 @@ const CartMain = () => {
                       className="mr-1"
                       loading="lazy"
                     />
-                    {totalServicesPrice}
+                    {formatPrice(totalServicesPrice)}
                   </div>
                 </div>
               </div>
@@ -1007,7 +1012,7 @@ const CartMain = () => {
                       className="mr-1"
                       loading="lazy"
                     />
-                    {totalAccessoryPrice}
+                    {formatPrice(totalAccessoryPrice)}
                   </div>
                 </div>
               </div>
@@ -1080,10 +1085,12 @@ const CartMain = () => {
                       loading="lazy"
                     />
                     {otherApplicableExternalOffers
-                      ? SumtotalPrice +
-                        -bankDiscountedAmount -
-                        otherApplicableExternalOffers.discountedAmount
-                      : SumtotalPrice - bankDiscountedAmount}
+                      ? (
+                          SumtotalPrice +
+                          -bankDiscountedAmount -
+                          otherApplicableExternalOffers.discountedAmount
+                        ).toFixed(2)
+                      : (SumtotalPrice - bankDiscountedAmount).toFixed(2)}
                   </div>
                 </span>
               </div>
@@ -1185,7 +1192,7 @@ const CartMain = () => {
           )}
         </div>
 
-        {sideMenu && (
+        {sideMenu && !userId && (
           <div className=" fixed h-full w-screen  bg-black/50  backdrop:blur-sm top-0 left-0">
             <section className="text-black bg-white flex-col absolute right-0 top-0 h-screen p-8 gap-8 z-50  w-[35%] flex ">
               <div className="flex items-end justify-end">
