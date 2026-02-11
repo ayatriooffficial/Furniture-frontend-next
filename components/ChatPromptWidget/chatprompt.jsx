@@ -35,7 +35,7 @@ const ChatPrompt = () => {
             href="https://api.whatsapp.com/send?phone=916291531025"
             target="_blank"
             rel="noopener noreferrer"
-            className={`group flex items-center lg:right-6 right-7 bottom-4 lg:bottom-3.5 gap-[8px] rounded-lg fixed z-50 ${!showContent && 'lg:mr-2.5 lg:mb-1.5'
+            className={`group flex items-center lg:right-6 right-7 bottom-4 lg:bottom-3.5 gap-[8px] rounded-lg fixed z-50 ${!showContent && 'lg:mb-1.5'
                 }`}
         >
             <div className="ripple-container">
