@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { NavLink } from "./NavLink";
 
 const TopHeader = () => {
   return (
@@ -9,16 +10,16 @@ const TopHeader = () => {
         className={`bg-[#f5f5f5] top-0 fixed h-[35px] z-[9998] w-full flex items-center justify-between px-5`}
       >
         <div className="flex items-center">
-          <Link
+          <NavLink
             suppressHydrationWarning
-            className="pr-[20px] text-sm underline underline-offset-4 "
-            href="#"
+            className="pr-[20px] text-sm"
+            href="/"
           >
             For you
-          </Link>
-          <Link className="text-sm " href="/business-to-business">
+          </NavLink>
+          <NavLink className="text-sm" href="/business-to-business">
             For business
-          </Link>
+          </NavLink>
         </div>
         <div className="flex items-center">
           <div className="flex flex-row items-center gap-2  text-black  text-[12px]">

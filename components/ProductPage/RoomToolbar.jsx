@@ -305,14 +305,14 @@ const RoomToolbar = ({ data }) => {
         <span className="text-white text-xs">Live</span>
       </div>
       <button
-        onClick={handleJoinLive}
+        // onClick={handleJoinLive}
         className="py-2 focus:outline-none text-black flex items-center ml-2 h-8"
       >
         <span className="text-sm">Join Live</span>
       </button>
       <span></span>
       <div
-        onClick={handleFreeSampling}
+        // onClick={handleFreeSampling}
         className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 "
       >
         <Image
@@ -327,7 +327,7 @@ const RoomToolbar = ({ data }) => {
       <span></span>
       <div
         // onClick={() => handleSeeOnWall(data)}
-        onClick={handleSeeOnWall}
+        // onClick={handleSeeOnWall}
         className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 "
       >
         <Image

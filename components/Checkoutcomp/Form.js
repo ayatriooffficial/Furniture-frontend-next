@@ -101,15 +101,19 @@ export default function Form() {
     // console.log(form);
 
     try {
+      // Get token from localStorage for authentication
+      const token = localStorage?.getItem("token");
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(token && { Authorization: `${token}` }),
           },
           body: JSON.stringify({ form, deviceId, cartId }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -231,8 +235,8 @@ export default function Form() {
                 postalValidation === "invalid"
                   ? "border-red-500"
                   : postalValidation === "valid"
-                  ? "border-green-500"
-                  : "border-gray-600"
+                    ? "border-green-500"
+                    : "border-gray-600"
               }
               `}
             />
@@ -309,8 +313,8 @@ export default function Form() {
               numberValidation === "invalid"
                 ? "border-red-500"
                 : numberValidation === "valid"
-                ? "border-green-500"
-                : "border-gray-600"
+                  ? "border-green-500"
+                  : "border-gray-600"
             }
             `}
           />
@@ -436,12 +440,12 @@ export default function Form() {
             pathname: "/shipping",
           }}
         > */}
-          <button
-            disabled={incompleteForm}
-            className={`mt-4 bg-black text-white py-2 px-4 rounded-full sm:w-96 w-[70vw] ${buttonClass} `}
-          >
-            Continue
-          </button>
+        <button
+          disabled={incompleteForm}
+          className={`mt-4 bg-black text-white py-2 px-4 rounded-full sm:w-96 w-[70vw] ${buttonClass} `}
+        >
+          Continue
+        </button>
         {/* </Link> */}
       </form>
       <br />

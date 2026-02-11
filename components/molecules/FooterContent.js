@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 const FooterContent = (props) => {
   const [screenSize, setScreenSize] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 0
+    typeof window !== "undefined" ? window.innerWidth : 0,
   );
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -23,7 +23,11 @@ const FooterContent = (props) => {
   const { headingId, categoryHeading, categoryData } = props;
   const handleClick = (headingId, elementId) => {
     if (headingId === 1) {
-      elementId === 1 ? router.push("/login") : elementId === 6 ? router.push("create-customer") : router.push("/");
+      elementId === 1
+        ? router.push("/login")
+        : elementId === 6
+          ? router.push("create-customer")
+          : router.push("/");
     } else if (headingId === 2) {
       elementId === 1
         ? router.push("/deliveryservice")
@@ -32,36 +36,36 @@ const FooterContent = (props) => {
           : elementId === 3
             ? router.push("/services/Planning")
             : elementId === 4
-              ? router.push("/services/BuyBack")
+              ? router.push("/services/ClickAndCollect")
               : elementId === 5
-                ? router.push("/services/ClickAndCollect")
+                ? router.push("/services/Finance")
                 : elementId === 6
-                  ? router.push("/services/Finance")
+                  ? router.push("/designservice")
                   : elementId === 7
-                    ? router.push("/designservice")
+                    ? router.push("customerservice")
                     : elementId === 8
-                      ? router.push("customerservice")
-                      : elementId === 9
-                        ? router.push("freesample")
-                        : router.push("/home");
+                      ? router.push("freesample")
+                      : router.push("/home");
     } else if (headingId === 3) {
-      elementId === 8
-        ? router.push("/customerservice/returnpolicy")
-        : elementId === 4
-          ? router.push("/customerservice/priceguarantee")
-          : elementId === 6
-            ? router.push("/customerservice/giftcards")
-            : elementId === 10
-              ? router.push("/customerservice/contact")
-              : elementId === 11
-                ? router.push("/faq")
-                : elementId === 2
-                  ? router.push("/billing-payment")
-                  : elementId === 3
-                    ? router.push("shipping-delivery")
-                    : elementId === 9
-                      ? router.push("customer-privacy-policy")
-                      : router.push("/freedesign");
+      elementId === 1
+        ? router.push("/freedesign")
+        : elementId === 2
+          ? router.push("/billing-payment")
+          : elementId === 4
+            ? router.push("/customerservice/priceguarantee")
+            : elementId === 5
+              ? router.push("/freedesign")
+              : elementId === 6
+                ? router.push("/customerservice/giftcards")
+                : elementId === 7
+                  ? router.push("/home")
+                  : elementId === 8
+                    ? router.push("/customerservice/returnpolicy")
+                    : elementId === 10
+                      ? router.push("/customerservice/contact")
+                      : elementId === 11
+                        ? router.push("/faq")
+                        : router.push("/freedesign");
     } else {
       elementId === 1
         ? router.push("/about-ayatrio")
@@ -69,7 +73,9 @@ const FooterContent = (props) => {
           ? router.push("/sustainability")
           : elementId === 3
             ? router.push("/ayatrio-map")
-            : router.push("/home");
+            : elementId === 4
+              ? router.push("/business-to-business")
+              : router.push("/home");
     }
   };
   return (

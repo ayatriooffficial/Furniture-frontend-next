@@ -59,15 +59,27 @@ const Details = () => {
   const appliedOffers = useSelector(selectAppliedOffers);
   // #########################
 
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
   //############### my logic pieces
   useEffect(function () {
     async function getUserId() {
+      // Quick check: if token exists in localStorage, user is likely logged in
+      const hasToken = localStorage?.getItem("token");
+
+      if (hasToken) {
+        setUserId(true); // User has token
+        setIsCheckingAuth(false);
+        return;
+      }
+
       try {
         const userId = await isUserAuth();
-
         setUserId(userId);
       } catch (error) {
         console.log("Error while fetching userId");
+      } finally {
+        setIsCheckingAuth(false);
       }
     }
 
@@ -477,12 +489,16 @@ const Details = () => {
     };
 
     try {
+      // Get token from localStorage for authentication
+      const token = localStorage?.getItem("token");
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(token && { Authorization: `${token}` }),
           },
           body: JSON.stringify({
             address,
@@ -515,6 +531,9 @@ const Details = () => {
         const paymentResponse = await axios.request({
           method: "POST",
           url: `${apiBaseUrl}/api/makepayment`,
+          headers: {
+            Authorization: localStorage?.getItem("token") || "",
+          },
           data: {
             amount: isFreeSample
               ? deliveryPrice
@@ -1133,7 +1152,7 @@ const Details = () => {
             </div>
 
             {/* if user has not registered */}
-            {!userId && (
+            {!userId && !isCheckingAuth && (
               <div className="mt-5 border border-slate-500 p-[10px] lg:p-[20px] w-[100%] lg:w-[100%] h-auto">
                 <p className="text-black font-[600]">
                   Exclusive Member Offers Await!

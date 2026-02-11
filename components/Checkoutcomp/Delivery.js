@@ -61,14 +61,27 @@ const Delivery = () => {
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [nearestStore, setNearestStore] = useState(null);
 
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
   // Fetch user ID
   useEffect(() => {
     async function getUserId() {
+      // Quick check: if token exists in localStorage, user is likely logged in
+      const hasToken = localStorage?.getItem("token");
+
+      if (hasToken) {
+        setUserId(true); // User has token
+        setIsCheckingAuth(false);
+        return;
+      }
+
       try {
         const userId = await isUserAuth();
         setUserId(userId);
       } catch (error) {
         console.log("Error while fetching userId");
+      } finally {
+        setIsCheckingAuth(false);
       }
     }
     getUserId();
@@ -913,7 +926,7 @@ const Delivery = () => {
               {formatPrice(deliveryCost)} for up to 5 kg.
             </p>
           </div>
-          {!userId && (
+          {!userId && !isCheckingAuth && (
             <div className="mt-5 border border-slate-500 p-[10px] lg:p-[20px] w-[100%] lg:w-[100%] h-auto">
               <p className="text-black font-[600]">
                 Exclusive Member Offers Await!

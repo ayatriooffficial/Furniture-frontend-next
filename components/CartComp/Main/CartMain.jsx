@@ -52,6 +52,7 @@ const CartMain = () => {
 
   // #####################My Code
   const [userId, setUserId] = useState(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const otherApplicableExternalOffers = useSelector(
     selectOtherApplicableExternalOffers,
   );
@@ -63,12 +64,22 @@ const CartMain = () => {
   //############### my logic pieces
   useEffect(function () {
     async function getUserId() {
+      // Quick check: if token exists in localStorage, user is likely logged in
+      const hasToken = localStorage?.getItem("token");
+
+      if (hasToken) {
+        setUserId(true); // User has token
+        setIsCheckingAuth(false);
+        return;
+      }
+
       try {
         const userId = await isUserAuth();
-
         setUserId(userId);
       } catch (error) {
         // console.log("Error while fetching userId");
+      } finally {
+        setIsCheckingAuth(false);
       }
     }
 
@@ -505,7 +516,7 @@ const CartMain = () => {
 
   return (
     <>
-      {sideMenu && (
+      {sideMenu && !userId && !isCheckingAuth && (
         <>
           <div
             initial={
@@ -1192,7 +1203,7 @@ const CartMain = () => {
           )}
         </div>
 
-        {sideMenu && !userId && (
+        {sideMenu && !userId && !isCheckingAuth && (
           <div className=" fixed h-full w-screen  bg-black/50  backdrop:blur-sm top-0 left-0">
             <section className="text-black bg-white flex-col absolute right-0 top-0 h-screen p-8 gap-8 z-50  w-[35%] flex ">
               <div className="flex items-end justify-end">
