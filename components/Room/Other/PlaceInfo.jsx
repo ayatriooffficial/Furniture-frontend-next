@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-
 import { FreeMode, Mousewheel, Pagination, Scrollbar } from "swiper/modules";
 import fixImageUrl from "@/utils/modifyUrl";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -27,7 +26,6 @@ const PlaceInfo = (data) => {
     ? smartConvertCoreValues(data.data.coreValueIds, CORE_VALUES)
     : smartConvertCoreValues(data?.data?.coreValues, CORE_VALUES);
 
-  
   const featuresData = data?.data?.featureIds
     ? smartConvertFeatures(data.data.featureIds, FEATURES)
     : smartConvertFeatures(data?.data?.features, FEATURES);
@@ -45,7 +43,7 @@ const PlaceInfo = (data) => {
     allowSlideNext: true,
   };
 
-  const groupedCoreValues = groupIntoThrees(data?.data?.coreValues);
+  const groupedCoreValues = groupIntoThrees(coreValuesData);
   //
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const [isFeaturesDropdownOpen, setIsFeaturesDropdownOpen] = useState(true);
@@ -205,7 +203,7 @@ const PlaceInfo = (data) => {
               </div>
             )}
           </section>
-       }
+        }
 
         {/* ✅ CORE FUNCTIONALITY SECTION */}
         {featuresData && featuresData.length > 0 && (
@@ -276,7 +274,6 @@ const PlaceInfo = (data) => {
               </div>
             )}
 
-           
             {isFeaturesDropdownOpen && (
               <div
                 className="md:hidden overflow-visible h-auto mt-7 max-h-[300px] w-full mb-4"

@@ -31,7 +31,7 @@ export const convertFeatureIdsToObjects = (featureIds = [], FEATURES = {}) => {
  */
 export const convertCoreValueIdsToObjects = (
   coreValueIds = [],
-  CORE_VALUES = {}
+  CORE_VALUES = {},
 ) => {
   if (!Array.isArray(coreValueIds) || coreValueIds.length === 0) {
     return [];
@@ -58,7 +58,13 @@ export const convertCoreValueIdsToObjects = (
  */
 export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
   if (!coreValues || coreValues.length === 0) {
-    return [];
+    // Fallback: Return all available core values if none provided
+    return Object.keys(CORE_VALUES).map((id) => ({
+      id,
+      heading: CORE_VALUES[id].heading,
+      text: CORE_VALUES[id].description,
+      image: CORE_VALUES[id].icon,
+    }));
   }
 
   // If first item is an object with 'heading' property (old format from DB)
@@ -68,7 +74,16 @@ export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
 
   // If items are strings (IDs - new format)
   if (typeof coreValues[0] === "string") {
-    return convertCoreValueIdsToObjects(coreValues, CORE_VALUES);
+    const converted = convertCoreValueIdsToObjects(coreValues, CORE_VALUES);
+    // If conversion resulted in empty array, return all available values
+    return converted.length > 0
+      ? converted
+      : Object.keys(CORE_VALUES).map((id) => ({
+          id,
+          heading: CORE_VALUES[id].heading,
+          text: CORE_VALUES[id].description,
+          image: CORE_VALUES[id].icon,
+        }));
   }
 
   return coreValues;
