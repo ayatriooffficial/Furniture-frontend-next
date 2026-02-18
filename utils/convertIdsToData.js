@@ -100,11 +100,28 @@ export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
 
         // Generate dynamic heading based on selected value
         let heading = coreValue.heading;
+        let icon = coreValue.icon;
+
         if (selectedValue) {
           if (id === "warranty_programs") {
             heading = `${selectedValue} Year Warranty`;
+            if (selectedValue === "5") {
+              icon = "/icons/5 year warrante.svg";
+            } else if (selectedValue === "10") {
+              icon = "/icons/10 year warrante.svg";
+            } else if (selectedValue === "15") {
+              icon = "/icons/15 year warrante.svg";
+            } else if (selectedValue === "20") {
+              // 20 year specific icon not found, keeping default
+              icon = "/icons/warranty registration.svg";
+            }
           } else if (id === "trial_period") {
             heading = `${selectedValue} Days Trial Period`;
+            if (selectedValue === "45") {
+              icon = "/icons/45 day trial prioed.svg";
+            } else if (selectedValue === "60") {
+              icon = "/icons/60 day trial prioed.svg";
+            }
           } else if (id === "three_free_services") {
             heading = `${selectedValue} Free Services`;
           }
@@ -114,7 +131,7 @@ export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
           id,
           heading,
           text: coreValue.description,
-          image: coreValue.icon,
+          image: icon,
           selectedValue, // Include selected value for reference
         };
       })
