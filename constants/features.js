@@ -4,39 +4,39 @@ export const FEATURES = {
   high_durability: {
     title: "High Durability",
     description: "Built for long-lasting performance",
-    icon: "/features/durable.png",
+    icon: "/icons/quality.svg",
   },
   premium_quality: {
     title: "Premium Quality",
     description: "Best-in-class materials and craftsmanship",
-    icon: "/features/premium.png",
+    icon: "/icons/star full black.svg",
   },
   weatherproof: {
     title: "Weather Resistant",
     description: "Withstands extreme weather conditions",
-    icon: "/features/rainprotection.png",
+    icon: "/icons/waterproof.svg",
   },
   uv_resistant: {
     title: "UV Resistant",
     description: "Fades resistant for outdoor durability",
-    icon: "/features/uvresistant.png",
+    icon: "/icons/vision.svg",
   },
 
   // FINISH & AESTHETICS
   luxury_finish: {
     title: "Luxury Finish",
     description: "Premium polished surface",
-     icon: "/features/finish.png",
+     icon: "/icons/star full black.svg",
   },
   glossy_finish: {
     title: "Glossy Finish",
     description: "High-shine reflective surface",
-    icon: null,
+    icon: "/icons/star full black.svg",
   },
   matte_finish: {
     title: "Matte Finish",
     description: "Non-reflective elegant surface",
-    icon: null,
+    icon: "/icons/star full white.svg",
   },
   textured_surface: {
     title: "Textured Surface",
@@ -48,12 +48,12 @@ export const FEATURES = {
   easy_maintenance: {
     title: "Easy Maintenance",
     description: "Simple cleaning and upkeep",
-    icon: "/icons/mantanace.svg",
+    icon: "/icons/mantanance.svg",
   },
   stain_resistant: {
     title: "Stain Resistant",
     description: "Resists liquids and stains effectively",
-    icon: null,
+    icon: "/icons/Slip Resistant.svg",
   },
   waterproof: {
     title: "Waterproof",
@@ -63,7 +63,7 @@ export const FEATURES = {
   scratch_resistant: {
     title: "Scratch Resistant",
     description: "Durable against scratches and marks",
-    icon: null,
+    icon: "/icons/quality.svg",
   },
 
   // INSTALLATION & SETUP
@@ -75,39 +75,39 @@ export const FEATURES = {
   diy_friendly: {
     title: "DIY Friendly",
     description: "Can be installed without professionals",
-    icon: null,
+    icon: "/icons/assemble.svg",
   },
   no_grout_required: {
     title: "No Grout Required",
     description: "Grout-free installation system",
-    icon: null,
+    icon: "/icons/assemble.svg",
   },
   pre_assembled: {
     title: "Pre-Assembled",
     description: "Comes partially or fully assembled",
-    icon: null,
+    icon: "/icons/assemble.svg",
   },
 
   // DIMENSIONS & SPACE
   compact_design: {
     title: "Compact Design",
     description: "Space-saving compact size",
-    icon: null,
+    icon: "/icons/maserment.svg",
   },
   large_format: {
     title: "Large Format",
     description: "Extra-large size tiles or panels",
-    icon: null,
+    icon: "/icons/maserment.svg",
   },
   lightweight: {
     title: "Lightweight",
     description: "Easy to handle and transport",
-    icon: null,
+    icon: "/icons/maserment.svg",
   },
   deep_dimensions: {
     title: "Deep Dimensions",
     description: "Substantial depth for dimension",
-    icon: null,
+    icon: "/icons/3d.svg",
   },
 
   // ENVIRONMENTAL & HEALTH
@@ -119,12 +119,12 @@ export const FEATURES = {
   low_voc: {
     title: "Low VOC",
     description: "Low volatile organic compounds",
-    icon: null,
+    icon: "/icons/recyle.svg",
   },
   non_toxic: {
     title: "Non-Toxic",
     description: "Safe for families and pets",
-    icon: null,
+    icon: "/icons/recyle.svg",
   },
   recyclable: {
     title: "Recyclable",
@@ -136,22 +136,22 @@ export const FEATURES = {
   insulating: {
     title: "Insulating",
     description: "Provides thermal insulation",
-    icon: null,
+    icon: "/icons/home_store_icon.svg",
   },
   soundproof: {
     title: "Soundproof",
     description: "Reduces noise and sound",
-    icon: null,
+    icon: "/icons/quality.svg",
   },
   thermal_comfort: {
     title: "Thermal Comfort",
     description: "Maintains comfortable temperature",
-    icon: null,
+    icon: "/icons/home_store_icon.svg",
   },
   cool_to_touch: {
     title: "Cool to Touch",
     description: "Naturally cool surface",
-    icon: null,
+    icon: "/icons/Slip Resistant.svg",
   },
 
   // SAFETY & COMPLIANCE
@@ -163,78 +163,78 @@ export const FEATURES = {
   fire_resistant: {
     title: "Fire Resistant",
     description: "Meets fire safety standards",
-    icon: null,
+    icon: "/icons/quality.svg",
   },
   certified_safe: {
     title: "Certified Safe",
     description: "Certified by safety standards",
-    icon: null,
+    icon: "/icons/FSC Certificate.svg",
   },
 
   // DESIGN & CUSTOMIZATION
   customizable: {
     title: "Customizable",
     description: "Available in multiple options",
-    icon: null,
+    icon: "/icons/planning and consultation.svg",
   },
   pattern_options: {
     title: "Pattern Options",
     description: "Multiple pattern variations",
-    icon: null,
+    icon: "/icons/menu.svg",
   },
   color_range: {
     title: "Wide Color Range",
     description: "Available in many colors",
-    icon: null,
+    icon: "/icons/planning and consultation.svg",
   },
   designer_collection: {
     title: "Designer Collection",
     description: "Exclusive designer-curated lines",
-    icon: null,
+    icon: "/icons/star full black.svg",
   },
 
   // PERFORMANCE & DURABILITY
   fade_proof: {
     title: "Fade Proof",
     description: "Colors never fade or dull",
-    icon: null,
+    icon: "/icons/quality.svg",
   },
   anti_bacterial: {
     title: "Anti-Bacterial",
     description: "Inhibits bacterial growth",
-    icon: null,
+    icon: "/icons/recyle.svg",
   },
   anti_fungal: {
     title: "Anti-Fungal",
     description: "Resists fungal growth",
-    icon: null,
+    icon: "/icons/recyle.svg",
   },
   anti_mold: {
     title: "Anti-Mold",
     description: "Prevents mold formation",
-    icon: null,
+    icon: "/icons/recyle.svg",
   },
 
   // LUXURY & PREMIUM
   marble_look: {
     title: "Marble Look",
     description: "Authentic marble appearance",
-    icon: null,
+    icon: "/icons/furnishing.svg",
   },
   wood_effect: {
     title: "Wood Effect",
     description: "Realistic wood grain finish",
-    icon: null,
+    icon: "/icons/FSC Certificate.svg",
   },
   stone_texture: {
     title: "Stone Texture",
     description: "Natural stone appearance",
-    icon: null,
+    icon: "/icons/furnishing.svg",
   },
   handcrafted: {
     title: "Handcrafted",
     description: "Artisan-made with attention to detail",
-    icon: null,
+    icon: "/icons/assemble.svg",
   },
 };
 

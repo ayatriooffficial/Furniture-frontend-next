@@ -29,7 +29,7 @@ const Displaybox = (props) => {
 
   return (
     <main className="w-full noto-sans-200 h-full border-l px-4 border-solid border-[#f5f5f5]">
-      <h1 className="lg:text-[14px] text-[18px] py-4 px-2 mb-2 font-semibold w-full">
+      <h1 className="lg:text-[14px] text-transform: uppercase text-[18px] py-4 px-2 mb-2 font-semibold w-full">
         {props.data?.name}
       </h1>
       <div className="grid grid-cols-2 gap-3 lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -42,14 +42,14 @@ const Displaybox = (props) => {
                   className="flex flex-row gap-1 lg:gap-4 p-2 items-center cursor-pointer hover:bg-[#f5f5f5]  min-w-[200px]"
                   onClick={() => handleClick(item.name)}
                 >
-                   <Image
+                  <Image
                     loading="lazy"
                     src={item.img}
                     alt={item.name}
                     width={100}
                     height={100}
                     className="w-[50px] h-[50px] bg-transparent"
-                  /> 
+                  />
                   <h2 className="text-[14px] font-normal text-[#111111] lg:justify-start">
                     {item.name}
                   </h2>

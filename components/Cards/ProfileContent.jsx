@@ -31,13 +31,13 @@ const ProfileContent = ({ initialData }) => {
   // Helper function to determine if award needs "awards" text appended
   const formatAward = (award) => {
     if (!award) return null;
-    
+
     // If award is a number between 1-1000, append "awards" text
     const awardNum = Number(award);
     if (!isNaN(awardNum) && awardNum >= 1 && awardNum <= 1000) {
       return `${award} awards`;
     }
-    
+
     // If it's text or outside the range, display as is
     return award;
   };
@@ -48,6 +48,27 @@ const ProfileContent = ({ initialData }) => {
       data-component="profile-content"
       className="transparent rounded-lg pb-20"
     >
+      <div
+        className="flex flex-row items-end justify-end gap-6"
+        data-component="profile-navigation"
+      >
+        <Image
+          loading="lazy"
+          src="/icons/backarrowblack.svg"
+          width={20}
+          height={20}
+          alt="Previous slide"
+          className="vector-two rounded-full h-7 w-7"
+        />
+        <Image
+          loading="lazy"
+          src="/icons/rightarrowblack.svg"
+          width={20}
+          height={20}
+          alt="Next slide"
+          className="vector-one mr-10 rounded-full h-7 w-7"
+        />
+      </div>
       <Swiper
         className="h-50 lg:h-80"
         mousewheel={{
@@ -198,27 +219,7 @@ const ProfileContent = ({ initialData }) => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div
-        className="flex flex-row items-end justify-end gap-6 mt-6"
-        data-component="profile-navigation"
-      >
-        <Image
-          loading="lazy"
-          src="/icons/backarrowhite.svg"
-          width={20}
-          height={20}
-          alt="Previous slide"
-          className="vector-two rounded-full h-7 w-7"
-        />
-        <Image
-          loading="lazy"
-          src="/icons/rightarro-white.svg"
-          width={20}
-          height={20}
-          alt="Next slide"
-          className="vector-one mr-10 rounded-full h-7 w-7"
-        />
-      </div>
+
     </div>
   );
 };

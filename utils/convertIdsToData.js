@@ -54,39 +54,74 @@ export const convertCoreValueIdsToObjects = (
 };
 
 /**
- * Smart converter - handles both old format (objects) and new format (IDs)
+ * Smart converter - handles both old format (objects/arrays) and new format (object/Map with values)
  */
 export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
-  if (!coreValues || coreValues.length === 0) {
-    // Fallback: Return all available core values if none provided
-    return Object.keys(CORE_VALUES).map((id) => ({
-      id,
-      heading: CORE_VALUES[id].heading,
-      text: CORE_VALUES[id].description,
-      image: CORE_VALUES[id].icon,
-    }));
+
+  // Handle empty/null case
+  if (!coreValues) {
+    return [];
   }
 
-  // If first item is an object with 'heading' property (old format from DB)
-  if (typeof coreValues[0] === "object" && "heading" in coreValues[0]) {
-    return coreValues; // Return as-is, already has the right format
+  // LEGACY: Array format - CHECK THIS FIRST before object check
+  if (Array.isArray(coreValues)) {
+    // Empty array
+    if (coreValues.length === 0) {
+      return [];
+    }
+
+    // Old format: array of objects with 'heading' property (legacy DB format)
+    if (
+      typeof coreValues[0] === "object" &&
+      coreValues[0] !== null &&
+      "heading" in coreValues[0]
+    ) {
+      return coreValues; // Return as-is, already has the right format
+    }
+
+    // Old format: array of string IDs
+    if (typeof coreValues[0] === "string") {
+      return convertCoreValueIdsToObjects(coreValues, CORE_VALUES);
+    }
   }
 
-  // If items are strings (IDs - new format)
-  if (typeof coreValues[0] === "string") {
-    const converted = convertCoreValueIdsToObjects(coreValues, CORE_VALUES);
-    // If conversion resulted in empty array, return all available values
-    return converted.length > 0
-      ? converted
-      : Object.keys(CORE_VALUES).map((id) => ({
+  // NEW FORMAT: Object/Map with key-value pairs { "warranty_programs": "10", "one_day_installation": null }
+  if (typeof coreValues === "object" && !Array.isArray(coreValues)) {
+    // Check if it's a Map object from MongoDB
+    const entries =
+      coreValues instanceof Map
+        ? Array.from(coreValues.entries())
+        : Object.entries(coreValues);
+
+    return entries
+      .map(([id, selectedValue]) => {
+        const coreValue = CORE_VALUES[id];
+        if (!coreValue) return null;
+
+        // Generate dynamic heading based on selected value
+        let heading = coreValue.heading;
+        if (selectedValue) {
+          if (id === "warranty_programs") {
+            heading = `${selectedValue} Year Warranty`;
+          } else if (id === "trial_period") {
+            heading = `${selectedValue} Days Trial Period`;
+          } else if (id === "three_free_services") {
+            heading = `${selectedValue} Free Services`;
+          }
+        }
+
+        return {
           id,
-          heading: CORE_VALUES[id].heading,
-          text: CORE_VALUES[id].description,
-          image: CORE_VALUES[id].icon,
-        }));
+          heading,
+          text: coreValue.description,
+          image: coreValue.icon,
+          selectedValue, // Include selected value for reference
+        };
+      })
+      .filter((item) => item !== null);
   }
 
-  return coreValues;
+  return [];
 };
 
 /**

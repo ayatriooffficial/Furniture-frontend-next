@@ -148,11 +148,11 @@ const MulticardService = () => {
 
   return (
     <section
-  className="bg-[#f5f5f7] pb-[5rem] ml-0 pl-[12px] sm:ml-[20px] md:ml-[0px] md:pl-[52px] overflow-x-auto"
-  aria-label="Financial and support services"
->
+      className="bg-[#f5f5f7] pb-[5rem] ml-0 pl-[12px] sm:ml-[20px] md:ml-[0px] md:pl-[52px] overflow-x-auto"
+      aria-label="Financial and support services"
+    >
       {/* Schema script placed directly in component */}
-      
+
       <div className="w-full flex justify-between items-center">
         <h2 className="font-semibold sm:text-[16px] md:text-[24px] lg:text-[24px] pb-[20px] pt-[30px]">
           Service and Financial help on shopping
@@ -172,11 +172,11 @@ const MulticardService = () => {
             width={20}
             height={20}
             alt="Next services"
-            className="right lg:mr-16 mr-6 rounded-full h-7 w-7"
+            className="right lg:mr-[2.7rem] mr-6 rounded-full h-7 w-7"
           />
         </div>
       </div>
-      
+
       <MultiCardServiceSlider data={[
         {
           id: 1,

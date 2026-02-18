@@ -22,7 +22,14 @@ const groupIntoThrees = (items) => {
 const PlaceInfo = (data) => {
   const swiper2Ref = useRef(null);
 
-  const coreValuesData = data?.data?.coreValueIds
+  // Check if coreValueIds has actual data (not just an empty object)
+  const hasCoreValueIds =
+    data?.data?.coreValueIds &&
+    (Array.isArray(data.data.coreValueIds)
+      ? data.data.coreValueIds.length > 0
+      : Object.keys(data.data.coreValueIds).length > 0);
+
+  const coreValuesData = hasCoreValueIds
     ? smartConvertCoreValues(data.data.coreValueIds, CORE_VALUES)
     : smartConvertCoreValues(data?.data?.coreValues, CORE_VALUES);
 
