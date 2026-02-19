@@ -23,7 +23,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
     const handleResize = () => {
       const desktop = window.innerWidth >= 600;
       setIsDesktop(desktop);
-      setMaxHeight(desktop ? "70vh" : "470px");
+      setMaxHeight(desktop ? "70vh" : "auto");
     };
 
     handleResize();
@@ -34,7 +34,11 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
   return (
     <section
       className="w-full h-full relative"
-      style={{ maxHeight }}
+      style={{ 
+        height: maxHeight,
+        maxHeight: isDesktop ? maxHeight : "none",
+        aspectRatio: isDesktop ? "auto" : "1080 / 1463"
+      }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -82,7 +86,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
         {sliderData?.map((data, index) => (
           <SwiperSlide key={index} className="relative swiper-slide-custom">
           <Link href={data.link || "#"}>
-         <div className="relative w-full h-full px-[12px] sm:px-0">
+         <div className="relative w-full h-full px-[4px] sm:px-0">
         <Image
       src={isDesktop ? fixImageUrl(data.desktopImgSrc) : fixImageUrl(data.mobileImgSrc)}
       alt="slider"

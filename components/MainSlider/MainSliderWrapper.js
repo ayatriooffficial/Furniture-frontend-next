@@ -22,7 +22,7 @@ const MainSliderWrapper = () => {
     const handleResize = () => {
       const isDesk = window.innerWidth >= 600;
       setIsDesktop(isDesk);
-      setMaxHeight(isDesk ? "70vh" : "470px");
+      setMaxHeight(isDesk ? "70vh" : "auto");
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -49,10 +49,14 @@ const MainSliderWrapper = () => {
   const handleSwiperReady = () => setSwiperReady(true);
 
   return (
-    <div className="w-full px-[6px] sm:px-0 mt-28 sm:mt-[96px]">
+    <div className="w-full px-[2px] sm:px-0 mt-28 sm:mt-[96px]">
       <div
         className="relative w-full overflow-hidden bg-white"
-        style={{ height: maxHeight, maxHeight }}
+        style={{ 
+          height: maxHeight, 
+          maxHeight: isDesktop ? maxHeight : "none",
+          aspectRatio: isDesktop ? "auto" : "1080 / 1463"
+        }}
       >
         {isLoading ? (
           <div className="absolute top-0 left-0 w-full h-full z-0">
