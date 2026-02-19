@@ -101,7 +101,7 @@ export default async function Home() {
 
       {/* ⚡ FIX 2: Move API fetches out of HTML path using Suspense */}
       {/* Hero renders immediately, data loads after paint */}
-      <HomePage />
+      <HomePage isHomePage={true} />
 
       {/* Chat prompt loads separately, doesn't block homepage */}
       <Suspense fallback={null}>

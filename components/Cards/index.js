@@ -63,7 +63,8 @@ const RankedProducts = dynamic(() => import("./RankedProducts"), {
 });
 const UserReviewPosts = dynamic(() => import("./UserReviewPosts"));
 
-function Cards() {
+function Cards(props) {
+  const { isHomePage = false } = props;
   return (
     <div className="w-full h-auto">
       <MainSliderWrapper />
@@ -84,11 +85,11 @@ function Cards() {
         <Suggestion />
 
         <section className="sm:px-[52px] px-[20px] lg:px-[52px]">
-          <UserReviewPosts slidesPerView={3.2} />
+          <UserReviewPosts slidesPerView={3.2} isHomePage={isHomePage} />
         </section>
 
         <TabsWrapper />
-        <Phone />
+        <Phone isHomePage={isHomePage} />
       </Suspense>
       <Footer />
     </div>

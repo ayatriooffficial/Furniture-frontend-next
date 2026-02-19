@@ -4,7 +4,7 @@ import axios from "axios";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 
-const ReviewSchema = () => {
+const ReviewSchema = ({ isHomePage = false }) => {
   const [reviews, setReviews] = useState([]);
   const [mapPlaces, setMapPlaces] = useState([]);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.ayatrio.com";
@@ -38,6 +38,40 @@ const ReviewSchema = () => {
       const mapPlace = mapPlaces[0]; // Using first map entry, adjust if multiple locations
       const addressParts = mapPlace.address.split(', ');
       
+      const itemReviewed = [
+        {
+          "@type": "Service",
+          "@id": `${baseUrl}/services/flooring-installation/#service`
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": `${baseUrl}/stores/${mapPlace._id}/#localbusiness`,
+          "name": mapPlace.name,
+          "image": mapPlace.profileImg,
+          "telephone": mapPlace.phone,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": addressParts[0],
+            "addressLocality": addressParts[2],
+            "addressRegion": addressParts[3],
+            "postalCode": mapPlace.pincode,
+            "addressCountry": "India"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": mapPlace.geo_location?.coordinates[1],
+            "longitude": mapPlace.geo_location?.coordinates[0]
+          }
+        }
+      ];
+
+      if (!isHomePage) {
+        itemReviewed.unshift({
+          "@type": "Product",
+          "@id": `${baseUrl}/products/${review.productId}/#product`
+        });
+      }
+
       return {
         "@type": "ListItem",
         "position": index + 1,
@@ -55,36 +89,7 @@ const ReviewSchema = () => {
             "name": review.name,
             "image": review.profilePic
           },
-          "itemReviewed": [
-            {
-              "@type": "Product",
-              "@id": `${baseUrl}/products/${review.productId}/#product`
-            },
-            {
-              "@type": "Service",
-              "@id": `${baseUrl}/services/flooring-installation/#service`
-            },
-            {
-              "@type": "LocalBusiness",
-              "@id": `${baseUrl}/stores/${mapPlace._id}/#localbusiness`,
-              "name": mapPlace.name,
-              "image": mapPlace.profileImg,
-              "telephone": mapPlace.phone,
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": addressParts[0],
-                "addressLocality": addressParts[2],
-                "addressRegion": addressParts[3],
-                "postalCode": mapPlace.pincode,
-                "addressCountry": "India"
-              },
-              "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": mapPlace.geo_location?.coordinates[1],
-                "longitude": mapPlace.geo_location?.coordinates[0]
-              }
-            }
-          ],
+          "itemReviewed": itemReviewed,
           "datePublished": new Date(review.createdAt).toISOString()
         }
       };

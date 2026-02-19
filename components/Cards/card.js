@@ -10,18 +10,17 @@ import fixImageUrl from "@/utils/modifyUrl";
 
 function Card(props) {
   const dispatch = useDispatch();
-    const imagesToUse = props.imgSrc?.length > 0
-  ? props.images || props.imgSrc
-  : props.productImages?.[0]?.images || [];
-     
-
+  const imagesToUse =
+    props.imgSrc?.length > 0
+      ? props.images || props.imgSrc
+      : props.productImages?.[0]?.images || [];
 
   function renderStars(averageRating) {
     const maxStars = 5;
     const fullStars = Math.floor(averageRating);
     const halfStar = averageRating - fullStars >= 0.5 ? 1 : 0;
     const emptyStars = maxStars - fullStars - halfStar;
-  
+
     const starsArray = [];
     for (let i = 0; i < fullStars; i++) {
       starsArray.push(
@@ -32,7 +31,7 @@ function Card(props) {
           width={20}
           alt="star"
           className="h-[1em] w-[1em] hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -45,7 +44,7 @@ function Card(props) {
           width={20}
           alt="half-star"
           className="h-[1em] w-[1em] hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -58,7 +57,7 @@ function Card(props) {
           width={20}
           alt="empty-star"
           className="h-[1em] w-[1em] hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -105,7 +104,7 @@ function Card(props) {
     try {
       setLoader(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${props.id}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${props.id}`,
       );
 
       setReviews(response.data);
@@ -132,7 +131,7 @@ function Card(props) {
           width={15}
           alt="star"
           className=" mr-[2px]  hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -145,7 +144,7 @@ function Card(props) {
           width={15}
           alt="half-star"
           className=" mr-[2px] hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -158,7 +157,7 @@ function Card(props) {
           width={15}
           alt="empty-star"
           className=" mr-[2px]  hover:text-gray-600"
-        />
+        />,
       );
     }
 
@@ -173,7 +172,7 @@ function Card(props) {
     if (reviews.length > 0) {
       const totalRatings = reviews.reduce(
         (acc, review) => acc + review.rating,
-        0
+        0,
       );
       const averageRating = totalRatings / reviews.length;
       return averageRating;
@@ -199,7 +198,7 @@ function Card(props) {
         deviceId: localStorage.getItem("deviceId"),
         productId: props.id,
         quantity: 1,
-      }
+      },
     );
     if (response.status === 200) {
       setInCart(true);
@@ -216,7 +215,6 @@ function Card(props) {
       setColorImage(fixImageUrl(imageData[0]?.image));
     }
   }, []);
-
 
   const getExpectedDeliveryDate = (expectedDelivery) => {
     const today = new Date();
@@ -240,7 +238,7 @@ function Card(props) {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const data = response.data;
@@ -278,7 +276,7 @@ function Card(props) {
         {
           productId: props.id,
           userId: loggedInUser._id,
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -296,7 +294,7 @@ function Card(props) {
         {
           productId: props.id,
           userId: loggedInUser._id,
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -362,8 +360,6 @@ function Card(props) {
 
   return (
     <div
-      itemScope
-      itemType="https://schema.org/Product"
       key={props.cardkey}
       className="card pb-12 "
       style={{
@@ -375,21 +371,17 @@ function Card(props) {
     >
       <div className={`relative`}>
         <div className="absolute top-2 left-2 z-10 flex gap-2">
-          
-  {props.demandtype && (
- 
-    <p className="text-[12px] text-black font-normal bg-white py-[.1rem] px-[.5rem] cursor-pointer hover:underline">
-      {props.demandtype}
-    </p>
+          {props.demandtype && (
+            <p className="text-[12px] text-black font-normal bg-white py-[.1rem] px-[.5rem] cursor-pointer hover:underline">
+              {props.demandtype}
+            </p>
+          )}
 
-)}
-
-{props.offer && (
-       <p className="text-[12px] text-[#C31952] font-normal bg-white py-[.1rem] px-[.5rem] cursor-pointer hover:underline">
-      {props.offer}
-    </p>
-  
-)}
+          {props.offer && (
+            <p className="text-[12px] text-[#C31952] font-normal bg-white py-[.1rem] px-[.5rem] cursor-pointer hover:underline">
+              {props.offer}
+            </p>
+          )}
         </div>
 
         <div
@@ -411,30 +403,26 @@ function Card(props) {
             />
           )}
 
-          
-            {imagesToUse.map((img, idx) => (
-  <Link
-    href={`/${props.title.replace(/ /g, "-")}/${props.productId}`}
-    key={idx}
-    aria-label={`View details about ${props.title}`}
-  >
-    <Image
-      loading={idx === 0 ? "eager" : "lazy"}
-      src={isHovered && !isNavigationHovered && imagesToUse.length > 1
-        ? fixImageUrl(imagesToUse[1])
-        : fixImageUrl(imagesToUse[idx])}
-      alt={`Image of ${props.title}`}
-      fill 
-      sizes="(min-width: 768px) 33vw, 100vw"
-      className={slide === idx
-        ? "aspect-square"
-        : "slide-hidden"}
-      itemProp="image"  
-    />
-  </Link>
-))}
-
-       
+          {imagesToUse.map((img, idx) => (
+            <Link
+              href={`/${props.title.replace(/ /g, "-")}/${props.productId}`}
+              key={idx}
+              aria-label={`View details about ${props.title}`}
+            >
+              <Image
+                loading={idx === 0 ? "eager" : "lazy"}
+                src={
+                  isHovered && !isNavigationHovered && imagesToUse.length > 1
+                    ? fixImageUrl(imagesToUse[1])
+                    : fixImageUrl(imagesToUse[idx])
+                }
+                alt={`Image of ${props.title}`}
+                fill
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className={slide === idx ? "aspect-square" : "slide-hidden"}
+              />
+            </Link>
+          ))}
 
           {isHovered && (
             <Image
@@ -453,8 +441,9 @@ function Card(props) {
             {props.imgSrc?.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-[0.4rem] w-[0.4rem] rounded-[50%] mr-1 ${slide === idx ? "bg-white" : "bg-[#cccc]"
-                  }`}
+                className={`h-[0.4rem] w-[0.4rem] rounded-[50%] mr-1 ${
+                  slide === idx ? "bg-white" : "bg-[#cccc]"
+                }`}
               ></div>
             ))}
           </span>
@@ -464,25 +453,31 @@ function Card(props) {
         <div className="flex items-center justify-between pt-2 b">
           <div className="flex flex-col">
             {props.urgency && (
-              <p aria-label="Special offer" className="font-semibold tracking-wide text-[#0152be]  mb-[3px] text-[12px]">
+              <p
+                aria-label="Special offer"
+                className="font-semibold tracking-wide text-[#0152be]  mb-[3px] text-[12px]"
+              >
                 {props.urgency}
               </p>
             )}
-            <h3 id="products-title" itemProp="name" className="text-[15px] font-semibold">{props.title}</h3>
+            <h3 id="products-title" className="text-[15px] font-semibold">
+              {props.title}
+            </h3>
           </div>
         </div>
-        <p itemProp="description" className="font-normal mb-1 text-[14px] py-[2px] text-[#484848] hide-on-mobile">
+        <p className="font-normal mb-1 text-[14px] py-[2px] text-[#484848] hide-on-mobile">
           {props?.shortDescription}
         </p>
 
         <div className=" flex h-[40px]  items-center justify-between mt-2 ">
           {props.productType === "normal" || props.productType === "special" ? (
-            <div itemProp="offers" itemScope itemType="https://schema.org/Offer" className="flex gap-1 items-end">
+            <div className="flex gap-1 items-end">
               <p
-                itemProp="price" itemprop="priceCurrency"className={`text-3xl flex font-bold leading-[0.5] tracking-wide ${props.specialPrice?.price
+                className={`text-3xl flex font-bold leading-[0.5] tracking-wide ${
+                  props.specialPrice?.price
                     ? "bg-[#FFD209] px-2 pt-3 pb-1 w-fit shadow-lg"
                     : ""
-                  }`}
+                }`}
                 style={
                   props?.specialPrice?.price
                     ? { boxShadow: "3px 3px #C31952" }
@@ -490,8 +485,9 @@ function Card(props) {
                 }
               >
                 <span
-                  className={`text-sm ${props?.specialPrice?.price ? "" : "pt-3.5"
-                    }`}
+                  className={`text-sm ${
+                    props?.specialPrice?.price ? "" : "pt-3.5"
+                  }`}
                 >
                   Rs.  
                 </span>{" "}
@@ -522,7 +518,9 @@ function Card(props) {
               Regular price:{" "}
               <span className="font-bold text-black">
                 Rs.{" "}
-                <span className="line-through  text-base">{Math.floor(props?.price)}</span>
+                <span className="line-through  text-base">
+                  {Math.floor(props?.price)}
+                </span>
               </span>{" "}
               (incl. of all taxes)
             </p>
@@ -537,9 +535,9 @@ function Card(props) {
         )}
 
         {Stars && (
-          <div itemProp="aggregateRating" itemScope itemType="https://schema.org/AggregateRating" className="flex items-center mt-1 hide-on-mobile">
+          <div className="flex items-center mt-1 hide-on-mobile">
             {Stars}
-            <p itemProp="ratingValue" className="text-[14px] mt-1 ml-2">({Reviews?.length})</p>
+            <p className="text-[14px] mt-1 ml-2">({Reviews?.length})</p>
           </div>
         )}
 
@@ -555,54 +553,50 @@ function Card(props) {
               width={25}
               alt="add to cart icon"
               className="cursor-pointer rounded-full"
-              itemProp="image"
             />
           </div>
 
-          <div  className="bg-[#fff] border border-solid border-[#efefef] hover:bg-[#f5f5f5] p-2 mr-2 rounded-full">
-
-          {loggedInUser ? (
-            <div className="flex items-center">
-              {isLiked ? (
-                <button disabled={loading} onClick={handleUnlike}>
-                  <Image
-                    loading="lazy"
-                    src={"/icons/like-fill.svg"}
-                    height={25}
-                    width={25}
-                    className={`cursor-pointer  hover:scale-105 transition-transform`}
-                    alt="like icon"
-                    itemProp="image"
-                  />
-                </button>
-              ) : (
-                <button disabled={loading} onClick={handleLike}>
-                  <Image
-                    loading="lazy"
-                    src={"/icons/like.svg"}
-                    height={25}
-                    width={25}
-                    className={`cursor-pointer hover:scale-105 transition-transform`}
-                    alt="like icon"
-                    itemProp="image"
-                  />
-                </button>
-              )}
-            </div>
-          ) : (
-            <Link href={"/login"}>
-              <Image
-                loading="lazy"
-                src={"/icons/like.svg"}
-                height={25}
-                width={25}
-                className="cursor-pointer  hover:scale-105 transition-transform"
-                alt="like icon"
-                itemProp="image"
-              />
-            </Link>
-          )}
-        </div></div>
+          <div className="bg-[#fff] border border-solid border-[#efefef] hover:bg-[#f5f5f5] p-2 mr-2 rounded-full">
+            {loggedInUser ? (
+              <div className="flex items-center">
+                {isLiked ? (
+                  <button disabled={loading} onClick={handleUnlike}>
+                    <Image
+                      loading="lazy"
+                      src={"/icons/like-fill.svg"}
+                      height={25}
+                      width={25}
+                      className={`cursor-pointer  hover:scale-105 transition-transform`}
+                      alt="like icon"
+                    />
+                  </button>
+                ) : (
+                  <button disabled={loading} onClick={handleLike}>
+                    <Image
+                      loading="lazy"
+                      src={"/icons/like.svg"}
+                      height={25}
+                      width={25}
+                      className={`cursor-pointer hover:scale-105 transition-transform`}
+                      alt="like icon"
+                    />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <Link href={"/login"}>
+                <Image
+                  loading="lazy"
+                  src={"/icons/like.svg"}
+                  height={25}
+                  width={25}
+                  className="cursor-pointer  hover:scale-105 transition-transform"
+                  alt="like icon"
+                />
+              </Link>
+            )}
+          </div>
+        </div>
 
         {props.expectedDelivery && (
           <div className="flex flex-col items-start mt-2">
@@ -649,7 +643,6 @@ function Card(props) {
                     fill
                     style={{ objectFit: "cover" }}
                     loading="lazy"
-                    itemProp="image"
                   />
                   {selectedColor === item.color ? (
                     <div className="w-full h-[2px] bg-black mt-[50px]" />

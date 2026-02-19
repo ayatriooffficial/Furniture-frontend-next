@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import "./styles.css";
 import UserReviewSlider from "./UserReviewSlider";
 
-const UserReviewPosts = ({ slidesPerView, SubcategoryName }) => {
+const UserReviewPosts = ({ slidesPerView, SubcategoryName, isHomePage = false }) => {
   const [postDetails, setPostDetails] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -63,23 +63,20 @@ const UserReviewPosts = ({ slidesPerView, SubcategoryName }) => {
     return {
       "@context": "https://schema.org",
       "@type": "Reviews",
-      "itemListElement": postsToRender.map((post, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "Review",
-          "@id": `${baseUrl}/instagram-posts/${post._id}#review`,
-          "reviewBody": post.caption || "Instagram post by Ayatrio customer",
-          "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5"
+      "itemListElement": postsToRender.map((post, index) => {
+        const itemReviewed = [
+          {
+            "@type": "Service",
+            "@id": `${baseUrl}/services/flooring-installation/#service`
           },
-          "author": {
-            "@type": "Person",
-            "name": post.username
-          },
-          "itemReviewed": [
+          {
+            "@type": "LocalBusiness",
+            "@id": `${baseUrl}/stores/delhi-rajouri/#localbusiness`
+          }
+        ];
+
+        if (!isHomePage) {
+          itemReviewed.unshift(
             {
               "@type": "Product",
               "@id": `${baseUrl}/categories/${encodeURIComponent(
@@ -91,18 +88,30 @@ const UserReviewPosts = ({ slidesPerView, SubcategoryName }) => {
               "@id": `${baseUrl}/products/${encodeURIComponent(
                 product.productTitle.toLowerCase().replace(/\s+/g, '-')
               )}/${product.productId}`
-            })) || []),
-            {
-              "@type": "Service",
-              "@id": `${baseUrl}/services/flooring-installation/#service`
-            },
-            {
-              "@type": "LocalBusiness",
-              "@id": `${baseUrl}/stores/delhi-rajouri/#localbusiness`
-            }
-          ]
+            })) || [])
+          );
         }
-      }))
+
+        return {
+          "@type": "ListItem",
+          "position": index + 1,
+          "item": {
+            "@type": "Review",
+            "@id": `${baseUrl}/instagram-posts/${post._id}#review`,
+            "reviewBody": post.caption || "Instagram post by Ayatrio customer",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5",
+              "bestRating": "5"
+            },
+            "author": {
+              "@type": "Person",
+              "name": post.username
+            },
+            "itemReviewed": itemReviewed
+          }
+        };
+      })
     };
   };
 

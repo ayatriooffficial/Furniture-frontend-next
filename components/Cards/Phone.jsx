@@ -4,7 +4,7 @@ import Image from "next/image";
 // Define the base URL for Ayatrio at the top
 const AYATRIO_BASE_URL = "https://www.ayatrio.com";
 
-const Phone = async () => {
+const Phone = async ({ isHomePage = false }) => {
   // Fetch trending categories for the footer links and schema
   const fetchCategory = async () => {
     try {
@@ -17,7 +17,6 @@ const Phone = async () => {
       return [];
     }
   };
-
   // Fetch subcategories for each category for schema
   const fetchCategoryDataForSchema = async (categories) => {
     try {
@@ -225,8 +224,8 @@ const Phone = async () => {
       </div>
 
       <div
-        itemScope
-        itemType="https://schema.org/Product"
+        itemScope={!isHomePage ? true : undefined}
+        itemType={!isHomePage ? "https://schema.org/Product" : undefined}
         className="text-[14px] text-[#484848] pt-5"
       >
         <h2
@@ -297,8 +296,8 @@ const Phone = async () => {
       </div>
 
       <div
-        itemScope
-        itemType="https://schema.org/Product"
+        itemScope={!isHomePage ? true : undefined}
+        itemType={!isHomePage ? "https://schema.org/Product" : undefined}
         className="text-[14px]  text-[#484848] pt-3"
       >
         <h2
@@ -357,8 +356,8 @@ const Phone = async () => {
       </div>
 
       <div
-        itemScope
-        itemType="https://schema.org/Product"
+        itemScope={!isHomePage ? true : undefined}
+        itemType={!isHomePage ? "https://schema.org/Product" : undefined}
         className="text-[14px] text-[#484848] pt-3"
       >
         <h2
@@ -381,8 +380,8 @@ const Phone = async () => {
       </div>
 
       <div
-        itemScope
-        itemType="https://schema.org/Product"
+        itemScope={!isHomePage ? true : undefined}
+        itemType={!isHomePage ? "https://schema.org/Product" : undefined}
         className="text-[14px] text-[#484848] pt-3"
       >
         <h2
@@ -401,8 +400,8 @@ const Phone = async () => {
       </div>
 
       <div
-        itemScope
-        itemType="https://schema.org/Product"
+        itemScope={!isHomePage ? true : undefined}
+        itemType={!isHomePage ? "https://schema.org/Product" : undefined}
         className="text-[14px] text-[#484848] pt-3"
       >
         <h2

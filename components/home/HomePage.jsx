@@ -28,16 +28,17 @@ const useIntersectionObserver = (ref, options) => {
   return isIntersecting;
 };
 
-const HomePage = () => {
+const HomePage = ({ isHomePage = false }) => {
   const cardsRef = useRef(null);
   const mapRef = useRef(null);
 
   const showCards = useIntersectionObserver(cardsRef, { threshold: 0.1, triggerOnce: true });
   const showMapButton = useIntersectionObserver(mapRef, { threshold: 0.1, triggerOnce: true });
 
+  
   return (
     <main className="overflow-x-hidden fade-in">
-      <div ref={cardsRef}>{showCards && <LazyCards />}</div>
+      <div ref={cardsRef}>{showCards && <LazyCards isHomePage={isHomePage} />}</div>
       <div ref={mapRef}>{showMapButton && <LazyMapButton />}</div>
     </main>
   );

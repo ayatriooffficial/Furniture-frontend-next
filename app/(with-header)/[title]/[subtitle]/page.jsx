@@ -10,6 +10,7 @@ import axios from "axios";
 import {
   ArticleJsonLd,
   BreadcrumbJsonLd,
+  FAQPageJsonLd,
   ProductJsonLd,
   WebPageJsonLd,
 } from "next-seo";
@@ -37,7 +38,10 @@ export async function generateMetadata({ params }) {
         },
       }
     );
-    const roomData = response.data;
+    const allRooms = response.data;
+    const roomData = Array.isArray(allRooms)
+      ? allRooms.find(room => room.roomType?.toLowerCase() === params.title.replace(/-/g, " ").toLowerCase())
+      : allRooms;
 
     return {
       title: roomData?.metadata?.title || roomData?.roomType || params.roomType,
@@ -191,8 +195,10 @@ const Page = async ({ params }) => {
         },
       }
     );
-    const roomData = response.data;
-
+    const allRooms = response.data;
+    const roomData = Array.isArray(allRooms)
+      ? allRooms.find(room => room.roomType?.toLowerCase() === params.title.replace(/-/g, " ").toLowerCase())
+      : allRooms;
 
 
     return (
@@ -205,6 +211,34 @@ const Page = async ({ params }) => {
           description={roomData?.summary || ""}
           id={`https://www.ayatrio.com/rooms/${params.roomType}`}
         />
+        <ProductJsonLd
+          useAppDir={true}
+          productName={roomData?.roomType || params.title.replace(/-/g, " ")}
+          images={[roomData?.mainImage?.imgSrc]}
+          description={roomData?.summary || roomData?.metadata?.description}
+          brand="Ayatrio"
+          offers={[
+            {
+              price: "0",
+              priceCurrency: "INR",
+              itemCondition: "https://schema.org/NewCondition",
+              availability: "https://schema.org/InStock",
+              url: `${BASE_URL}/${params.title}/rooms`,
+              seller: {
+                name: "Ayatrio",
+              },
+            },
+          ]}
+        />
+        {roomData?.faqs?.length > 0 && (
+          <FAQPageJsonLd
+            useAppDir={true}
+            mainEntity={roomData.faqs.map((faq) => ({
+              questionName: faq.title || faq.question,
+              acceptedAnswerText: faq.description || faq.answer,
+            }))}
+          />
+        )}
         <RoomsPage params={params.title} />;
       </>
     );
