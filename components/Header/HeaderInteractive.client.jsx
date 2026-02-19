@@ -489,7 +489,7 @@ export default function HeaderInteractive({ headerLinks }) {
             </div>
 
             {/* Mobile Search */}
-            <div className="flex mt-16 w-full items-center md:hidden px-[20px] sm:px-[50px] lg:px-[67px] mb-3">
+            <div className="flex md:mt-16 w-full items-center md:hidden px-[20px] sm:px-[50px] lg:px-[67px] mb-3">
               <div
                 className="md:hidden py-[8px] flex items-center justify-between w-full bg-zinc-100 rounded-full h-[45px] p-[9px] hover:bg-zinc-200 cursor-pointer"
                 onClick={handleModalOpen}

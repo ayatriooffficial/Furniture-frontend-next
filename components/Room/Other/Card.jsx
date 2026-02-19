@@ -924,7 +924,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                   <div className="font-bold items-end flex mb-1 mt-[10px]">
                     <p
                       className={`text-3xl leading-[0.5] tracking-wide ${data?.specialprice?.price
-                          ? "bg-[#FFD209] px-2 pt-2 w-fit shadow-lg"
+                          ? "bg-[#FFD209] px-4 py-2 w-fit shadow-lg"
                           : ""
                         }`}
                       style={

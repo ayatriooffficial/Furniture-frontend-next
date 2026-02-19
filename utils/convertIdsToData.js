@@ -111,7 +111,7 @@ export const smartConvertCoreValues = (coreValues, CORE_VALUES) => {
               icon = "/icons/10 year warrante.svg";
             } else if (selectedValue === "15") {
               icon = "/icons/15 year warrante.svg";
-            } else if (selectedValue === "20") {
+            } else  {
               // 20 year specific icon not found, keeping default
               icon = "/icons/warranty registration.svg";
             }

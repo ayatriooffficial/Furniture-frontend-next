@@ -49,7 +49,7 @@ const MainSliderWrapper = () => {
   const handleSwiperReady = () => setSwiperReady(true);
 
   return (
-    <div className="w-full px-[6px] sm:px-0 mt-0 sm:mt-[96px]">
+    <div className="w-full px-[6px] sm:px-0 mt-28 sm:mt-[96px]">
       <div
         className="relative w-full overflow-hidden bg-white"
         style={{ height: maxHeight, maxHeight }}
