@@ -230,6 +230,16 @@ const Page = async ({ params }) => {
             },
           ]}
         />
+        <ArticleJsonLd
+          useAppDir={true}
+          url={`${BASE_URL}/${params.title}/rooms`}
+          title={roomData?.heading || roomData?.metadata?.title}
+          images={[roomData?.mainImage?.imgSrc]}
+          datePublished={roomData?.createdAt}
+          dateModified={roomData?.updatedAt}
+          authorName={roomData?.author?.displayName || "Ayatrio"}
+          description={roomData?.summary}
+        />
         {roomData?.faqs?.length > 0 && (
           <FAQPageJsonLd
             useAppDir={true}
