@@ -973,6 +973,24 @@ export const RoomsPage = ({ params }) => {
 
             </section>
           )}
+
+          {roomMain?.faqs?.length > 0 && (
+            <section className="mt-20 px-5 sm:px-12 pb-20">
+              <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+              {roomMain.faqs.map((faq, index) => (
+                <div key={index} className="mt-4">
+                  <div className="text-[14px] text-[#000000]">
+                    <h2 className="text-[14px] font-medium text-[#6e6e73]">
+                      Q. {faq.question || faq.heading || "Question"}
+                    </h2>
+                    <h3 className="text-[#6e6e73]">
+                      A. {faq.answer || faq.description || "Answer"}
+                    </h3>
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
         </div>
       ) : (
         <ProductPageSkeleton
