@@ -138,19 +138,28 @@ const FreeSample = () => {
   const handleSelectValue = (section, value) => {
     switch (section) {
       case "category": {
-        const data = {
-          [value]: true,
-        };
-        // Toggle category selection
-        setSelectedCategory((prevCategories) => {
-          if (prevCategories.includes(value)) {
-            return prevCategories.filter((category) => category !== value); // Remove if already selected
-          } else {
-            return [...prevCategories, value]; // Add if not selected
-          }
-        });
-        dispatch(setCategory(selectedCategory)); // Dispatch the updated selected categories
-        // setSelectedCategory(value);
+        // Toggle category selection in both selectedCategory & categoryState
+        const index = arguments[2]; // handleSelectValue is called with 3 args in step 3
+        
+        if (index !== undefined) {
+          setCategoryState((prev) => {
+            if (prev.includes(index)) {
+              return prev.filter((i) => i !== index);
+            } else {
+              return [...prev, index];
+            }
+          });
+        }
+
+        let nextSelectedCategory;
+        if (selectedCategory.includes(value)) {
+          nextSelectedCategory = selectedCategory.filter((category) => category !== value);
+        } else {
+          nextSelectedCategory = [...selectedCategory, value];
+        }
+
+        setSelectedCategory(nextSelectedCategory);
+        dispatch(setCategory(nextSelectedCategory));
         break;
       }
       case "room": {
@@ -563,9 +572,9 @@ const FreeSample = () => {
                   <div
                     key={data.label + index}
                     onClick={() => setServiceState(index)}
-                    className={`flex flex-col md:w-48 border hover:border-blue-500 hover:border-2 p-2 md:p-4 cursor-pointer ${
+                    className={`flex flex-col md:w-48 transition-colors border-2 hover:border-blue-500 p-2 md:p-4 cursor-pointer ${
                       serviceState === index
-                        ? "border-blue-500 text-black border-2"
+                        ? "border-blue-500 text-black"
                         : "text-neutral-500 border-neutral-300"
                     }`}
                   >
@@ -772,7 +781,7 @@ const FreeSample = () => {
               in this step, we'll ask you what type of room you want to design.
             </p>
 
-            <div className="md:flex md:flex-wrap gap-4 mt-10 grid grid-cols-2 mb-[80px] md:mb-0  ">
+            <div className="md:flex md:flex-wrap gap-4 mt-10 grid grid-cols-2 mb-[120px] md:mb-[120px]  ">
               {rooms.map((item, index) => {
                 return (
                   <div key={index} className=" relative  overflow-hidden ">
@@ -783,13 +792,12 @@ const FreeSample = () => {
                       }}
                       className={`relative flex flex-col  w-full opacity-100 h-full cursor-pointer `}
                     >
-                      <div className="hover:border-2 border border-black hover:border-blue-500">
+                      <div className={`transition-colors border-[3px] hover:border-blue-500 ${
+                            roomstate === index ? "border-blue-500" : "border-transparent"
+                          }`}>
                         <Image
                           loading="lazy"
-                          className={`object-cover w-[272px] h-[150px]  ${
-                            roomstate === index &&
-                            "border-blue-500 border-[3px]"
-                          }`}
+                          className={`object-cover w-[272px] h-[150px]`}
                           width={300}
                           height={300}
                           src={item.image}
@@ -819,7 +827,7 @@ const FreeSample = () => {
               in this step, we'll ask you what type of category you looking at .
             </p>
 
-            <div className="md:flex md:flex-wrap gap-4 mt-10 grid grid-cols-2 mb-[80px] md:mb-0  ">
+            <div className="md:flex md:flex-wrap gap-4 mt-10 grid grid-cols-2 mb-[120px] md:mb-[120px]  ">
               {allCategories.map((item, index) => {
                 return (
                   <div
@@ -832,13 +840,16 @@ const FreeSample = () => {
                       }}
                       className={`relative flex flex-col  w-full opacity-100 h-full cursor-pointer `}
                     >
-                      <div className="hover:border-2 border border-black">
+                      <div
+                        className={`transition-all ${
+                          selectedCategory.includes(item.name)
+                            ? "border-[3px] border-blue-500 p-0"
+                            : "hover:border-[3px] hover:border-blue-500 hover:p-0 border-[1px] border-gray-300 p-[2px]"
+                        }`}
+                      >
                         <Image
                           loading="lazy"
-                          className={`object-cover w-[272px]  h-[150px]  ${
-                            categoryState.includes(index) &&
-                            "border-blue-500 border-[3px]"
-                          }`}
+                          className="object-cover w-[272px] h-[150px]"
                           width={300}
                           height={300}
                           src={item.image}
@@ -846,8 +857,8 @@ const FreeSample = () => {
                         />
                       </div>
                       <h3
-                        className={` text-[16px] text-[#666666] group-hover:text-black text-center mt-2 font-medium ${
-                          categoryState.includes(index) && "text-black"
+                        className={`text-[16px] group-hover:text-black text-center mt-2 font-medium ${
+                          selectedCategory.includes(item.name) ? "text-black font-semibold" : "text-[#666666]"
                         }`}
                       >
                         {item.name}
@@ -900,8 +911,8 @@ const FreeSample = () => {
                         handleSelectValue("price", item.price);
                         setPriceState(index);
                       }}
-                      className={`relative  flex flex-col p-2 md:p-4 min-h-[86px] md:max-h-[102px]  hover:border-2 border hover:border-blue-500  justify-center  opacity-100 cursor-pointer ${
-                        priceState === index && "border-blue-500 border-2"
+                      className={`relative flex flex-col p-2 md:p-4 min-h-[86px] md:max-h-[102px] transition-colors border-2 hover:border-blue-500 justify-center opacity-100 cursor-pointer ${
+                        priceState === index ? "border-blue-500" : "border-neutral-300"
                       }`}
                     >
                       <h3 className=" text-xl text-center mt-2 font-medium">
@@ -937,9 +948,9 @@ const FreeSample = () => {
                       handleSelectValue("mode", data.label);
                       setModeState(index);
                     }}
-                    className={`flex flex-col md:w-48 border hover:border-blue-500 hover:border-2 p-2 md:p-4 cursor-pointer ${
+                    className={`flex flex-col md:w-48 transition-colors border-2 hover:border-blue-500 p-2 md:p-4 cursor-pointer ${
                       modeState === index
-                        ? "border-blue-500 text-black border-2"
+                        ? "border-blue-500 text-black"
                         : "text-neutral-500 border-neutral-300"
                     }`}
                   >
@@ -1072,7 +1083,7 @@ const FreeSample = () => {
                     src="/images/login/login4.jpg"
                     alt="login image"
                   />
-                    <div className="w-[150px] min-h-[120px] bg-white absolute top-[310px] right-[-100px] shadow-md z-10">
+                    <div className="w-[150px] min-h-[120px] bg-white absolute top-[310px] right-[-100px] shadow-md z-">
                     <div className="p-3 flex flex-col ">
                       <h2 className="text-lg font-semibold">Akash</h2>
                       <p className="text-xs text-gray-800 ">Web Developer</p>
@@ -1113,7 +1124,7 @@ const FreeSample = () => {
             className="text-lg font-medium bg-black text-white py-1 px-6 rounded-full hover:bg-gray-800 disabled:bg-gray-300 disabled:text-black disabled:cursor-not-allowed"
             // disabled={dataStep.step === 4}
             disabled={
-              (dataStep.step === 3 && categoryState < 0) ||
+              (dataStep.step === 3 && selectedCategory.length === 0) ||
               (dataStep.step === 2 && roomstate < 0) ||
               (dataStep.step === 4 && priceState < 0) ||
               (dataStep.step === 5 && modeState < 0) ||
