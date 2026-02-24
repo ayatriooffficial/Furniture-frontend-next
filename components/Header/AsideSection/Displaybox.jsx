@@ -48,7 +48,7 @@ const Displaybox = (props) => {
       <h1 className="lg:text-[14px] text-transform: uppercase text-[18px] md:py-4 py-2 px-2 mb-2 font-semibold w-full">
         {props.data?.name}
       </h1>
-      <div className="grid grid-cols-2 gap-3 lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:gap-8 sm:grid-cols-2 lg:grid-cols-4  md:w-full w-screen">
         {props.data?.subcategories && props.data.subcategories.length > 0 ? (
           props.data.subcategories.map(
             (item, index) =>
