@@ -108,7 +108,7 @@ const Asidebox = (props) => {
           <div className="inline-block h-full w-[0.5px] self-stretch bg-[#e5e7eb]"></div>
           <div
             className={`${innerData ? "block" : "hidden"
-              } md:block absolute md:h-auto md:w-[80%] md:static w-full z-[99]`}
+              } md:block absolute top-0 left-0 bg-white h-full md:bg-transparent md:h-auto md:w-[80%] md:static w-full z-[99]`}
           >
             <Displaybox
               toggleMobileMenu={props.toggleMobileMenu}
@@ -118,6 +118,7 @@ const Asidebox = (props) => {
               setAsideCategory={setAsideCategory}
               HandleClick={handleClick}
               handleChange={props.handleChange}
+              setInnerData={setInnerData}
             />
           </div>
         </div>

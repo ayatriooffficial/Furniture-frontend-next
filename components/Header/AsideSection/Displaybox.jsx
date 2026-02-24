@@ -28,8 +28,24 @@ const Displaybox = (props) => {
   }, [props.data.name]);
 
   return (
-    <main className="w-full noto-sans-200 h-full border-l px-4 border-solid border-[#f5f5f5]">
-      <h1 className="lg:text-[14px] text-transform: uppercase text-[18px] py-4 px-2 mb-2 font-semibold w-full">
+    <main className="w-full bg-white md:bg-transparent noto-sans-200 h-full md:border-l px-2 md:px-4 border-solid border-[#f5f5f5] pb-10 overflow-y-auto">
+      {/* Back button for mobile */}
+      <div 
+        className="md:hidden flex flex-row items-center gap-2 mb-2 pt-4 px-2 cursor-pointer" 
+        onClick={() => props.setInnerData && props.setInnerData(false)}
+      >
+        <Image
+          loading="lazy"
+          src="/icons/backarrowRevarce.svg"
+          alt="Back"
+          width={16}
+          height={16}
+          className="rotate-180"
+        />
+        <span className="text-[14px] font-semibold text-[#111111]">Back</span>
+      </div>
+      
+      <h1 className="lg:text-[14px] text-transform: uppercase text-[18px] md:py-4 py-2 px-2 mb-2 font-semibold w-full">
         {props.data?.name}
       </h1>
       <div className="grid grid-cols-2 gap-3 lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
