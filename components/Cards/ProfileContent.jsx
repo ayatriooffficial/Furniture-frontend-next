@@ -122,7 +122,7 @@ const ProfileContent = ({ initialData }) => {
                 <Image
                   loading="lazy"
                   src={fixImageUrl(person.user?.image)}
-                  alt=""
+                  alt={person.user?.displayName || `profile-${index}`}
                   className="rounded-full w-full h-full object-cover"
                   fill
                   style={{ objectFit: "cover" }}
@@ -219,7 +219,6 @@ const ProfileContent = ({ initialData }) => {
           </SwiperSlide>
         ))}
       </Swiper>
-
     </div>
   );
 };

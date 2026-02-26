@@ -36,14 +36,14 @@ import RankedProducts from "@/components/Cards/RankedProducts";
 import ProductPageSkeleton from "../Skeleton/ProductPageSkeleton";
 import fixImageUrl from "@/utils/modifyUrl";
 
-export const RoomsPage = ({ params }) => {
+export const RoomsPage = ({ params, initialRoomData }) => {
 
   const pathname = usePathname();
 
   const [productData, setProductData] = useState([]);
   const [roomData, setRoomData] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
-  const [roomMain, setRoomMain] = useState({});
+  const [roomMain, setRoomMain] = useState(initialRoomData || {});
   const dispatch = useDispatch();
   const roomSelect = useSelector(selectRoomData);
   const productSelect = useSelector(selectProductData);
@@ -137,7 +137,10 @@ export const RoomsPage = ({ params }) => {
     }
     setRoomData(roomSelect);
     setProductData(productSelect);
-    setRoomMain(roomMainSelect);
+    // Only override server-provided data once Redux has finished loading
+    if (roomMainSelect && Object.keys(roomMainSelect).length > 0) {
+      setRoomMain(roomMainSelect);
+    }
   }, [
     dispatch,
     params,

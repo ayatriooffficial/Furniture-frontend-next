@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 const LazyCards = dynamic(() => import("../Cards"), { ssr: false });
@@ -32,8 +32,12 @@ const HomePage = ({ isHomePage = false }) => {
   const cardsRef = useRef(null);
   const mapRef = useRef(null);
 
-  const showCards = useIntersectionObserver(cardsRef, { threshold: 0.1, triggerOnce: true });
-  const showMapButton = useIntersectionObserver(mapRef, { threshold: 0.1, triggerOnce: true });
+  // Stable option references — prevents useEffect inside the hook from re-firing on every render
+  const cardsOptions = useMemo(() => ({ threshold: 0.1, triggerOnce: true }), []);
+  const mapOptions = useMemo(() => ({ threshold: 0.1, triggerOnce: true }), []);
+
+  const showCards = useIntersectionObserver(cardsRef, cardsOptions);
+  const showMapButton = useIntersectionObserver(mapRef, mapOptions);
 
   
   return (

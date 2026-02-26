@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
@@ -18,20 +18,8 @@ function TabsProductCard(props) {
 
   const dispatch = useDispatch();
 
-  const [Reviews, setReviews] = useState([]);
-  const [Stars, setStars] = useState();
-
-  const fetchReviews = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${props.id}`
-      );
-
-      setReviews(response.data);
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
-    }
-  };
+  // Reviews are now passed from parent (TabsProducts) which fetches all at once
+  const Reviews = props.reviews ?? [];
 
   function renderStars(averageRating) {
     const maxStars = 5;
@@ -82,9 +70,10 @@ function TabsProductCard(props) {
     return starsArray;
   }
 
-  useEffect(() => {
-    fetchReviews();
-  }, [props.id]);
+  const stars = useMemo(() => {
+    const avg = calculateAverageRating(Reviews);
+    return renderStars(avg);
+  }, [Reviews]);
 
   function calculateAverageRating(reviews) {
     if (reviews.length > 0) {
@@ -100,12 +89,6 @@ function TabsProductCard(props) {
   }
 
   const [inCart, setInCart] = useState(props?.inCart);
-
-  useEffect(() => {
-    const averageRating = calculateAverageRating(Reviews);
-    const stars = renderStars(averageRating);
-    setStars(stars);
-  }, [Reviews]);
 
   const handleclick = async (title) => {
 
@@ -196,50 +179,17 @@ function TabsProductCard(props) {
     props.productImages?.[0],
   ]);
 
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  // loggedInUser is now passed from parent (TabsProducts) which fetches once
+  const loggedInUser = props.loggedInUser ?? null;
   const [isLiked, setIsLiked] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const checkUser = async () => {
-    try {
-      const token = localStorage?.getItem("token");
-      if (token) {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/user`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = response.data;
-
-        if (data.isAuthenticated) {
-          setLoggedInUser(data.user);
-        } else {
-          setLoggedInUser(null);
-        }
-      } else {
-        setLoggedInUser(null);
-      }
-    } catch (error) {
-      setLoggedInUser(null);
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    checkUser();
-  }, [props._id]);
 
   useEffect(() => {
     if (loggedInUser) {
       const checkProductLiked = loggedInUser.likedProducts.includes(props.id);
       setIsLiked(checkProductLiked);
     }
-  }, [loggedInUser]);
+  }, [loggedInUser, props.id]);
 
   const handleLike = async () => {
     setLoading(true);
@@ -575,12 +525,15 @@ function TabsProductCard(props) {
           )}
 
           <div className="card-rating">{props.rating}</div>
-          {Stars && (
-            <div className="flex items-center mt-1 hide-on-mobile">
-              {Stars}
-              <p className="text-[14px] mt-1 ml-2">({Reviews?.length})</p>
-            </div>
-          )}
+          {/* min-h reserves height so content below never shifts when stars load */}
+          <div className="min-h-[22px] hide-on-mobile">
+            {stars && (
+              <div className="flex items-center mt-1">
+                {stars}
+                <p className="text-[14px] mt-1 ml-2">({Reviews?.length})</p>
+              </div>
+            )}
+          </div>
 
           <div className="flex my-2 items-center gap-2 hide-on-mobile">
             <div

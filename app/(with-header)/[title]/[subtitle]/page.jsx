@@ -6,7 +6,7 @@ import { RoomsPage } from "@/components/Rooms/RoomsPage";
 import Suggestion from "@/components/suggestion/Suggestion";
 import { BASE_URL } from "@/constants/base-url";
 import { getAggregateRating } from "@/utils/getAggregateRating";
-import axios from "axios";
+
 import {
   ArticleJsonLd,
   BreadcrumbJsonLd,
@@ -30,15 +30,12 @@ export async function generateMetadata({ params }) {
   const isRoomPage = params.subtitle === "rooms";
   const isInspirationPage = params.subtitle === "inspiration";
   if (isRoomPage) {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRoommain`,
-      {
-        params: {
-          roomType: params.title.replace(/-/g, " "),
-        },
-      }
+    const roomType = params.title.replace(/-/g, " ");
+    const metaRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRoommain?roomType=${encodeURIComponent(roomType)}`,
+      { next: { revalidate: 3600 } }
     );
-    const allRooms = response.data;
+    const allRooms = await metaRes.json();
     const roomData = Array.isArray(allRooms)
       ? allRooms.find(room => room.roomType?.toLowerCase() === params.title.replace(/-/g, " ").toLowerCase())
       : allRooms;
@@ -187,17 +184,14 @@ const Page = async ({ params }) => {
   const aggregateRating = getAggregateRating(ratings);
 
   if (isRoomPage) {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllRoommain`,
-      {
-        params: {
-          roomType: params.title.replace(/-/g, " "),
-        },
-      }
+    const roomType = params.title.replace(/-/g, " ");
+    const roomRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllRoommain?roomType=${encodeURIComponent(roomType)}`,
+      { next: { revalidate: 3600 } }
     );
-    const allRooms = response.data;
+    const allRooms = await roomRes.json();
     const roomData = Array.isArray(allRooms)
-      ? allRooms.find(room => room.roomType?.toLowerCase() === params.title.replace(/-/g, " ").toLowerCase())
+      ? allRooms.find(room => room.roomType?.toLowerCase() === roomType.toLowerCase())
       : allRooms;
 
 
@@ -249,7 +243,7 @@ const Page = async ({ params }) => {
             }))}
           />
         )}
-        <RoomsPage params={params.title} />;
+        <RoomsPage params={params.title} initialRoomData={roomData} />;
       </>
     );
   }

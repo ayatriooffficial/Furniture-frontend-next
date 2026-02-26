@@ -639,7 +639,7 @@ function Card(props) {
                   <Image
                     className="w-full h-full object-cover"
                     src={fixImageUrl(item.image)}
-                    alt={item.color}
+                    alt={item.color||`color-${index}`}
                     fill
                     style={{ objectFit: "cover" }}
                     loading="lazy"

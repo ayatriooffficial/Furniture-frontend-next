@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import NavigationItem from "../ProductPage/NavigationItem";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -25,9 +25,10 @@ import {
 import TabsProductContent from "../compounds/TabsProductContent";
 import Measure from "./meausrement";
 import axios from "axios";
+import { selecteddbItems } from "../Features/Slices/cartSlice";
 import TabsProductCard from "./TabsProductCard";
 import CategoryGrid from "./CategoryGrid";
-import { selecteddbItems } from "../Features/Slices/cartSlice";
+
 import { viewItemList } from "@/tag-manager/events/view_item_list";
 import SubcategorySlider from "./SubcategorySlider";
 import OfferSlider from "./OfferSlider";
@@ -66,6 +67,65 @@ const Tabs = ({
   const router = useRouter();
   const dispatch = useDispatch();
   const pathname = usePathname();
+
+  // ── Fix 1: Single auth check lifted from per-card to parent ──────────────
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  const checkUser = useCallback(async () => {
+    try {
+      const token = localStorage?.getItem("token");
+      if (token) {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/user`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = response.data;
+        setLoggedInUser(data.isAuthenticated ? data.user : null);
+      } else {
+        setLoggedInUser(null);
+      }
+    } catch {
+      setLoggedInUser(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  // ── Fix 2: Batch reviews fetch with Promise.all lifted from per-card ──────
+  const [reviewsMap, setReviewsMap] = useState({});
+
+  useEffect(() => {
+    if (!filterData || filterData.length === 0) return;
+
+    const fetchAllReviews = async () => {
+      const results = await Promise.all(
+        filterData.map(async (product) => {
+          try {
+            const res = await axios.get(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${product._id}`
+            );
+            return { id: product._id, reviews: res.data };
+          } catch {
+            return { id: product._id, reviews: [] };
+          }
+        })
+      );
+      const map = {};
+      results.forEach(({ id, reviews }) => { map[id] = reviews; });
+      setReviewsMap(map);
+    };
+
+    fetchAllReviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterData]);
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Combined map state
   const [map, setMap] = useState([
@@ -1407,6 +1467,8 @@ const Tabs = ({
                       unitType={text.unitType}
                       expectedDelivery={text.expectedDelivery}
                       faqs={text.faqs}
+                      loggedInUser={loggedInUser}
+                      reviews={reviewsMap[text._id] ?? []}
                     />
                     {/* {firstGrid && idx === 2 && <CategoryGrid grid={firstGrid} />}
                     {secondGrid && idx === 6 && (

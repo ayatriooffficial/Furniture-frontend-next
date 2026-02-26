@@ -15,30 +15,17 @@ import fixImageUrl from "@/utils/modifyUrl";
 
 
 const MainSlider = ({ sliderData, onSwiperReady }) => {
-  const [maxHeight, setMaxHeight] = useState("70vh");
   const [isHovering, setIsHovering] = useState(false);
+  // Read once on mount — used only for image src selection, not layout
   const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
-    const handleResize = () => {
-      const desktop = window.innerWidth >= 600;
-      setIsDesktop(desktop);
-      setMaxHeight(desktop ? "70vh" : "auto");
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    setIsDesktop(window.innerWidth >= 600);
   }, []);
 
   return (
     <section
       className="w-full h-full relative"
-      style={{ 
-        height: maxHeight,
-        maxHeight: isDesktop ? maxHeight : "none",
-        aspectRatio: isDesktop ? "auto" : "1080 / 1463"
-      }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

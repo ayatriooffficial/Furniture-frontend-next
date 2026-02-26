@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import MainSliderSkeleton from "./MainSliderSkeleton";
-import fixImgUrl from "utils/modifyUrl.js";
 
 const MainSlider = dynamic(() => import("./MainSlider"), {
   ssr: false,
@@ -13,21 +11,7 @@ const MainSlider = dynamic(() => import("./MainSlider"), {
 
 const MainSliderWrapper = () => {
   const [sliderData, setSliderData] = useState([]);
-  const [isDesktop, setIsDesktop] = useState(true);
-  const [maxHeight, setMaxHeight] = useState("70vh");
   const [isLoading, setIsLoading] = useState(true);
-  const [swiperReady, setSwiperReady] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const isDesk = window.innerWidth >= 600;
-      setIsDesktop(isDesk);
-      setMaxHeight(isDesk ? "70vh" : "auto");
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,30 +28,18 @@ const MainSliderWrapper = () => {
     fetchData();
   }, []);
 
-  const fallbackImage = null;
-
-  const handleSwiperReady = () => setSwiperReady(true);
-
   return (
     <div className="w-full px-[2px] sm:px-0 mt-28 sm:mt-[96px]">
-      <div
-        className="relative w-full overflow-hidden bg-white"
-        style={{ 
-          height: maxHeight, 
-          maxHeight: isDesktop ? maxHeight : "none",
-          aspectRatio: isDesktop ? "auto" : "1080 / 1463"
-        }}
-      >
+      {/* aspect-[1080/1463] reserves exact space on mobile before JS runs.
+          sm:aspect-auto + sm:h-[70vh] takes over on desktop. */}
+      <div className="relative w-full overflow-hidden bg-[#f1f1f1] aspect-[1080/1463] sm:aspect-auto sm:h-[70vh]">
         {isLoading ? (
-          <div className="absolute top-0 left-0 w-full h-full z-0">
+          <div className="absolute inset-0 z-0">
             <MainSliderSkeleton />
           </div>
         ) : (
-          <div className="absolute top-0 left-0 w-full h-full z-10">
-            <MainSlider
-              sliderData={sliderData}
-              onSwiperReady={handleSwiperReady}
-            />
+          <div className="absolute inset-0 z-10">
+            <MainSlider sliderData={sliderData} />
           </div>
         )}
       </div>
