@@ -98,33 +98,6 @@ const Tabs = ({
     checkUser();
   }, [checkUser]);
 
-  // ── Fix 2: Batch reviews fetch with Promise.all lifted from per-card ──────
-  const [reviewsMap, setReviewsMap] = useState({});
-
-  useEffect(() => {
-    if (!filterData || filterData.length === 0) return;
-
-    const fetchAllReviews = async () => {
-      const results = await Promise.all(
-        filterData.map(async (product) => {
-          try {
-            const res = await axios.get(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${product._id}`
-            );
-            return { id: product._id, reviews: res.data };
-          } catch {
-            return { id: product._id, reviews: [] };
-          }
-        })
-      );
-      const map = {};
-      results.forEach(({ id, reviews }) => { map[id] = reviews; });
-      setReviewsMap(map);
-    };
-
-    fetchAllReviews();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterData]);
   // ─────────────────────────────────────────────────────────────────────────
 
   // Combined map state
@@ -217,6 +190,36 @@ const Tabs = ({
   };
 
   const [filterData, setFilterdata] = useState([]);
+  
+  // ── Batch reviews fetch with Promise.all lifted from per-card ──────
+  const [reviewsMap, setReviewsMap] = useState({});
+
+  useEffect(() => {
+    if (!filterData || filterData.length === 0) return;
+
+    const fetchAllReviews = async () => {
+      const results = await Promise.all(
+        filterData.map(async (product) => {
+          try {
+            const res = await axios.get(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${product._id}`
+            );
+            return { id: product._id, reviews: res.data };
+          } catch {
+            return { id: product._id, reviews: [] };
+          }
+        })
+      );
+      const map = {};
+      results.forEach(({ id, reviews }) => { map[id] = reviews; });
+      setReviewsMap(map);
+    };
+
+    fetchAllReviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterData]);
+  // ───────────────────────────────────────────────────────────────────
+
   const [allColors, setAllColors] = useState([]);
   const [allProductTypes, setAllProductTypes] = useState([]);
   const [allOffers, setAllOffers] = useState([]);

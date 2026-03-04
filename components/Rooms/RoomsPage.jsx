@@ -168,8 +168,9 @@ export const RoomsPage = ({ params, initialRoomData }) => {
     // Utility to check if the description contains HTML
     const hasHtml = (html) => /<\/?[a-z][\s\S]*>/i.test(html);
 
-    // Utility to strip HTML tags for plain text rendering
+    // Utility to strip HTML tags (client-side only)
     const stripHtmlTags = (html) => {
+      if (typeof document === 'undefined') return html;
       const div = document.createElement("div");
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
@@ -180,6 +181,18 @@ export const RoomsPage = ({ params, initialRoomData }) => {
       : "";
 
     switch (feature.displayType) {
+      case "comparison":
+        // For comparison type, the description is a header/intro text;
+        // the actual comparison is rendered via cards in the parent block.
+        return hasHtml(feature.description) ? (
+          <div
+            className="text-sm text-gray-600 mb-4"
+            dangerouslySetInnerHTML={{ __html: feature.description }}
+          />
+        ) : (
+          <p className="text-sm text-gray-600 mb-4">{descriptionText}</p>
+        );
+
       case "Tip":
         // Only render as Tip if explicitly marked as Tip and no HTML table
         if (!hasHtml(feature.description)) {
@@ -378,7 +391,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
 
     // Utility: check if content is HTML
     const hasHtml = (html) => /<\/?[a-z][\s\S]*>/i.test(html);
-
+    
     // Utility: strip HTML tags for plain text rendering
     const stripHtmlTags = (html) => {
       const div = document.createElement("div");
@@ -794,116 +807,28 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                 Features
               </h2>
 
-              <article className="sm:w-3/4 py-3 w-full ">
-          {roomMain?.features?.length > 0
-            ? 
-                <div  className="">
-                  <div className="flex flex-col ">
-                    <div>
-                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                        {roomMain?.features[0]?.name || "Feature"}:
-                      </h2>
-                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                        {/* {roomMain?.features[0]?.description} */}
-                        {renderFeatureDescription(roomMain?.features[0])}
-                      </div>
-                    </div>
-                    <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {roomMain?.features[0]?.cards &&
-  roomMain?.features[0]?.cards.map((card, cardIdx) => {
-    let parsedCard;
-    try {
-      parsedCard = JSON.parse(card);
-    } catch {
-      parsedCard = { description: 'Invalid card', svgUrl: '' };
-    }
+              <article className="sm:w-3/4 py-3 w-full">
+              {(() => {
+                const featuresToRender = roomMain.features.length > 0
+                  ? roomMain.features
+                  : filteredSubCategory && filteredSubCategory[0]?.features?.length > 0
+                    ? filteredSubCategory[0].features
+                    : [];
 
-    return (
-      <div
-        key={cardIdx}
-        className="bg-white border-[1px] border-gray-200 text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {parsedCard.svgUrl && (
-          <img
-            className="size-20 text-center mx-auto mt-6"
-            src={parsedCard.svgUrl}
-            alt=""
-          />
-        )}
-        {cardDescriptionRenderer(parsedCard)}
-      </div>
-    );
-  })}
+                // Helper to safely parse card data
+                const parseCard = (card) => {
+                  if (typeof card === 'string') {
+                    try { return JSON.parse(card); } catch { return { description: card, svgUrl: '' }; }
+                  }
+                  return card;
+                };
 
-                    </div>
-
-                    {roomMain?.features[0]?.tip && (
-                      <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
-                        <span className="font-bold">{roomMain.features[0].name} Tip :</span> {roomMain?.features[0]?.tip}
-                      </div>
-                    )}
-                  </div>
-                </div>
-            : filteredSubCategory &&
-              filteredSubCategory[0]?.features?.length > 0 &&
-              filteredSubCategory[0]?.features.map((feature, featureIdx) => (
-                <div key={featureIdx} className="">
-                  <div className="flex flex-col ">
-                    <div>
-                      <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                        {feature.title || "Feature"}:
-                      </h2>
-                      <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                        {renderFeatureDescription(feature)}
-                      </div>
-                    </div>
-                    <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                      {feature.cards &&
-                        feature.cards.map((card, cardIdx) => (
-                          <div
-                            key={cardIdx}
-                            className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                          >
-                            {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt=""/>)}
-                            {cardDescriptionRenderer(card)}
-                            {/* {Array.isArray(card.description)
-        ? card.description.map((desc, i) => (
-            <div key={i} dangerouslySetInnerHTML={{ __html: desc }} />
-          ))
-        : <div dangerouslySetInnerHTML={{ __html: card.description }} />} */}
-                          </div>
-                        ))}
-                    </div>
-
-                    {feature.tip && (
-                      <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
-                        <span className="font-bold">{feature.title} Tip :</span> {feature.tip}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-        </article>
-
-              {/* {roomMain.features.filter(
-                (feature) => feature?.displayType === "card1"
-              ).length > 0 && (
-                <div
-                  className="mt-6 w-full flex gap-4 overflow-x-auto pb-4"
-                  role="list"
-                  aria-label="Feature highlights with icons"
-                >
-                  {roomMain.features
-                    .filter((feature) => feature?.displayType === "card1")
-                    .map((feature, index) => {
-                      const Icon =
-                        feature?.icon && iconMap[feature.icon]
-                          ? iconMap[feature.icon]
-                          : null;
+                return featuresToRender.map((feature, featureIdx) => {
+                  switch (feature.displayType) {
+                    case "card1":
+                      const Icon = feature?.icon && iconMap[feature.icon] ? iconMap[feature.icon] : null;
                       return (
-                        <article key={index} className="h-full" role="listitem">
+                        <article key={featureIdx} className="h-full" role="listitem">
                           <div className="bg-white min-h-[200px] md:min-w-[20vw] min-w-[90vw] md:max-w-[30vw] max-w-[90vw] p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center">
                             {Icon && (
                               <Icon
@@ -921,59 +846,93 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                           </div>
                         </article>
                       );
-                    })}
-                </div>
-              )}
-
-              {roomMain.features.filter(
-                (feature) => feature.displayType === "card2"
-              ).length > 0 && (
-                <div
-                  className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 w-full"
-                  role="list"
-                  aria-label="Detailed feature cards"
-                >
-                  {roomMain.features
-                    .filter((feature) => feature.displayType === "card2")
-                    .map((feature, index) => (
-                      <article key={index} className="h-full" role="listitem">
-                        <div className="bg-white min-h-[350px] p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col">
-                          <h3 className="font-semibold text-gray-900 text-lg">
-                            {feature.name}
-                          </h3>
-                          <p className="text-gray-600 mt-2 text-sm">
-                            {feature.description}
-                          </p>
+                    case "card2":
+                      return (
+                        <article key={featureIdx} className="h-full" role="listitem">
+                          <div className="bg-white min-h-[350px] p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col">
+                            <h3 className="font-semibold text-gray-900 text-lg">
+                              {feature.name}
+                            </h3>
+                            <p className="text-gray-600 mt-2 text-sm">
+                              {feature.description}
+                            </p>
+                          </div>
+                        </article>
+                      );
+                    case "tips":
+                      return (
+                        <div
+                          key={featureIdx}
+                          className="w-full my-4 text-green-800 bg-green-500/25 p-4 border-l-4 border-green-800"
+                          role="listitem"
+                          aria-label={`Tip: ${feature.name}`}
+                        >
+                          <strong>{feature.name}:</strong> {feature.description}
                         </div>
-                      </article>
-                    ))}
-                </div>
-              )}
+                      );
+                    default: // Default rendering for scrollable cards / comparison
+                      return (
+                        <article key={featureIdx} className="sm:w-3/4 py-3 w-full ">
+                          <div className="">
+                            <div className="flex flex-col ">
+                              <div>
+                                <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
+                                  {feature.name || feature.title || "Feature"}:
+                                </h2>
+                                <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
+                                  {renderFeatureDescription(feature)}
+                                </div>
+                              </div>
+                              <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                                {feature.cards &&
+                                  (() => {
+                                    const parsedCards = feature.cards.map(parseCard);
 
-              {roomMain.features.filter(
-                (feature) => feature.displayType === "tips"
-              ).length > 0 && (
-                <div
-                  className="mt-8"
-                  role="list"
-                  aria-label="Helpful tips and recommendations"
-                >
-                  {roomMain.features
-                    .filter((feature) => feature.displayType === "tips")
-                    .map((feature, index) => (
-                      <div
-                        key={index}
-                        className="w-full my-4 text-green-800 bg-green-500/25 p-4 border-l-4 border-green-800"
-                        role="listitem"
-                        aria-label={`Tip: ${feature.name}`}
-                      >
-                        <strong>{feature.name}:</strong> {feature.description}
-                      </div>
-                    ))}
-                </div>
-              )} */}
+                                    if (feature.displayType === 'comparison') {
+                                      return (
+                                        <div className="w-full mt-4">
+                                          {parsedCards.map((card, idx) => (
+                                            <div key={idx} className="w-full mb-4">
+                                              {cardDescriptionRenderer(card)}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      );
+                                    }
 
+                                    // Default: horizontal scrollable cards (card / cardSVG)
+                                    return parsedCards.map((parsedCard, cardIdx) => (
+                                      <div
+                                        key={cardIdx}
+                                        className="bg-white border-[1px] border-gray-200 text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
+                                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                      >
+                                        {parsedCard.svgUrl && (
+                                          <img
+                                            className="size-20 text-center mx-auto mt-6"
+                                            src={parsedCard.svgUrl}
+                                            alt=""
+                                          />
+                                        )}
+                                        {cardDescriptionRenderer(parsedCard)}
+                                      </div>
+                                    ));
+                                  })()}
+                              </div>
 
+                              {feature.tip && (
+                                <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
+                                  <span className="font-bold">{feature.name || feature.title} Tip :</span> {feature.tip}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </article>
+                      );
+                  }
+                });
+              })()}
+              </article>
             </section>
           )}
 
