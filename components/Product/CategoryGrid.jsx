@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const CategoryGrid = ({ grid }) => {
   const GridContent = () => (
@@ -9,7 +10,7 @@ const CategoryGrid = ({ grid }) => {
         <figure className="relative z[-999999] w-fit" aria-hidden="true">
           <div className="relative flex h-full w-full items-center justify-center aspect-square">
             <Image
-              src={grid.image}
+              src={fixImageUrl(grid.image)}
               height={300}
               width={300}
               className="aspect-square w-[400px]"

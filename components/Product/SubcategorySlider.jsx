@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import fixImageUrl from "@/utils/modifyUrl";
 
 const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) => {
   const pathname = usePathname();
@@ -49,7 +50,7 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) =
           >
             <div className="w-[138px] h-[72px] relative  overflow-hidden mb-2">
               <Image
-                src={category.img}
+                src={fixImageUrl(category.img)}
                 alt={category.name}
                 fill
                 className="object-cover"
@@ -69,7 +70,7 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) =
               >
                 <div className="w-[138px] h-[72px] relative overflow-hidden mb-2">
                   <Image
-                    src={category.img}
+                    src={fixImageUrl(category.img)}
                     alt={category.name}
                     fill
                     className="object-cover"

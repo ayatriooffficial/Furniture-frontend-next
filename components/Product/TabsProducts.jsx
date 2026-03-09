@@ -1566,7 +1566,7 @@ const Tabs = ({
                       </div>
                     </div>
                     <div
-                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white"
+                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-x-auto scrollbar-hidden bg-white"
                       style={{
                         scrollbarWidth: "none",
                         msOverflowStyle: "none",
@@ -1576,7 +1576,7 @@ const Tabs = ({
                         feature.cards.map((card, cardIdx) => (
                           <div
                             key={cardIdx}
-                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-full" : "min-w-[240px] max-w-[240px]"} overflow-auto rounded-xl `}
+                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-max px-6 min-w-[240px]" : "min-w-[240px] max-w-[240px]"} overflow-auto rounded-xl `}
                             style={{
                               scrollbarWidth: "none",
                               msOverflowStyle: "none",
@@ -1622,7 +1622,7 @@ const Tabs = ({
                       </div>
                     </div>
                     <div
-                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white"
+                      className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-x-auto scrollbar-hidden bg-white"
                       style={{
                         scrollbarWidth: "none",
                         msOverflowStyle: "none",
@@ -1632,7 +1632,7 @@ const Tabs = ({
                         feature.cards.map((card, cardIdx) => (
                           <div
                             key={cardIdx}
-                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-full" : "min-w-[240px] max-w-[240px]"} overflow-auto p-2 rounded-xl px-8`}
+                            className={`bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-[300px] ${feature.cards.length === 1 ? "w-max px-8 min-w-[240px]" : "min-w-[240px] max-w-[240px] px-8"} overflow-auto p-2 rounded-xl `}
                             style={{
                               scrollbarWidth: "none",
                               msOverflowStyle: "none",
