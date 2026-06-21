@@ -45,13 +45,6 @@ We may share information with trusted service providers only when necessary for:
 • Legal or regulatory compliance`,
   },
 
-  // EXISTING CONTENT STARTS HERE (UNCHANGED)
-
-  {
-    title: "A partnership in trust.",
-    text: "We will make sure that your personal information is protected when it is sent outside of the AYATRIO Group. We make sure our trusted service partners keep your personal information safe. When AYATRIO set out to create a high-quality, low-priced line of home furnishings, we knew we couldn't do it without the help of some very important partners-you, our customers. Whether you're researching purchases in the AYATRIO catalogue, picking up your furniture in our self-serve warehouses or assembling your purchases at home-we're working together to help you create a better everyday life at a price everyone can afford. AYATRIO is based on a partnership with our customers. Without you, AYATRIO could not exist. This partnership extends to the way we handle your personal information. Just like shopping at AYATRIO is a cooperative experience, AYATRIO makes a point of working with our customers when it comes to their privacy. We only collect the information we may need to create a better shopping experience for you. This Privacy Notice is our way of telling you what information we collect, how we use it and how you can access, change and remove your information.",
-  },
-
   {
     title: "AYATRIO Family Members:",
     text: "When you as an AYATRIO Family member interact with us, we may collect information such as your name, email address, phone number, purchasing activity, product preferences, and other interactions you may have with us. This information helps us improve customer experience, provide personalized offers, and better understand customer preferences. The purpose of collecting this data is to perform statistical analysis to get insights on customer purchase, trends and engagements. This data will be stored and retained with us till you continue to use our services and / or as necessary to comply with legal obligations. If you are logged in to any AYATRIO Channel like AYATRIO Web or AYATRIO App, we collect your data (only if you identify as an AYATRIO Family member) to better understand how you use these different channels and how they play together.",
