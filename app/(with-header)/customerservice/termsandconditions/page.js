@@ -7,10 +7,10 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex flex-col sm:w-2/3 mt-20 sm:px-[50px] px-[20px] space-y-5">
+    <div className="flex flex-col sm:w-2/3 pt-[140px] sm:px-[50px] px-[20px] space-y-5">
       <div>
         <h1 className="text-4xl font-bold">
-          AYATRIO Terms, Conditions and Privacy notice
+          AYATRIO Terms & Conditions
         </h1>
       </div>
       <hr />

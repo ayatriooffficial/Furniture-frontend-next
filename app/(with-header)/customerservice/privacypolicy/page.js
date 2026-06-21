@@ -3,7 +3,7 @@ import { privacyPolicy } from "@/Model/PrivacyPolicy/privacyPolicyData";
 
 const page = () => {
   return (
-    <div className="flex flex-col mt-20 sm:px-[50px] px-[20px] space-y-20 sm:w-2/3">
+    <div className="flex flex-col pt-[140px] sm:px-[50px] px-[20px] space-y-20 sm:w-2/3">
       <div>
         <h1 className="text-4xl font-bold">
           AYATRIO India Customer Privacy Policy

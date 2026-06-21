@@ -40,7 +40,7 @@ const FooterContent = (props) => {
               : elementId === 5
                 ? router.push("/services/Finance")
                 : elementId === 6
-                  ? router.push("/designservice")
+                  ? router.push("/services")
                   : elementId === 7
                     ? router.push("customerservice")
                     : elementId === 8
@@ -56,16 +56,18 @@ const FooterContent = (props) => {
             : elementId === 5
               ? router.push("/freedesign")
               : elementId === 6
-                ? router.push("/customerservice/giftcards")
-                : elementId === 7
-                  ? router.push("/home")
+              ? router.push("/customerservice/giftcards")
+              : elementId === 7
+                  ? router.push("/customerservice/termsandconditions")
                   : elementId === 8
                     ? router.push("/customerservice/returnpolicy")
-                    : elementId === 10
-                      ? router.push("/customerservice/contact")
-                      : elementId === 11
-                        ? router.push("/faq")
-                        : router.push("/freedesign");
+                    : elementId === 9
+                      ? router.push("/customerservice/privacypolicy")
+                      : elementId === 10
+                        ? router.push("/customerservice/contact")
+                        : elementId === 11
+                          ? router.push("/faq")
+                          : router.push("/freedesign");
     } else {
       elementId === 1
         ? router.push("/about-ayatrio")

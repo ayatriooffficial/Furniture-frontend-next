@@ -26,6 +26,7 @@ export default function HeaderInteractive({ headerLinks }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoginPopupVisible, setIsLoginPopupVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [toptext, setTopText] = useState([]);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
@@ -459,17 +460,30 @@ export default function HeaderInteractive({ headerLinks }) {
                       />
                     </div>
                   ) : (
-                    <div
-                      className="pro w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
-                      onClick={handleLoginNav}
-                    >
-                      <Image
-                        loading="lazy"
-                        src="/icons/profile.svg"
-                        alt="Profile Icon"
-                        width={18}
-                        height={18}
-                      />
+                    <div className="relative inline-flex items-center">
+                      <div
+                        className="pro w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
+                        onClick={handleLoginNav}
+                        onMouseEnter={() => setIsLoginPopupVisible(true)}
+                        onMouseLeave={() => setIsLoginPopupVisible(false)}
+                      >
+                        <Image
+                          loading="lazy"
+                          src="/icons/profile.svg"
+                          alt="Profile Icon"
+                          width={18}
+                          height={18}
+                        />
+                      </div>
+                      <span
+                        className={`pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black px-3 py-1 text-[12px] text-white shadow-xl transition-all duration-200 ease-out ${
+                          isLoginPopupVisible
+                            ? "opacity-100 visible scale-100"
+                            : "opacity-0 invisible scale-95"
+                        }`}
+                      >
+                        Login
+                      </span>
                     </div>
                   )}
                 </div>
@@ -684,12 +698,27 @@ export default function HeaderInteractive({ headerLinks }) {
                   Logout
                 </p>
               ) : (
-                <p
-                  className="text-[14px] font-medium cursor-pointer"
-                  onClick={handleLoginClick}
+                <div
+                  className="relative inline-block"
+                  onMouseEnter={() => setIsLoginPopupVisible(true)}
+                  onMouseLeave={() => setIsLoginPopupVisible(false)}
                 >
-                  Login
-                </p>
+                  <p
+                    className="text-[14px] font-medium cursor-pointer"
+                    onClick={handleLoginClick}
+                  >
+                    Login
+                  </p>
+                  <span
+                    className={`pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black px-3 py-1 text-[12px] text-white shadow-xl transition-all duration-200 ease-out ${
+                      isLoginPopupVisible
+                        ? "opacity-100 visible scale-100"
+                        : "opacity-0 invisible scale-95"
+                    }`}
+                  >
+                    Login
+                  </span>
+                </div>
               )}
             </div>
           </div>

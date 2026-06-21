@@ -38,7 +38,7 @@ export const footerData = [
       { id: 2, text: "Billing-payment" },
       // { id: 3, text: "Shipping Delivery" },
       { id: 8, text: "Return policy" },
-      // { id: 9, text: "Privacy policy" },
+      { id: 9, text: "Privacy policy" },
       { id: 10, text: "Contact us" },
       { id: 11, text: "FAQ" },
     ],

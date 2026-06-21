@@ -1,6 +1,6 @@
 const CustomerPrivacyPolicy = () => {
     return (
-        <div className="mt-20 lg:px-[67px] w-full px-[20px] sm:px-[50px]">
+        <div className="pt-[140px] lg:px-[67px] w-full px-[20px] sm:px-[50px]">
             <div className="lg:w-[60%]">
                 <h1 className=" text-[24px] lg:text-[2.25rem] text-[#111111] font-semibold mb-10">Ayatrio Customer Privacy Policy</h1>
                 <div className="flex flex-col">

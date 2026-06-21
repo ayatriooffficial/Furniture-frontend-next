@@ -103,7 +103,7 @@ async function generateSitemapUrls() {
     "/customerservice/shoppinginfo",
     "/customerservice/termsandconditions",
     "/deliveryservice",
-    "/designservice",
+    "/services",
     "/freedesign",
     "/freesample",
     "/installationservice",

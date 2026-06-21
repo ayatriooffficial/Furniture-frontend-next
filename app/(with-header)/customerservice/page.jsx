@@ -51,6 +51,20 @@ const CustomerServicePage = () => {
             })}
           </div>
         </div>
+        <div className="bg-[#f9f9f9] rounded-[24px] p-6 mt-10 border border-[#e5e5e5] shadow-sm">
+          <h2 className="font-bold text-2xl mb-3">
+            Your privacy matters — see how we protect your data.
+          </h2>
+          <p className="text-[#4b4b4b] mb-5 max-w-2xl">
+            Click now to view our Customer Privacy Policy and learn exactly how Ayatrio handles your personal information, security, and data rights.
+          </p>
+          <button
+            onClick={() => router.push("/customerservice/privacypolicy")}
+            className="bg-black text-white rounded-full px-7 py-3 text-sm font-semibold hover:bg-gray-900 transition"
+          >
+            Read the privacy policy
+          </button>
+        </div>
         <div>
           <h2 className="font-bold text-2xl">Helping you help yourself </h2>
           <p className="mt-4">
