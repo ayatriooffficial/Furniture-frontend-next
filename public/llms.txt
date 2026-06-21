@@ -1,0 +1,73 @@
+# Ayatrio
+
+> Buy home furnishing and decor products online at the best prices in India.
+
+Ayatrio is an online platform offering a wide range of home furnishing and decor products, including wallpapers, flooring, curtains, bedding, mattresses, kitchenware, and more. The website caters to individuals looking to enhance their living spaces with stylish and quality items, providing options for various tastes and budgets. With a focus on customer convenience, Ayatrio offers features like free shipping, cash on delivery, and a price guarantee to ensure a seamless shopping experience.
+
+The core value proposition of Ayatrio lies in its extensive product catalog combined with competitive pricing and customer-centric services. Users can explore diverse collections, from abstract and floral wallpapers to vinyl and laminate flooring, and a variety of curtains and bedding. The platform aims to be a one-stop solution for home decor needs, simplifying the process of finding and purchasing items that transform a house into a home. Special services like free design consultations and virtual experiences further enhance the user's ability to make informed decisions about their decor choices.
+
+## Homepage & Core Information
+
+- [Ayatrio: Buy Home Furnishing & Decor Products Online](https://www.ayatrio.com/): Explore a wide range of home furnishing and decor products with free shipping and cash on delivery.
+- [About Ayatrio](https://www.ayatrio.com/about-ayatrio): Learn about Ayatrio's mission, values, and commitment to home decor solutions.
+
+## Services & Features
+
+- [Virtual Experience](https://www.ayatrio.com/virtualexperience): Experience home decor products virtually before making a purchase decision.
+- [Free Design Service](https://www.ayatrio.com/freedesign): Get expert design advice and consultations for your home decor projects for free.
+- [Free Sample Service](https://www.ayatrio.com/freesample): Order free samples of products to check quality and suitability for your space.
+- [Delivery Service](https://www.ayatrio.com/deliveryservice): Understand Ayatrio's delivery process, timelines, and coverage areas.
+- [Installation Service](https://www.ayatrio.com/installationservice): Learn about the professional installation services available for select products.
+- [Price Guarantee](https://www.ayatrio.com/priceguarantee): Discover Ayatrio's price guarantee policy and how it benefits customers.
+- [Services](https://www.ayatrio.com/services): Overview of all services offered by Ayatrio, including design and installation.
+
+## Business & B2B
+
+- [Business to Business](https://www.ayatrio.com/business-to-business): Explore solutions and partnerships for businesses seeking home furnishing products.
+- [Business to Business](https://www.ayatrio.com/businesstobusiness): Information on Ayatrio's offerings for corporate clients and bulk orders.
+
+## Customer Support & Account
+
+- [Login](https://www.ayatrio.com/login): Access your Ayatrio account by logging in with your credentials.
+- [User Profile](https://www.ayatrio.com/profile): Manage your personal information, orders, and preferences in your profile.
+- [Shopping Cart](https://www.ayatrio.com/cart): View and manage items added to your shopping cart before checkout.
+- [Customer Service](https://www.ayatrio.com/customerservice): Find help and support for all your Ayatrio shopping needs.
+- [Contact Us](https://www.ayatrio.com/customerservice/contactus): Get in touch with Ayatrio customer support via various contact methods.
+- [Frequently Asked Questions](https://www.ayatrio.com/customerservice/faq): Find answers to common questions about products, orders, and services.
+- [Gift Cards](https://www.ayatrio.com/customerservice/giftcards): Learn how to purchase and redeem Ayatrio gift cards.
+- [Shopping Information](https://www.ayatrio.com/customerservice/shoppinginfo): Get details on how to shop, place orders, and payment options.
+
+## Legal & Policies
+
+- [Privacy Policy](https://www.ayatrio.com/customerservice/privacypolicy): Understand how Ayatrio collects, uses, and protects your personal data.
+- [Return Policy](https://www.ayatrio.com/customerservice/returnpolicy): Review Ayatrio's policy on returning products and obtaining refunds.
+- [Terms and Conditions](https://www.ayatrio.com/customerservice/termsandconditions): Read the terms and conditions governing the use of Ayatrio's website and services.
+- [Return Policy](https://www.ayatrio.com/returnpolicy): Details on how to return items purchased from Ayatrio.
+
+## Product Categories: Bedding & Pillows
+
+- [Bedding Sheets](https://www.ayatrio.com/Home%20furnishing/homedecor/Bedding%20sheets): Browse and buy a variety of high-quality bedding sheets for comfort and style.
+- [Mattresses](https://www.ayatrio.com/Home%20furnishing/homedecor/Mattresses%20for%20bedding): Explore different types of mattresses for beds to ensure a good night's sleep.
+- [Pillows & Throws](https://www.ayatrio.com/Home%20furnishing/homedecor/Pillow%20&%20throw): Shop for decorative and comfortable pillows and throws to enhance your seating or bedding.
+
+## Product Categories: Upholstery Fabric
+
+- [Abstract Print Fabric](https://www.ayatrio.com/Upholstery/homedecor/Abstract%20print%20fabric): Discover abstract print fabrics for upholstery projects, adding a modern touch.
+- [Animal Print Fabric](https://www.ayatrio.com/Upholstery/homedecor/animal%20print%20fabric): Shop for animal print fabrics to create bold and stylish upholstery.
+- [Damask Fabric](https://www.ayatrio.com/Upholstery/homedecor/Damask%20fabric): Explore elegant damask fabrics suitable for classic and luxurious upholstery.
+- [Tropical & Leaves Fabric](https://www.ayatrio.com/Upholstery/homedecor/Tropical%20&%20Leaves%20Fabric): Find tropical and leaf-patterned fabrics for a vibrant and natural look.
+- [Geometric Print Fabric](https://www.ayatrio.com/Upholstery/homedecor/Geometric%20Print%20Fabric): Browse geometric print fabrics for contemporary and structured upholstery designs.
+- [Plain & Textured Fabric](https://www.ayatrio.com/Upholstery/homedecor/Plain%20&%20Textures%20fabric): Shop for plain and textured fabrics for versatile upholstery applications.
+
+## Product Categories: Wallpaper
+
+- [Floral Wallpapers](https://www.ayatrio.com/Wallpaper/walldecor/Floral%20wallpapers): Discover beautiful floral wallpapers to add charm and color to your walls.
+- [Plain and Textured Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Plain%20and%20Textured%20Wallpaper): Explore plain and textured wallpapers for a subtle yet sophisticated wall finish.
+- [Damask Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Damask%20Wallpaper): Shop for elegant damask wallpapers to create a classic and luxurious ambiance.
+- [Tree and Tropical Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Tree%20and%20Tropical%20Wallpaper): Bring nature indoors with tree and tropical themed wallpapers.
+- [Animal Wallpapers](https://www.ayatrio.com/Wallpaper/walldecor/Animal%20Wallpapers): Find unique animal-themed wallpapers for a playful or exotic wall statement.
+- [Geometric Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Geometric%20Wallpaper): Browse modern geometric wallpapers for a contemporary and structured look.
+- [Abstract Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Abstract%20Wallpaper): Discover abstract wallpapers to create a unique and artistic focal point.
+- [Tagore Wallpaper](https://www.ayatrio.com/Wallpaper/walldecor/Tagore%20wallpaper): Explore wallpapers inspired by Tagore, featuring artistic and cultural designs.
+
+This file was generated for www.ayatrio.com using the [LLMs.txt Generator Tool](https://llmrefs.com/tools/llms-txt-generator)
