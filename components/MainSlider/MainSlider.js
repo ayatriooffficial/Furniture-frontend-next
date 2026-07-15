@@ -64,16 +64,14 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
           disableOnInteraction: true,
         }}
         loop
-        centeredSlides
-        spaceBetween={10}
-       slidesPerView="auto"
+        slidesPerView={1}
         onSwiper={() => onSwiperReady?.()}
         className="w-full h-full"
       >
         {sliderData?.map((data, index) => (
           <SwiperSlide key={index} className="relative swiper-slide-custom">
           <Link href={data.link || "#"}>
-         <div className="relative w-full h-full px-[4px] sm:px-0">
+         <div className="relative w-full h-full">
         <Image
       src={isDesktop ? fixImageUrl(data.desktopImgSrc) : fixImageUrl(data.mobileImgSrc)}
       alt="slider"

@@ -1,5 +1,3 @@
-"use client";
-
 function ShopByRoomSliderSkeleton() {
   return (
     <div className=" w-full flex items-center justify-start gap-2 ">

@@ -160,6 +160,7 @@ const nextConfig = withPWA({
   },
   experimental: {
     missingSuspenseWithCSRBailout: true,
+    optimizePackageImports: ['lucide-react', 'react-icons', 'swiper', '@react-google-maps/api'],
   },
   // LCP Optimization: Image optimization for faster delivery
   compress: true,

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 // Define the base URL for Ayatrio at the top
 const AYATRIO_BASE_URL = "https://www.ayatrio.com";
@@ -75,7 +76,7 @@ const BodySkeletonLoader = () => {
           aria-label="Main slider loading"
           data-component="main-slider-skeleton"
         >
-          <img
+          <Image
             src="https://picsum.photos/1200/600"
             alt="Main promotional image"
             className="loaded-image"
@@ -99,7 +100,7 @@ const BodySkeletonLoader = () => {
               className="h-[70%] w-[100px] image-container"
               aria-hidden="true"
             >
-              <img
+              <Image
                 src={`https://picsum.photos/100/70?random=${idx}`}
                 alt={`Category ${idx + 1}`}
                 className="loaded-image"
@@ -126,7 +127,7 @@ const BodySkeletonLoader = () => {
               aria-label={`Product card skeleton ${idx + 1}`}
             >
               <div className="image-container w-full h-[300px]">
-                <img
+                <Image
                   src={`https://picsum.photos/300/300?random=${idx}`}
                   alt={`Product ${idx + 1}`}
                   className="loaded-image"
@@ -159,7 +160,7 @@ const BodySkeletonLoader = () => {
                   className="parent image-container w-full h-full"
                   aria-label={`Grid card skeleton ${idx + 1}`}
                 >
-                  <img
+                  <Image
                     src={`https://picsum.photos/400/400?random=${idx}`}
                     alt={`Grid item ${idx + 1}`}
                     className="loaded-image"
@@ -192,7 +193,7 @@ const BodySkeletonLoader = () => {
                   aria-label={`Additional product card skeleton ${idx + 1}`}
                 >
                   <div className="image-container w-full h-[300px]">
-                    <img
+                    <Image
                       src={`https://picsum.photos/300/300?random=${sectionIdx * 4 + idx}`}
                       alt={`Additional product ${idx + 1}`}
                       className="loaded-image"
@@ -227,7 +228,7 @@ const BodySkeletonLoader = () => {
                   className="parent image-container w-full h-full"
                   aria-label={`Two grid card skeleton ${idx + 1}`}
                 >
-                  <img
+                  <Image
                     src={`https://picsum.photos/600/400?random=${idx}`}
                     alt={`Two grid item ${idx + 1}`}
                     className="loaded-image"
@@ -260,7 +261,7 @@ const BodySkeletonLoader = () => {
                   aria-label={`More product card skeleton ${idx + 1}`}
                 >
                   <div className="image-container w-full h-[300px]">
-                    <img
+                    <Image
                       src={`https://picsum.photos/300/300?random=${sectionIdx * 4 + idx}`}
                       alt={`More product ${idx + 1}`}
                       className="loaded-image"
@@ -296,7 +297,7 @@ const BodySkeletonLoader = () => {
                 aria-label={`Final product card skeleton ${idx + 1}`}
               >
                 <div className="image-container w-full h-[300px]">
-                  <img
+                  <Image
                     src={`https://picsum.photos/300/300?random=${idx + 20}`}
                     alt={`Final product ${idx + 1}`}
                     className="loaded-image"
@@ -328,7 +329,7 @@ const BodySkeletonLoader = () => {
               className="h-[255px] w-[420px] image-container"
               aria-label={`Convenience card skeleton ${idx + 1}`}
             >
-              <img
+              <Image
                 src={`https://picsum.photos/420/255?random=${idx}`}
                 alt={`Convenience ${idx + 1}`}
                 className="loaded-image"
@@ -354,7 +355,7 @@ const BodySkeletonLoader = () => {
               className="h-[580px] w-[290px] image-container"
               aria-label={`Inspiration card skeleton ${idx + 1}`}
             >
-              <img
+              <Image
                 src={`https://picsum.photos/290/580?random=${idx}`}
                 alt={`Inspiration ${idx + 1}`}
                 className="loaded-image"
@@ -378,7 +379,7 @@ const BodySkeletonLoader = () => {
             className="h-[580px] w-[290px] image-container"
             aria-label="Suggestion card skeleton"
           >
-            <img
+            <Image
               src="https://picsum.photos/290/580?random=10"
               alt="Suggestion"
               className="loaded-image"
@@ -403,7 +404,7 @@ const BodySkeletonLoader = () => {
               className="h-[255px] w-[420px] image-container"
               aria-label={`Service card skeleton ${idx + 1}`}
             >
-              <img
+              <Image
                 src={`https://picsum.photos/420/255?random=${idx + 5}`}
                 alt={`Service ${idx + 1}`}
                 className="loaded-image"
@@ -432,7 +433,7 @@ const BodySkeletonLoader = () => {
                 } image-container`}
                 aria-label={`Design inspiration card skeleton ${idx + 1}`}
               >
-                <img
+                <Image
                   src={`https://picsum.photos/400/${idx % 2 === 0 ? 871 : 429}?random=${idx}`}
                   alt={`Design inspiration ${idx + 1}`}
                   className="loaded-image"

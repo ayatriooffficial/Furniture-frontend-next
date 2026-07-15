@@ -14,8 +14,7 @@
 .swiper-slide-custom {
   opacity: 0.3;
   transition: opacity 0.5s ease-in-out;
-  width: 96% !important; /* 80% of container width */
- 
+  width: 100% !important; 
 }
 
 .swiper-slide-active.swiper-slide-custom {

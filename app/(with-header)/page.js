@@ -10,6 +10,7 @@ import HomePage from "@/components/home/HomePage";
 import SiteNavigationElement from "@/components/JsonLd/SiteNavigationElement";
 import SaveDeviceIdLocalstorage from "@/utils/SaveDeviceIdLocalstorage ";
 import SaveUserCoordinatesOnscroll from "@/utils/SaveUserCoordinatesOnScroll";
+import MainSliderWrapper from "@/components/MainSlider/MainSliderWrapper";
 import {
   OrganizationJsonLd,
   SiteLinksSearchBoxJsonLd,
@@ -19,11 +20,20 @@ import dynamicImport from "next/dynamic";
 const ChatPrompt = dynamicImport(
   () => import("../../components/ChatPromptWidget/chatprompt"),
 );
+const CategoriesSlider = dynamicImport(
+ () => import("@/components/Cards/categorySlider"),
+);
+
 
 export default async function Home() {
   return (
     <>
       <SiteNavigationElement />
+
+      <div className="w-full mt-28 sm:mt-[70px]">
+        <CategoriesSlider />
+      </div>
+      <MainSliderWrapper />
 
       <WebPageJsonLd
         useAppDir={true}

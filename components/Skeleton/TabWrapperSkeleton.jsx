@@ -1,5 +1,3 @@
-"use client";
-
 function TabWrapperSkeleton() {
   return (
     <div className="mr-[12px] sm:mr-[22px] md:mr-[0px] ml-[12px] sm:ml-[20px] md:ml-[0px] md:px-[52px] pb-20 pt-10 h-full">

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from "next/link";
 import React from "react";
 
@@ -50,7 +51,7 @@ const Recomend = () => {
         </div>
 
         <div>
-          <img src="/images/Business/room.gif" className="w-full h-auto" alt="Loading...." />
+          <Image src="/images/Business/room.gif" className="w-full h-auto" alt="Loading...." width={500} height={500} />
           <h3 className="text-xl pt-[15px]">3D rendering example</h3>
           <p>15㎡ Apartment: Fully Utilizing a Small Space</p>
           <Link

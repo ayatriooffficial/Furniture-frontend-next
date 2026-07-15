@@ -1,3 +1,4 @@
+import Image from 'next/image';
 const Home = () => {
   return (
     <main className="flex flex-col md:flex-row items-center justify-between p-10 bg-white gap-8 " >
@@ -26,9 +27,11 @@ const Home = () => {
         </div>
       </div>
       <div className="w-full md:w-[45%] flex justify-center">
-        <img
+        <Image
           src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669484/ayatrio_office_axig8q.avif"
           alt="Loading..."
+          width={800}
+          height={600}
           className="w-full object-cover"
         />
       </div>

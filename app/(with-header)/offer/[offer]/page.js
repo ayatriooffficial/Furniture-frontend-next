@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
@@ -43,7 +44,7 @@ const OfferPage = () => {
   if (!data || data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center mt-12 px-4">
-        <img
+        <Image
           src="/images/no-results.png" // optional: update path
           alt="No results"
           className="w-[250px] h-auto mb-6"

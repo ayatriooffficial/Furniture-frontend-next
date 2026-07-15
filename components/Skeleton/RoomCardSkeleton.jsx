@@ -1,5 +1,3 @@
-"use client";
-
 function RoomCardSkeleton() {
   // const [offers, setOffers] = useState([]);
 

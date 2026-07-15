@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from "react";
 
 const Commercial = () => {
@@ -8,12 +9,14 @@ const Commercial = () => {
       </h1>
       <div className="flex">
         <div className="m-2 w-full md:w-[55%]  ">
-          <img
+          <Image
             src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669575/ayatrio_furnishing_for_office_pmesfr.avif"
             alt="Loadin..Furinture"
+            width={620}
+            height={400}
             className="w-[620px]
             cursor-pointer"
-          ></img>
+          />
         </div>
         <div className=" w-full md:w-[55%]  text-black w-80 m-10 my-24 gap-20 ">
           <h1 className="text-1xl sm:text-xl text-black font-bold ">

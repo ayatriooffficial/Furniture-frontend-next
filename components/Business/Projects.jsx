@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from "react";
 
 const Projects = () => {
@@ -24,7 +25,7 @@ const Projects = () => {
         </a>
       </div>
       <div className="w-full md:w-[45%]">
-        <img src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669627/ayatrio_offer_wlxo8f.avif" alt="Loading...." className="w-[1600px] mb-8"></img>
+        <Image src="https://res.cloudinary.com/dcvabpy6e/image/upload/v1770669627/ayatrio_offer_wlxo8f.avif" alt="Loading...." width={1600} height={900} className="w-[1600px] mb-8"/>
       </div>
     </div>
   );
