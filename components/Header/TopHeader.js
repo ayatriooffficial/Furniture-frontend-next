@@ -22,10 +22,11 @@ const TopHeader = () => {
           </NavLink>
         </div>
 
-        <div className="flex-1 flex justify-center items-center text-[9px] md:text-[10px] lg:text-[12px] font-medium text-black whitespace-nowrap px-2 overflow-hidden">
-          <span className="truncate">
-            Shop and get up to <span className="font-bold">Rs.50k</span> back on orders. Call on <span className="font-bold">+91 9007404292</span>
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-[10px] lg:text-[12px] font-medium text-black whitespace-nowrap">
+          <span className="hidden lg:inline mr-1">
+            Shop and get up to <span className="font-bold">Rs.50k</span> back on orders. Call on
           </span>
+          <span className="font-bold">+91 9007404292</span>
         </div>
 
         <div className="flex items-center">
