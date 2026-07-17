@@ -64,7 +64,7 @@ const FooterContent = (props) => {
                     : elementId === 9
                       ? router.push("/customerservice/privacypolicy")
                       : elementId === 10
-                        ? router.push("/customerservice/contact")
+                        ? router.push("/stores/flooring-store-kolkata-park-street")
                         : elementId === 11
                           ? router.push("/faq")
                           : router.push("/freedesign");
