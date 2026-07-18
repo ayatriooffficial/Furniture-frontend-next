@@ -2,107 +2,169 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import "./styles.css";
 import Image from "next/image";
-import LottieBackground from "@/components/LottieBackground";
-import animationData from "@/components/Animation - 1718097462437.json";
 import { useDispatch, useSelector } from "react-redux";
-import { selectClickedItem, setClickedItem } from "../../Features/Slices/mapSlice";
+import {
+  selectClickedItem,
+  setClickedItem,
+} from "../../Features/Slices/mapSlice";
+import axios from "axios";
 
-const PopupPortal = ({ children }) => {
-  return ReactDOM.createPortal(children, document.body);
-};
 
-const MapMarker = ({ place, idx }) => {
+// ─── Decode Google's encoded polyline format ─────────────────────────────────
+// Implements the standard polyline decoding algorithm
+function decodePolyline(encoded) {
+  if (!encoded) return [];
+  const points = [];
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < encoded.length) {
+    let shift = 0;
+    let result = 0;
+    let byte;
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+    const deltaLat = result & 1 ? ~(result >> 1) : result >> 1;
+    lat += deltaLat;
+
+    shift = 0;
+    result = 0;
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+    const deltaLng = result & 1 ? ~(result >> 1) : result >> 1;
+    lng += deltaLng;
+
+    points.push({ lat: lat / 1e5, lng: lng / 1e5 });
+  }
+
+  return points;
+}
+
+// ─── Haversine distance (km) ─────────────────────────────────────────────────
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return (R * c).toFixed(2);
+}
+
+// ─── MapMarker Component ─────────────────────────────────────────────────────
+const MapMarker = ({ place, idx, userLocation, onRouteDisplay, onClearRoute, isClosest }) => {
   const clickedItem = useSelector(selectClickedItem);
   const dispatch = useDispatch();
 
-  const [isPopupOpen, setPopupOpen] = useState(false);
 
   const handleMarkerClick = () => {
-    setPopupOpen(!isPopupOpen);
+    // Clicking just triggers the route change by updating global state
+    dispatch(setClickedItem(place));
   };
 
   const handleClose = () => {
-    setPopupOpen(false);
     dispatch(setClickedItem(null));
+    if (onClearRoute) onClearRoute();
   };
 
-  useEffect(() => {
-    if (clickedItem?._id === place?._id) {
-      handleMarkerClick();
+  const openGoogleMaps = () => {
+    if (!userLocation) {
+      alert("Enable location services to get directions.");
+      return;
     }
-  }, [clickedItem, place]);
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${place.geo_location.latitude},${place.geo_location.longitude}&travelmode=driving`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const profileImg =
+    place.profileImg ||
+    (place.images && place.images.length > 0 ? place.images[0] : null) ||
+    null;
+
+  // Route fetching is now fully owned by Map/index.js (central controller).
+  // This marker only needs to dispatch setClickedItem to trigger it.
+
+  // For the closest store, auto-select it on mount so the parent fetches its route
+  const hasAutoFetchedRef = React.useRef(false);
+  useEffect(() => {
+    if (isClosest && userLocation && !hasAutoFetchedRef.current) {
+      hasAutoFetchedRef.current = true;
+      dispatch(setClickedItem(place)); // triggers central route controller in Map/index.js
+    }
+  }, [isClosest, userLocation]);
+
+  // No clickedItem useEffect here — removed to prevent multiple concurrent route fetches
 
   return (
-    <div className="marker-container gmap-marker">
-      <div className="marker-info" onClick={handleMarkerClick}>
-        <div className="info-wrapper wrapper" style={{ position: 'relative' }}>
-          {idx === 5 && <LottieBackground animationData={animationData} />}
-          
+    <div 
+      className="marker-container gmap-marker"
+      style={{ position: 'relative', zIndex: 1 }}
+    >
+      {/* ─── Circle photo marker on map ──────────────────────────────── */}
+      <div 
+        className="marker-info" 
+        onClick={handleMarkerClick}
+        role="button" 
+        aria-label={`View ${place.name}`}
+      >
+        <div className="info-wrapper wrapper" style={{ position: "relative" }}>
           <div
             className="info-image"
             style={{
-              backgroundImage: `url(${place.profileImg || place.images[0]})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              position: 'relative',
-              boxShadow: idx === 5 && "0 0 0 6px #000000",
+              backgroundImage: profileImg ? `url(${profileImg})` : "none",
+              backgroundColor: profileImg ? "transparent" : "#e5e7eb",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              position: "relative",
             }}
           >
+            {!profileImg && (
+              <span
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                }}
+              >
+                🏪
+              </span>
+            )}
             <div
               className="marker-tail"
               style={{
-                position: 'absolute',
-                bottom: '-18px',
-                left: '50%',
-                transform: 'translateX(-50%)',
+                position: "absolute",
+                bottom: "-18px",
+                left: "50%",
+                transform: "translateX(-50%)",
                 width: 0,
                 height: 0,
-                borderLeft: '15px solid transparent',
-                borderRight: '15px solid transparent',
-                borderTop: '20px solid #000000',
+                borderLeft: "12px solid transparent",
+                borderRight: "12px solid transparent",
+                borderTop: "16px solid #000000",
               }}
             />
           </div>
         </div>
       </div>
 
-      {isPopupOpen && (
-        <PopupPortal>
-          <div className="mt-6 custom-popup fixed rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-lg border w-[270px] mx-auto z-50">
-            <button
-              className="absolute top-2 right-2 hover:text-gray-800"
-              onClick={handleClose}
-            >
-              X
-            </button>
-            <div className="flex flex-col rounded-lg">
-              <Image
-                loading="lazy"
-                src={place.images[0]}
-                height={100}
-                width={200}
-                alt="store-image"
-                className="w-full rounded-t-lg h-[125px] object-cover"
-              />
 
-              <div className="flex flex-col px-2 mt-1">
-                <p className="text-[16px] sm:text-[14px] font-semibold">
-                  {place.name}
-                </p>
-                <p className="text-[12px] text-gray-500">
-                  {place.address}
-                </p>
-                <p className="text-gray-600 text-[14px] my-1 font-semibold w-full text-left">
-                  {place.phone}
-                </p>
-              </div>
-            </div>
-          </div>
-        </PopupPortal>
-      )}
     </div>
   );
 };

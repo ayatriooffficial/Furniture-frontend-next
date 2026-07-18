@@ -12,29 +12,40 @@ const MapButton = ({ }) => {
     return null;
   }
 
+  const handleClick = () => router.push("/ayatrio-map");
+
   return (
     <div className="fixed-ayatrio-map">
-      {/* <button
+      {/* ── Mobile button (visible on small screens) ── */}
+      <button
         type="button"
+        id="near-store-btn-mobile"
+        aria-label="Find nearby Ayatrio stores"
         className="fixed sm:hidden flex left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999] -bottom-3 text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-lg px-5 py-2.5 me-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-        onClick={() => router.push("/ayatrio-map")}
+        onClick={handleClick}
       >
-        Map{" "}
-        <Image loading="lazy"
-          width={25}
-          height={25}
-          src="/icons/ayatrio_store.svg"
+        Near Store{" "}
+        <Image
+          loading="lazy"
+          width={20}
+          height={20}
+          src="/icons/home_store_icon.svg"
           alt="Store icon"
           className="header-div-sStore-icon"
         />
-      </button> */}
+      </button>
+
+      {/* ── Desktop button (visible on sm and above) ── */}
       <button
         type="button"
+        id="near-store-btn-desktop"
+        aria-label="Find nearby Ayatrio stores"
         className="fixed sm:flex hidden leading-6 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999] -bottom-3 text-white bg-[#000000] hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2  dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-500"
-        onClick={() => router.push("/ayatrio-map")}
+        onClick={handleClick}
       >
         Near Store{" "}
-        <Image loading="lazy"
+        <Image
+          loading="lazy"
           width={25}
           height={25}
           src="/icons/home_store_icon.svg"

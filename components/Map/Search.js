@@ -60,28 +60,26 @@ const Search = ({ places, onResultClick }) => {
 
   let filteredData = [];
   if (data && data.length > 0) {
+    // MapPlaces model uses a flat `address` string — filter stores that have any address
     filteredData = data
-      .filter(
-        (item) => item.address.streetAddress && item.address.country === "India"
-      )
+      .filter((item) => typeof item.address === "string" && item.address.trim().length > 0)
       .slice(0, 4);
-
-    // console.log(filteredData.map((item) => item.address_obj.country));
   }
 
   const handleItemHover = (item) => {
     setHoveredItem(item);
   };
   const handleResultClick = (item) => {
-    if (onResultClick && item) {
+    if (onResultClick && item && item.geo_location?.latitude && item.geo_location?.longitude) {
+      // MapPlaces model stores coordinates under geo_location
       onResultClick({
-        lat: item.address.lat,
-        lng: item.address.lng,
+        lat: parseFloat(item.geo_location.latitude),
+        lng: parseFloat(item.geo_location.longitude),
       });
     } else {
-      onResultClick({ lat: 20.593, lng: 78.96 });
+      // Reset to all-India view
+      onResultClick({ lat: 20.5937, lng: 78.9629 });
     }
-    // console.log(item);
   };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 450);
@@ -299,7 +297,7 @@ const Search = ({ places, onResultClick }) => {
                     />
                   )} */}
                   <div className="px-4 py-2 text-gray-700 cursor-pointer">
-                    {`${item.name} ${item.address.streetAddress.slice(0, 20)}`}
+                    {`${item.name}${item.address ? " – " + item.address.slice(0, 25) : ""}`}
                   </div>
                   <Image loading="lazy"
                     src="/icons/cancel.svg"

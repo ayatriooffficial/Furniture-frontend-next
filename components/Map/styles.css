@@ -2,25 +2,34 @@
   width: 100%;
   height: 100vh;
 }
-.poi-info-window .full-width{
+
+/* When location banner is shown at top, offset map so it's not hidden behind banner */
+.map-with-banner {
+  height: calc(100vh - 68px);
+  margin-top: 68px;
+}
+
+/* Hide default Google Maps info windows (we use custom popups) */
+.poi-info-window .full-width {
   display: none !important;
   width: 0px !important;
-
 }
-.gm-style-iw.gm-style-iw-c{
+.gm-style-iw.gm-style-iw-c {
   width: 0px !important;
   display: none !important;
-
 }
+
+/* Zoom controls */
 .gmnoprint {
   right: 0px;
   top: 5rem;
   border-radius: 30px;
 }
 .gmnoprint > :first-child {
-  border-radius: 14px !important ;
+  border-radius: 14px !important;
 }
 
+/* Search bar styles */
 .searchbar {
   display: flex;
   gap: 1rem;
@@ -39,4 +48,52 @@
   background-color: none !important;
 }
 
+/* ── User location pulse animation ──────────────────────────────────────── */
+@keyframes user-location-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
 
+.user-location-pulse {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(66, 133, 244, 0.4);
+  animation: user-location-pulse 2s ease-out infinite;
+  transform-origin: center;
+}
+
+/* ── Custom marker container ─────────────────────────────────────────────── */
+.gmap-marker {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Popup backdrop overlay ─────────────────────────────────────────────── */
+.custom-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+}
+
+/* Hide scrollbar for the horizontal store cards list */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

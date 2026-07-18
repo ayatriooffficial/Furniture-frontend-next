@@ -2,9 +2,8 @@
 /* ********* custom marker style ********** */
 
 .marker-info {
-    width: 213.281px;
-    transform: scale(0.51897) translateY(-51.897%);
-  }
+    width: 100px;
+}
   
   .info-wrapper .info-title {
     width: 155.281px;
