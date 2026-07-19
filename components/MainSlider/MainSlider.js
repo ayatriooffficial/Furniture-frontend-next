@@ -55,6 +55,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
       ))}
 
       <Swiper
+        modules={[Navigation, Autoplay]}
         navigation={{
           nextEl: ".nav-next",
           prevEl: ".nav-prev",

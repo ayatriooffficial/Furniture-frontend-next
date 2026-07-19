@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: "idle",
   loader: false,
-  product: {},
+  product: [],
   currentPage: 1,
   itemsPerPage: 16,
   totalPages: 1,

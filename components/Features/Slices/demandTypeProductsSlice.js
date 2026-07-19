@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: "idle",
   loader: false,
-  product: {},
+  product: [],
 };
 
 export const demandTypeProductsSlice = createSlice({

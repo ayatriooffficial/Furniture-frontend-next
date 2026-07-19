@@ -187,7 +187,7 @@ const page = async ({ params }) => {
 
 
   const categoryProductsResponse = await axios.get(
-    createApiEndpoint(`fetchProductsByCategory/${categoryName}`)
+    createApiEndpoint(`fetchProductsByCategory/${encodeURIComponent(categoryName)}`)
   );
 
 

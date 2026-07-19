@@ -1,3 +1,4 @@
+"use client";
 import Card from "./card";
 import React, { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";

@@ -1,3 +1,4 @@
+"use client";
 import PlaceInfo from "./Other/PlaceInfo";
 import Amenities from "./Other/Amenities";
 import Image from "next/image";

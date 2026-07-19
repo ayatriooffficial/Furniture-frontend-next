@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from 'react';
 import axios from 'axios'; // Ensure axios is installed and imported
 import { useRouter } from 'next/navigation'; // Update import for useRouter

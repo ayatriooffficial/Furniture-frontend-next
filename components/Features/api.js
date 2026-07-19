@@ -319,7 +319,7 @@ export const upsertUserLocation = async ({ lat, lng, pincode, deviceId }) => {
 export const getCategoryByName = async (categoryName) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getCategoryByName/${categoryName}`),
+      createApiEndpoint(`getCategoryByName/${encodeURIComponent(categoryName)}`),
     );
 
     // 🛑 If it's an array, return first object (if needed)
@@ -337,7 +337,7 @@ export const getCategoryByName = async (categoryName) => {
 export const getCategoryByNameModified = async (categoryName) => {
   try {
     const response = await axios.get(
-      createApiEndpoint(`getCategoryByName/${categoryName}`),
+      createApiEndpoint(`getCategoryByName/${encodeURIComponent(categoryName)}`),
     );
 
     // 🛑 If it's an array, return first object (if needed)

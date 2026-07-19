@@ -1,3 +1,4 @@
+"use client";
 import PropTypes from "prop-types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

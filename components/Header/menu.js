@@ -1,3 +1,4 @@
+"use client";
 // import * as React from "react";
 import React, { useEffect, useState } from "react";
 import "./styles.css";

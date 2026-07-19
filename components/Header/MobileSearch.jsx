@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, useState, useEffect } from "react";
 
 const MobileSearch = ({ isOpen, onClose, onSearch }) => {

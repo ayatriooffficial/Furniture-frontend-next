@@ -195,7 +195,7 @@ const Tabs = ({
   const [reviewsMap, setReviewsMap] = useState({});
 
   useEffect(() => {
-    if (!filterData || filterData.length === 0) return;
+    if (!Array.isArray(filterData) || filterData.length === 0) return;
 
     const fetchAllReviews = async () => {
       const results = await Promise.all(
