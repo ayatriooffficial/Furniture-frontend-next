@@ -2,7 +2,7 @@ import {
   selectMapDataCoords,
   selectMapDataZoom,
 } from "@/components/Features/Slices/mapSlice";
-import { GoogleMap, OverlayView, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, OverlayView, Circle, useLoadScript } from "@react-google-maps/api";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { REACT_APP_GMAP_API_KEY } from "./config.js";
@@ -10,7 +10,7 @@ import MapMarker from "./MapMarker";
 import { mapStyles } from "./mapStyles";
 import Search from "./Search";
 import "./styles.css";
-const Map = ({ setBoundaries, coords, places, PlacesData }) => {
+const Map = ({ setBoundaries, coords, places, PlacesData, userLocation }) => {
   const [stores, setStores] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
 
@@ -49,7 +49,7 @@ const Map = ({ setBoundaries, coords, places, PlacesData }) => {
   const hotels_zoom = 11;
   const [zoom, setZoom] = useState(india_zoom);
   const [map, setMap] = useState(null);
-  // const [selectedCoords, setSelectedCoords] = useState(coords);
+  const [selectedCoords, setSelectedCoords] = useState(coords);
   const handleResultClick = ({ lat, lng }) => {
     if (lat && lng && lat !== null && lng !== null) {
       const latitude = parseFloat(lat);
@@ -161,12 +161,61 @@ const Map = ({ setBoundaries, coords, places, PlacesData }) => {
 
           }}
         >
+          {/* Search Radius Circle around user location */}
+          {userLocation && (
+            <Circle
+              center={userLocation}
+              radius={50000} // 50km radius
+              options={{
+                strokeColor: '#4285F4',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#4285F4',
+                fillOpacity: 0.1,
+              }}
+            />
+          )}
+
+          {/* User Location Marker */}
+          {userLocation && (
+            <CustomMarker
+              key="user-location"
+              lat={userLocation.lat}
+              lng={userLocation.lng}
+              content={
+                <div style={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: '#4285F4',
+                    borderRadius: '50%',
+                    border: '3px solid white',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  }} />
+                  <div style={{
+                    position: 'absolute',
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: 'rgba(66, 133, 244, 0.2)',
+                    borderRadius: '50%',
+                    animation: 'pulse 2s infinite'
+                  }} />
+                </div>
+              }
+            />
+          )}
+
           {PlacesData.map((store, i) => (
             <CustomMarker
               key={store._id}
               lat={store.geo_location.latitude}
               lng={store.geo_location.longitude}
-              content={<MapMarker place={store} idx={i} />}
+              content={<MapMarker place={store} idx={i} userLocation={userLocation} />}
             />
           ))}
         </GoogleMap>
