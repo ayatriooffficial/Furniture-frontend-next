@@ -70,7 +70,7 @@ export default function StaticHeaderSkeleton() {
             <nav className="hidden md:flex gap-0">
               {headerLinks.map((value, idx) => (
                 <div key={idx} className="px-[12px]">
-                  <p className="block py-[15px] px-[5px] border-b-2 border-transparent text-md font-semibold text-gray-800 cursor-pointer hover:border-black transition-colors">
+                  <p className="block py-[15px] px-[5px] border-b-2 border-transparent text-[14px] font-medium text-gray-800 cursor-pointer hover:border-black transition-colors">
                     {value.label}
                   </p>
                 </div>

@@ -359,7 +359,7 @@ export default function HeaderInteractive({ headerLinks }) {
                         onMouseLeave={handleMouseLeave}
                       >
                         <span
-                          className={`text-md cursor-pointer font-semibold${
+                          className={`text-[14px] cursor-pointer font-medium ${
                             isOpen ? "border-b-2 border-black" : ""
                           }`}
                           onClick={() => toggleDropdown(value.label)}
