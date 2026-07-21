@@ -127,8 +127,6 @@ const MapMarker = ({ place, idx, userLocation, onRouteDisplay, onClearRoute, isC
               backgroundColor: profileImg ? "transparent" : "#e5e7eb",
               backgroundSize: "cover",
               backgroundPosition: "center",
-              width: "80px",
-              height: "80px",
               borderRadius: "50%",
               position: "relative",
             }}
@@ -147,20 +145,7 @@ const MapMarker = ({ place, idx, userLocation, onRouteDisplay, onClearRoute, isC
                 🏪
               </span>
             )}
-            <div
-              className="marker-tail"
-              style={{
-                position: "absolute",
-                bottom: "-18px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: 0,
-                height: 0,
-                borderLeft: "12px solid transparent",
-                borderRight: "12px solid transparent",
-                borderTop: "16px solid #000000",
-              }}
-            />
+            <div className="marker-tail" />
           </div>
         </div>
       </div>

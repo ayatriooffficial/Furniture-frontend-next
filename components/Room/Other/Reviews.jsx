@@ -235,10 +235,9 @@ const Reviews = ({ productId, data }) => {
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${productId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getReview?productId=${productId}&t=${new Date().getTime()}`
       );
       
-
       setReviews(response.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);

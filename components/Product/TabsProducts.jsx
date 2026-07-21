@@ -961,7 +961,30 @@ const Tabs = ({
   const renderPaginationControls = () => {
     const pages = [];
     if (totalPages > 1) {
-      for (let i = 1; i <= Math.min(5, totalPages); i++) {
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, currentPage + 2);
+      
+      // Adjust boundaries to always show up to 5 buttons if available
+      if (currentPage <= 3) {
+        endPage = Math.min(totalPages, 5);
+      } else if (currentPage + 2 >= totalPages) {
+        startPage = Math.max(1, totalPages - 4);
+      }
+
+      // Add 'Previous' button if not on first page
+      if (currentPage > 1) {
+        pages.push(
+          <button
+            key="prev"
+            className="text-center text-[14px] font-semibold border max-w-fit bg-gray-100 cursor-pointer px-[24px] py-[0.65rem] mr-2.5 rounded-full"
+            onClick={() => onPageChange(currentPage - 1)}
+          >
+            &laquo; Prev
+          </button>
+        );
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
         pages.push(
           <button
             key={i}
@@ -972,6 +995,19 @@ const Tabs = ({
           >
             {i}
           </button>,
+        );
+      }
+
+      // Add 'Next' button if not on last page
+      if (currentPage < totalPages) {
+        pages.push(
+          <button
+            key="next"
+            className="text-center text-[14px] font-semibold border max-w-fit bg-gray-100 cursor-pointer px-[24px] py-[0.65rem] mr-2.5 rounded-full"
+            onClick={() => onPageChange(currentPage + 1)}
+          >
+            Next &raquo;
+          </button>
         );
       }
     }

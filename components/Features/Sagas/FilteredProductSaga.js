@@ -9,8 +9,7 @@ function* fetchFilteredProduct(action) {
 
 
 
-    if (action.payload.heading === "collection" && !action.payload.cat) {
-
+    if (!action.payload.cat || action.payload.cat === "all") {
       let apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${action.payload.parentCategoryVar}?page=${currentPage}&itemsPerPage=${itemsPerPage}`;
 
       const response = yield call(axios.get, apiUrl);
@@ -18,8 +17,6 @@ function* fetchFilteredProduct(action) {
       yield put(setFilteredProduct(response.data.products));
       yield put(setTotalPages(Math.ceil(response.data.totalproducts / itemsPerPage)));
     } else {
-      yield put(setFilteredProductCurrentPage(1))
-      yield put(setTotalPages(1))
       let apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/productByCategoryAndSubCategory?category=${action.payload.parentCategoryVar}&subcategory=${action.payload.cat}&page=${currentPage}&itemsPerPage=${itemsPerPage}`;
       const response = yield call(axios.get, apiUrl);
       yield put(setFilteredProduct(response.data.products));

@@ -114,24 +114,11 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
       setUserPincode(userPincode);
     }
   }, []);
-  useEffect(function () {
-    async function fetchExternalOffers() {
-      try {
-        setIsExtOffersLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/allExternalOffers`
-        );
-        if (response.status !== 200) throw new Error("Something went wrong");
-        setExternalOffers(response.data.externalOffers);
-      } catch (error) {
-        console.error("Error fetching externak offers:", error.message);
-      } finally {
-        setIsExtOffersLoading(false);
-      }
+  useEffect(() => {
+    if (data?.externalOffers) {
+      setExternalOffers(data.externalOffers);
     }
-
-    fetchExternalOffers();
-  }, []);
+  }, [data?.externalOffers]);
 
   useEffect(() => {
     if (STORE_MAP_DATA.length > 0 && userPincode) {
@@ -868,6 +855,15 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
       localStorage.setItem("cutoffTime", initialCutoff);
     }
   }, []);
+  const currentRegularPrice = selectedSpecData
+    ? (selectedSpecData?.price || data?.perUnitPrice)
+    : data?.perUnitPrice;
+
+  const currentDiscountedPrice = selectedSpecData
+    ? (selectedSpecData?.specialprice?.price || selectedSpecData?.discountedprice || selectedSpecData?.price || data?.perUnitPrice)
+    : (data?.specialprice?.price || data?.discountedprice?.price || data?.perUnitPrice);
+
+  const hasDiscount = currentRegularPrice && currentDiscountedPrice && currentRegularPrice > currentDiscountedPrice;
 
   return (
     <>
@@ -934,44 +930,27 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                       }
                     >
                       <span className="text-sm price-label">Rs. &nbsp;</span>
-                      {selectedSpecData
-                        ? Math.floor(
-                          selectedSpecData?.specialprice?.price ||
-                          selectedSpecData?.discountedprice ||
-                          selectedSpecData?.price
-                        )
-                        : Math.floor(
-                          data?.specialprice?.price ||
-                          data?.discountedprice?.price ||
-                          data.perUnitPrice
-                        )}
+                      {Math.floor(currentDiscountedPrice)}
                     </p>{" "}
                     <span> &nbsp;/{data.unitType}</span>
                     {/* Discount Percentage at the right side */}
-                    {data?.perUnitPrice &&
-                      (data?.specialprice?.price ||
-                        data?.discountedprice?.price) && (
+                    {hasDiscount && (
                         <span aria-label=" Offer percent" className="text-[#388e3c] bg-[rgba(56,142,60,0.3)] px-2 rounded border-[0.02px] border-[rgba(56,142,60,0.05)] text-xl font-bold ml-5">
                           {`${Math.round(
-                            ((data?.perUnitPrice -
-                              (data?.specialprice?.price ||
-                                data?.discountedprice?.price)) /
-                              data?.perUnitPrice) *
-                            100
+                            ((currentRegularPrice - currentDiscountedPrice) / currentRegularPrice) * 100
                           )}% off`}
                         </span>
                       )}
                   </div>
 
-                  {(data?.specialprice?.price ||
-                    data?.discountedprice?.price) && (
+                  {hasDiscount && (
                       <div className="flex flex-col my-2">
                         <p aria-label="Original price" className="text-[#757575] text-[12px] pt-[3px]">
                           Regular price:{" "}
                           <span itemprop="priceCurrency" content="INR" className="font-bold text-black">
                             Rs.{" "}
                             <span className="line-through text-base price-label">
-                              {data?.perUnitPrice}
+                              {currentRegularPrice}
                             </span>
                           </span>{" "}
                           (incl. of all taxes)
@@ -1046,7 +1025,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                             <Image
                               loading="lazy"
                               src={`/icons/offer.svg`}
-                              alt={offer.title}
+                              alt={offer.title || offer.name || "offer"}
                               width={20}
                               height={20}
                               className="mr-2"
@@ -1054,16 +1033,16 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                             />
                             <p itemprop="description" className="md:text-[14px] text-[12px]">
                               <span className="text-black font-bold">
-                                {offer.description
-                                  .split(" ")
-                                  .slice(0, 3)
-                                  .join(" ")}
+                                {offer?.description
+                                  ?.split(" ")
+                                  ?.slice(0, 3)
+                                  ?.join(" ")}
                               </span>
                               <span className="text-black font-light ml-2">
-                                {offer.description
-                                  .split(" ")
-                                  .slice(3)
-                                  .join(" ")}
+                                {offer?.description
+                                  ?.split(" ")
+                                  ?.slice(3)
+                                  ?.join(" ")}
                               </span>
                             </p>
                           </summary>

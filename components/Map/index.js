@@ -423,7 +423,7 @@ const Map = ({
 
           {/* Horizontal scrollable bottom list of store cards */}
           {PlacesData && PlacesData.length > 0 && (
-            <div className="fixed bottom-0 left-0 w-full z-[1000] overflow-x-auto pb-6 pt-10 px-4 custom-scrollbar pointer-events-none">
+            <div className="fixed bottom-0 left-0 w-full z-[1000] overflow-x-auto pb-1 pt-10 px-4 custom-scrollbar pointer-events-none">
               <div className="flex gap-4 pointer-events-auto items-stretch">
                 {PlacesData.map((store, i) => {
                   const isSelected = clickedItem 

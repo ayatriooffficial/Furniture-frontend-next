@@ -201,6 +201,7 @@ const ProductPage = ({
     } else if (type === "all") {
       // console.log("test", type, parentCategory);
       handleSetItem("Products");
+      dispatch(setFilteredProductCurrentPage(1));
       dispatch({
         type: "FETCH_FILTER_PRODUCTS",
         payload: {
@@ -256,6 +257,7 @@ const ProductPage = ({
         };
         fetchCategoryData();
       }
+      dispatch(setFilteredProductCurrentPage(1));
       dispatch({
         type: "FETCH_FILTER_PRODUCTS",
         payload: {
@@ -347,13 +349,20 @@ const ProductPage = ({
     }
 
     dispatch(setFilteredProductCurrentPage(pageNumber));
+    
+    const payload = type === "all" 
+      ? { heading: "collection", parentCategoryVar: parentCategory.replace(/-/g, " ") }
+      : { parentCategoryVar: parentCategory.replace(/-/g, " "), cat: type };
+
     dispatch({
       type: "FETCH_FILTER_PRODUCTS",
-      payload: {
-        heading: "collection",
-        parentCategoryVar: parentCategory.replace(/-/g, " "),
-      },
+      payload,
     });
+    
+    // Scroll to the top of the page when navigating to a new page
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   // const currentItems = filteredProductData.slice(
