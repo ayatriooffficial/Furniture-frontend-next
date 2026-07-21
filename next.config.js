@@ -156,6 +156,14 @@ const nextConfig = withPWA({
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      // {
+      //   protocol: "https",
+      //   hostname: "www.ayatrio.com",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "ayatrio.com",
+      // },
     ],
   },
   experimental: {
