@@ -82,7 +82,7 @@ const handleUrgencyClick = (urgency) => {
         aria-label="Trending section header"
         data-component="trending-header"
       >
-        <h2 id="products-showcase-heading" className="font-semibold text-2xl pb-[15px] lg:pt-[50px]">
+        <h2 id="products-showcase-heading" className="font-semibold text-2xl pt-[10px] pb-[0px] lg:pt-[50px] lg:pb-[15px]">
           Most Family Choice
         </h2>
       </div>

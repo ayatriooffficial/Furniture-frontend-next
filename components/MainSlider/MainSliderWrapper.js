@@ -31,7 +31,7 @@ const SliderContent = async () => {
 
 const MainSliderWrapper = () => {
   return (
-    <div className="w-full px-[20px] sm:px-[52px]">
+    <div className="w-full px-[12px] md:px-[52px] lg:px-[52px]">
       {/* aspect-[1080/1463] reserves exact space on mobile before JS runs.
           sm:aspect-auto + sm:h-[70vh] takes over on desktop. */}
       <div className="relative w-full overflow-hidden bg-[#f1f1f1] aspect-[1080/1463] sm:aspect-auto sm:h-[70vh]">
