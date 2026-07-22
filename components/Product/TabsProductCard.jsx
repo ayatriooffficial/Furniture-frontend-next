@@ -342,65 +342,65 @@ function TabsProductCard(props) {
                 className="arrow arrow-left hover:opacity-100"
               />
             )}
-            {selectedColor !== ""
-              ? productImages
-                .find((item) => item.color === selectedColor)
-                ?.images?.map((src, idx) => {
-                  return (
-                    <Link
-                      href={`/${props.productTitle.replace(/ /g, "-")}/${props.productId
-                        }`}
-                      onClick={() => handleclick(props.productTitle)}
-                    >
-                      <Image
-                        loading="lazy"
-                        src={
-                          fixImageUrl(isHovered && !isNavigationHovered
-                            ? productImages.find(
-                              (item) =>
-                                item.color ===
-                                colors.find(
-                                  (item) => item === selectedColor
-                                )
-                            )?.images[2]
-                            : src)
-                        }
-                        alt={props.productTitle}
-                        key={idx}
-                        height={300}
-                        width={300}
-                        className={
-                          slide === idx ? "aspect-square w-[400px]" : "hidden"
-                        }
-                      />
-                    </Link>
-                  );
-                })
-              : props.images?.map((item, idx) => {
+            {(() => {
+              const currentImages = selectedColor
+                ? (props.productImages?.find((item) => item.color === selectedColor)?.images || [])
+                : (props.images || []);
+
+              const parsedCurrentImages = currentImages
+                .map((img) => fixImageUrl(img))
+                .filter((img) => typeof img === "string" && img.trim() !== "");
+
+              const fallbackImages = (props.images || [])
+                .map((img) => fixImageUrl(img))
+                .filter((img) => typeof img === "string" && img.trim() !== "");
+
+              const finalImagesToUse = parsedCurrentImages.length > 0 ? parsedCurrentImages : fallbackImages;
+
+              if (finalImagesToUse.length === 0) {
                 return (
                   <Link
-                    href={`/${props.productTitle.replace(/ /g, "-")}/${props.productId
-                      }`}
+                    href={`/${props.productTitle?.replace(/ /g, "-")}/${props.productId}`}
                     onClick={() => handleclick(props.productTitle)}
+                    className="block w-full h-full relative"
                   >
                     <Image
-                      loading="lazy"
-                      src={
-                        isHovered && !isNavigationHovered
-                          ? fixImageUrl(props.images[1])
-                          : item
-                      }
+                      loading="eager"
+                      src="/images/temp.svg"
+                      alt={`Image of ${props.productTitle}`}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="aspect-square object-cover"
+                    />
+                  </Link>
+                );
+              }
+
+              return finalImagesToUse.map((src, idx) => {
+                const hoverSrc = isHovered && !isNavigationHovered && finalImagesToUse.length > 1
+                  ? finalImagesToUse[1]
+                  : src;
+
+                return (
+                  <Link
+                    href={`/${props.productTitle?.replace(/ /g, "-")}/${props.productId}`}
+                    onClick={() => handleclick(props.productTitle)}
+                    key={idx}
+                  >
+                    <Image
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      src={hoverSrc}
                       alt={props.productTitle}
-                      key={idx}
                       height={300}
                       width={300}
                       className={
-                        slide === idx ? "aspect-square w-[400px]" : "hidden"
+                        slide === idx ? "aspect-square w-[400px] object-cover" : "hidden"
                       }
                     />
                   </Link>
                 );
-              })}
+              });
+            })()}
 
             {isHovered && (
               <div>
@@ -419,7 +419,7 @@ function TabsProductCard(props) {
             )}
 
             <span className="flex absolute bottom-[16px]">
-              {props.images.map((_, idx) => {
+              {(selectedColor ? (props.productImages?.find((item) => item.color === selectedColor)?.images || []) : (props.images || [])).map((_, idx) => {
                 return (
                   <button
                     key={idx}

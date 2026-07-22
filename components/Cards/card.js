@@ -10,10 +10,24 @@ import fixImageUrl from "@/utils/modifyUrl";
 
 function Card(props) {
   const dispatch = useDispatch();
+
+  // Normalize imgSrc: always produce a clean array of non-empty strings
+  const parsedImgSrc = (
+    Array.isArray(props.imgSrc)
+      ? props.imgSrc
+      : props.imgSrc
+        ? [props.imgSrc]
+        : []
+  ).filter((img) => img && (typeof img === "string" ? img.trim() !== "" : typeof img === "object"));
+
+  // Fallback chain: images[] → productImages[0].images[] → []
   const imagesToUse =
-    props.imgSrc?.length > 0
-      ? props.images || props.imgSrc
-      : props.productImages?.[0]?.images || [];
+    parsedImgSrc.length > 0
+      ? parsedImgSrc
+      : (props.productImages || [])
+          .flatMap((pi) => (Array.isArray(pi?.images) ? pi.images : []))
+          .filter((img) => img && (typeof img === "string" ? img.trim() !== "" : typeof img === "object"))
+          .slice(0, 10); // cap to prevent runaway renders
 
   function renderStars(averageRating) {
     const maxStars = 5;
@@ -75,11 +89,11 @@ function Card(props) {
   const [isHovered, setIsHovered] = useState(false);
 
   const nextSlide = () => {
-    setSlide(slide === props.imgSrc.length - 1 ? 0 : slide + 1);
+    setSlide(slide === imagesToUse.length - 1 ? 0 : slide + 1);
   };
 
   const prevSlide = () => {
-    setSlide(slide === 0 ? props.imgSrc.length - 1 : slide - 1);
+    setSlide(slide === 0 ? imagesToUse.length - 1 : slide - 1);
   };
 
   const imageData = props.productImages?.map((item) => {
@@ -403,7 +417,23 @@ function Card(props) {
             />
           )}
 
-          {imagesToUse.map((img, idx) => (
+          {imagesToUse.length === 0 ? (
+            <Link
+              href={`/${props.title?.replace(/ /g, "-")}/${props.productId}`}
+              aria-label={`View details about ${props.title}`}
+              className="block w-full h-full relative"
+            >
+              <Image
+                loading="eager"
+                src="/images/temp.svg"
+                alt={`Image of ${props.title}`}
+                fill
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className="aspect-square"
+              />
+            </Link>
+          ) : (
+            imagesToUse.map((img, idx) => (
             <Link
               href={`/${props.title.replace(/ /g, "-")}/${props.productId}`}
               key={idx}
@@ -422,7 +452,8 @@ function Card(props) {
                 className={slide === idx ? "aspect-square" : "slide-hidden"}
               />
             </Link>
-          ))}
+          ))
+          )}
 
           {isHovered && (
             <Image
@@ -438,7 +469,7 @@ function Card(props) {
           )}
 
           <span className="flex items-center absolute bottom-[16px]">
-            {props.imgSrc?.map((_, idx) => (
+            {imagesToUse?.map((_, idx) => (
               <div
                 key={idx}
                 className={`h-[0.4rem] w-[0.4rem] rounded-[50%] mr-1 ${

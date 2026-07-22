@@ -2,7 +2,7 @@
 
 const fixImageUrl = (url) => {
   if (!url) return "";
-  if (typeof url === "object") url = url.imgSrc || "";
+  if (typeof url === "object") url = url.imgSrc || url.url || url.image || url.src || "";
   if (typeof url !== "string") return "";
 
   let fixedUrl = url
