@@ -33,8 +33,8 @@ const MainSliderWrapper = () => {
   return (
     <div className="w-full px-[12px] md:px-[52px] lg:px-[52px]">
       {/* aspect-[1080/1463] reserves exact space on mobile before JS runs.
-          sm:aspect-auto + sm:h-[70vh] takes over on desktop. */}
-      <div className="relative w-full overflow-hidden bg-[#f1f1f1] aspect-[1080/1463] sm:aspect-auto sm:h-[70vh]">
+          sm:aspect-auto + sm:h-[70vh] takes over on desktop. max-[1450px]:sm:h-[60vh] prevents aggressive cropping on MacBooks. */}
+      <div className="relative w-full overflow-hidden bg-[#f1f1f1] aspect-[1080/1463] sm:aspect-auto sm:h-[70vh] max-[1450px]:sm:h-[60vh] max-[1024px]:sm:h-[50vh]">
         <Suspense
           fallback={
             <div className="absolute inset-0 z-0">
