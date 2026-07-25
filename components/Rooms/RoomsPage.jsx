@@ -807,7 +807,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                 Features
               </h2>
 
-              <article className="sm:w-3/4 py-3 w-full">
+              {/* <article className="sm:w-3/4 py-3 w-full"> */}
               {(() => {
                 const featuresToRender = roomMain.features.length > 0
                   ? roomMain.features
@@ -932,7 +932,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                   }
                 });
               })()}
-              </article>
+              {/* </article> */}
             </section>
           )}
 
