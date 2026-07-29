@@ -17,9 +17,6 @@ import {
   WebPageJsonLd,
 } from "next-seo";
 import dynamicImport from "next/dynamic";
-const ChatPrompt = dynamicImport(
-  () => import("../../components/ChatPromptWidget/chatprompt"),
-);
 const CategoriesSlider = dynamicImport(
  () => import("@/components/Cards/categorySlider"),
 );
@@ -113,10 +110,6 @@ export default async function Home() {
       {/* Hero renders immediately, data loads after paint */}
       <HomePage isHomePage={true} />
 
-      {/* Chat prompt loads separately, doesn't block homepage */}
-      <Suspense fallback={null}>
-        <ChatPrompt />
-      </Suspense>
     </>
   );
 }

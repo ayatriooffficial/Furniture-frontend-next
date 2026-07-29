@@ -4,6 +4,7 @@ import "./globals.css";
 import { RootProviders } from "@/components/RootProviders";
 import { HomeDataProvider } from "@/providers/HomeDataProvider";
 import FooterWrapper from "@/components/FooterWrapper/FooterWrapper";
+import FloatSupportBot from "@/components/shared/FloatSupportBot";
 import { BASE_URL } from "@/constants/base-url";
 
 const inter = Inter({
@@ -130,6 +131,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <FooterWrapper />
           </HomeDataProvider>
         </RootProviders>
+        <FloatSupportBot />
       </body>
     </html>
   );
