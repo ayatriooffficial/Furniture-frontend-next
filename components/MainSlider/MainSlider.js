@@ -25,7 +25,7 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
 
   return (
     <section
-      className="w-full h-full relative"
+      className="w-full h-auto relative"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -67,20 +67,21 @@ const MainSlider = ({ sliderData, onSwiperReady }) => {
         loop
         slidesPerView={1}
         onSwiper={() => onSwiperReady?.()}
-        className="w-full h-full"
+        className="w-full h-auto"
       >
         {sliderData?.map((data, index) => (
           <SwiperSlide key={index} className="relative swiper-slide-custom">
           <Link href={data.link || "#"}>
-         <div className="relative w-full h-full">
+         <div className="relative w-full h-auto flex items-center justify-center">
         <Image
       src={isDesktop ? fixImageUrl(data.desktopImgSrc) : fixImageUrl(data.mobileImgSrc)}
       alt="slider"
-      fill
+      width={isDesktop ? 3840 : 1080}
+      height={isDesktop ? 1400 : 1463}
       priority={index === 0}
       loading={index === 0 ? "eager" : "lazy"}
-      sizes="(max-width: 768px) 100vw, 100vw"
-      className="object-cover"
+      sizes="100vw"
+      className="w-full h-auto object-contain"
     />
   </div>
 </Link>

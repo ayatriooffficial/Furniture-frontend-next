@@ -140,7 +140,7 @@ const RoomCard = () => {
       {gallery && (
         <section className="flex justify-between mx-auto mb-[10px] px-[12px] sm:px-[20px] md:px-[52px]">
           <div className="w-full flex justify-center screens">
-            <div className="w-full h-[1000px] md:h-[730px] grid grid-cols-2 lg:grid-cols-12 gap-y-4 gap-x-4 auto-rows-fr">
+            <div className="w-full max-w-[1536px] mx-auto h-[1000px] md:h-[800px] lg:h-auto lg:aspect-[1.66] grid grid-cols-2 lg:grid-cols-12 gap-y-4 gap-x-4 auto-rows-fr">
               {/* 1 */}
               <div
                 className="parent col-start-1 col-end-3 row-start-1 lg:mb-0 row-end-6
