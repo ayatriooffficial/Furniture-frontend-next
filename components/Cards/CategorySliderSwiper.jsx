@@ -112,8 +112,8 @@ const CategorySliderSwiper = ({ categories }) => {
                 aria-label={`Browse ${curElement.name} collection`}
                 data-component="category-link"
               >
-                <div className="flex flex-col items-center">
-                  <figure className="mb-[12px]">
+                <div className="flex flex-col items-center pb-[10px]">
+                  <figure className="mb-1">
                     <Image
                       src={fixImageUrl(curElement.image) || "/images/temp.svg"}
                       width={120}
