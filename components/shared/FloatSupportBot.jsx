@@ -121,13 +121,13 @@ export default function FloatSupportBot() {
                 setOpen(true);
               }}
             >
-              {/* Close Button on Hover */}
+              {/* Close Button permanent on mobile, hover on desktop */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowQueryPill(false);
                 }}
-                className="absolute top-1.5 right-1.5 w-[22px] h-[22px] rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1.5 right-1.5 w-[22px] h-[22px] rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                 aria-label="Close"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -138,7 +138,7 @@ export default function FloatSupportBot() {
 
               <div className="relative z-10 text-[13px] md:text-[14px] text-gray-800 text-center leading-[1.4] pr-2 md:pr-0">
                 <div>Hey there.👋 Got any questions?</div>
-                <div className="text-gray-500 hidden md:block mt-0.5">Schedule a personalized demo here.</div>
+                <div className="text-gray-500 hidden md:block mt-0.5">Schedule a personalized room here.</div>
               </div>
             </div>
           )}
