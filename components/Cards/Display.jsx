@@ -44,7 +44,7 @@ const Display = () => {
 
         <div className="px-[12px] sm:px-[20px] md:px-[52px] max-w-[1536px] mx-auto flex flex-col lg:grid lg:grid-cols-2 md:flex-row gap-4 items-center justify-between my-8">
           <div className="w-full">
-            <div className="relative w-full aspect-square md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
+            <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
               <TabImage
                 src={apiData[0].grid[0].room.imgSrc}
                 href={`/${apiData[0].grid[0].room?.productCategory?.replace(/ /g, "-")}/collection/all`}
@@ -65,7 +65,7 @@ const Display = () => {
           </div>
 
           <div className="max-w-1/2 w-full">
-            <div className="relative w-full aspect-square md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
+            <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
               <TabImage
                 src={apiData[0]?.grid[1].room.imgSrc}
                 href={`/${apiData[0].grid[1].room?.productCategory?.replace(/ /g, "-")}/collection/all`}
