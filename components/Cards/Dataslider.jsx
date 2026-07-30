@@ -53,13 +53,13 @@ const Dataslider = ({ category, data, sliderIndex }) => {
   };
 
   return (
-      <div className=" bg-white mt-[30px] lg:mt-0 md:px-[52px] ml-[12px] sm:ml-[20px] md:ml-[0px]">
+      <div className=" bg-white mt-[10px] md:mt-[30px] lg:mt-0 md:px-[52px] ml-[12px] sm:ml-[20px] md:ml-[0px]">
         <div className="w-full flex justify-between items-center">
           <Link 
             href={`/${category.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('-')}/collection/all`}
             className="flex items-center gap-2 group"
           >
-            <h2 id="recommended product categories title" className="font-semibold text-2xl pb-[20px] pt-[60px] hover:underline">
+            <h2 id="recommended product categories title" className="font-semibold text-2xl pb-[20px] pt-[20px] md:pt-[60px] hover:underline">
               {category}
             </h2>
             <Image
@@ -67,7 +67,7 @@ const Dataslider = ({ category, data, sliderIndex }) => {
               width={27}
               height={27}
               alt="View all"
-              className="pt-[60px] pb-[20px]"
+              className="pt-[20px] md:pt-[60px] pb-[20px]"
             />
           </Link>
           

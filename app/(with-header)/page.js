@@ -27,7 +27,7 @@ export default async function Home() {
     <>
       <SiteNavigationElement />
 
-      <div className="w-full mt-28 sm:mt-[70px]">
+      <div className="w-full mt-[84px] sm:mt-[70px] mb-[-12px] lg:mb-0 relative z-10">
         <CategoriesSlider />
       </div>
       <MainSliderWrapper />
