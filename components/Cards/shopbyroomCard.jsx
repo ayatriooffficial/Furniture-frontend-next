@@ -33,20 +33,22 @@ function ShopByRoomCard(props) {
 
   return (
     <>
-      <div key={props.cardkey} className="pb-8  cursor-pointer ">
-        <Link href={`/${props.id}/rooms`}>
-          <div className="flex h-full w-full items-center justify-center cursor-pointer overflow-hidden ">
-            <Image
-              src={fixImageUrl(props.imgSrc)}
-              alt={props.title}
-              height={600}
-              width={600}
-              quality={75}
-              className={"aspect-square w-full object-cover hover-zoom"}
-            />
+      <div key={props.cardkey} className="pb-8 cursor-pointer h-full w-full flex flex-col">
+        <Link href={`/${props.id}/rooms`} className="flex flex-col flex-grow h-full w-full">
+          <div className="flex w-full aspect-square items-center justify-center cursor-pointer overflow-hidden flex-shrink-0 bg-gray-100">
+            {props.imgSrc && (
+              <Image
+                src={fixImageUrl(props.imgSrc)}
+                alt={props.title}
+                height={600}
+                width={600}
+                quality={75}
+                className={"aspect-square w-full object-cover hover-zoom"}
+              />
+            )}
           </div>
 
-          <div className={`${props.bgColorClass} p-8 overflow-hidden ${darkTheme ? "text-white" : "text-black"}`}>
+          <div className={`${props.bgColorClass} p-8 overflow-hidden ${darkTheme ? "text-white" : "text-black"} flex flex-col flex-grow`}>
             <h2 className="sm:text-[14px] md:text-[16px] lg:text-[20px] font-semibold hover:underline text-ellipsis mb-1">
               {props.title}
             </h2>
@@ -55,16 +57,18 @@ function ShopByRoomCard(props) {
             >
               {props.summary}
             </p>
-            <div className={`${darkTheme ? "bg-white" : "bg-[#000000]"} rounded-full max-w-fit p-2 mt-[60px] lg:mt-[90px]`}>
-              <Image
-                src={darkTheme ? "/icons/top_arrow-black.svg" : "/icons/top_arrow-white.svg"}
-                height={25}
-                width={25}
-                quality={75}
-                className="p-1"
-                alt="arrow icon"
-                loading="lazy"
-              />
+            <div className="mt-auto pt-[60px] lg:pt-[90px]">
+              <div className={`${darkTheme ? "bg-white" : "bg-[#000000]"} rounded-full max-w-fit p-2`}>
+                <Image
+                  src={darkTheme ? "/icons/top_arrow-black.svg" : "/icons/top_arrow-white.svg"}
+                  height={25}
+                  width={25}
+                  quality={75}
+                  className="p-1"
+                  alt="arrow icon"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </Link>

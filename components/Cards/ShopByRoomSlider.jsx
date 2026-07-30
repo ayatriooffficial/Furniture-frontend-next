@@ -116,7 +116,7 @@ const ShopByRoomSlider = () => {
           {RoomDataSlider?.map((roomData, idx) => (
             <SwiperSlide
               key={idx}
-              className="ml-0 min-w-[322px] sm:min-w-0"
+              className="ml-0 min-w-[322px] sm:min-w-0 !h-auto flex"
             >
               <ShopByRoomCard
                 title={roomData?.roomType}
