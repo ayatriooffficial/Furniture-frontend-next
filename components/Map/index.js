@@ -360,7 +360,7 @@ const Map = ({
             options={{
               styles: mapStyles,
               disableDefaultUI: true,
-              zoomControl: false,
+              zoomControl: true,
               gestureHandling: "greedy",
             }}
           >
