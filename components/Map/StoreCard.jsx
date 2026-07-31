@@ -1,33 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-// ─── Haversine distance (km) ─────────────────────────────────────────────────
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c).toFixed(2);
-}
-
 const StoreCard = ({ place, userLocation, isSelected, onClick }) => {
+  const [actualDistance, setActualDistance] = useState(
+    place.distance?.exactRoute ? place.distance.kilometers : null
+  );
 
-  const distanceFromUser =
-    place.distance?.kilometers ||
-    (userLocation
-      ? calculateDistance(
-          userLocation.lat,
-          userLocation.lng,
-          place.geo_location.latitude,
-          place.geo_location.longitude
-        )
-      : null);
+  useEffect(() => {
+    if (place.distance?.exactRoute) {
+      setActualDistance(place.distance.kilometers);
+      return;
+    }
+
+    const fetchDistance = async () => {
+      if (!userLocation || !place.geo_location) return;
+      try {
+        const params = new URLSearchParams({
+          originLat: userLocation.lat,
+          originLng: userLocation.lng,
+          destinationLat: place.geo_location.latitude,
+          destinationLng: place.geo_location.longitude,
+          mode: "DRIVE",
+        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/directions?${params}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data.route?.distance?.value) {
+            const distanceVal = data.route.distance.value / 1000;
+            setActualDistance(distanceVal.toFixed(1));
+          }
+        }
+      } catch (err) {
+        // Silently fail if route cannot be fetched
+      }
+    };
+
+    fetchDistance();
+
+    // No cleanup needed since we use a single async fetch now
+  }, [userLocation, place]);
+
+  const distanceFromUser = actualDistance || place.distance?.kilometers;
 
   const primaryImage =
     (place.images && place.images.length > 0 ? place.images[0] : null) ||

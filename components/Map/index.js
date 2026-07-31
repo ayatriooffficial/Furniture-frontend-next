@@ -6,13 +6,14 @@ import {
   setClickedItem,
 } from "@/components/Features/Slices/mapSlice";
 import {
-  Circle,
+  CircleF,
   GoogleMap,
-  Marker,
+  MarkerF,
   OverlayView,
+  OverlayViewF,
   useLoadScript,
 } from "@react-google-maps/api";
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { REACT_APP_GMAP_API_KEY } from "./config.js";
 import { mapStyles } from "./mapStyles";
@@ -25,16 +26,19 @@ import "./styles.css";
 const LIBRARIES = ["geometry"];
 
 // Custom overlay wrapper for store circle-photo markers
-const CustomMarker = ({ lat, lng, content }) => (
-  <OverlayView
-    position={{ lat, lng }}
-    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-  >
-    <div style={{ position: "absolute", transform: "translate(-50%, -100%)" }}>
-      {content}
-    </div>
-  </OverlayView>
-);
+const CustomMarker = ({ lat, lng, content }) => {
+  const position = useMemo(() => ({ lat, lng }), [lat, lng]);
+  return (
+    <OverlayViewF
+      position={position}
+      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+    >
+      <div style={{ position: "absolute", transform: "translate(-50%, -100%)" }}>
+        {content}
+      </div>
+    </OverlayViewF>
+  );
+};
 
 const Map = ({
   setBoundaries,
@@ -363,7 +367,7 @@ const Map = ({
             {/* User location marker (blue dot) + search radius circle */}
             {userLocation && (
               <>
-                <Marker
+                <MarkerF
                   position={userLocation}
                   icon={{
                     path: window.google.maps.SymbolPath.CIRCLE,
@@ -376,7 +380,7 @@ const Map = ({
                   title="Your location"
                   zIndex={1000}
                 />
-                <Circle
+                <CircleF
                   center={userLocation}
                   radius={50000} // 50 km in meters
                   options={{

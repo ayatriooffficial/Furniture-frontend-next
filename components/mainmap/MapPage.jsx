@@ -6,6 +6,17 @@ import axios from "axios";
 import { LocalBusinessJsonLd } from "next-seo";
 import { useCallback, useEffect, useState } from "react";
 
+// ─── Inline Haversine helper for fallback sorting ────────────────────────
+const getHaversine = (lat1, lon1, lat2, lon2) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+};
+
 // ─── Constants ─────────────────────────────────────────────────────────────
 const INDIA_CENTER = { lat: 20.5937, lng: 78.9629 };
 const NEARBY_LIMIT = 3;
@@ -60,11 +71,42 @@ const MapPage = () => {
       const userLoc = { lat: latitude, lng: longitude };
 
       try {
-        const stores = await fetchNearbyStores(latitude, longitude);
+        let stores = await fetchNearbyStores(latitude, longitude);
         if (!stores || stores.length === 0) {
           setStatus("no_stores");
           return;
         }
+
+        // --- Refine sorting with exact Google Routes API distance ---
+        stores = await Promise.all(stores.map(async (store) => {
+          if (!store.geo_location?.latitude) return store;
+          try {
+            const params = new URLSearchParams({
+              originLat: latitude,
+              originLng: longitude,
+              destinationLat: store.geo_location.latitude,
+              destinationLng: store.geo_location.longitude,
+              mode: "DRIVE",
+            });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || ''}/api/directions?${params}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.route?.distance?.value) {
+                store.distance = {
+                  ...(store.distance || {}),
+                  meters: data.route.distance.value,
+                  kilometers: parseFloat((data.route.distance.value / 1000).toFixed(1)),
+                  exactRoute: true,
+                };
+              }
+            }
+          } catch (err) {}
+          return store;
+        }));
+
+        stores.sort((a, b) => (a.distance?.meters ?? Infinity) - (b.distance?.meters ?? Infinity));
+        // --- END Refine ---
+
         setStoreMapData(stores);
         setPlaces(stores);
         setUserLocation(userLoc);
@@ -74,11 +116,54 @@ const MapPage = () => {
         console.error("Error fetching nearby stores:", err);
         if (err.response?.status === 404) {
           try {
-            const allStores = await fetchAllStores();
+            let allStores = await fetchAllStores();
             if (!allStores || allStores.length === 0) {
               setStatus("no_stores");
               return;
             }
+
+            // --- Refine sorting for fallback stores using exact Google Routes API distance ---
+            // Pre-sort by haversine to avoid spamming Google API with 50+ requests
+            allStores.forEach(s => {
+              if (s.geo_location?.latitude && s.geo_location?.longitude) {
+                s.tempHav = getHaversine(latitude, longitude, s.geo_location.latitude, s.geo_location.longitude);
+              } else {
+                s.tempHav = Infinity;
+              }
+            });
+            allStores.sort((a, b) => a.tempHav - b.tempHav);
+            const topFallback = allStores.slice(0, 5);
+
+            const refinedFallback = await Promise.all(topFallback.map(async (store) => {
+              if (!store.geo_location?.latitude) return store;
+              try {
+                const params = new URLSearchParams({
+                  originLat: latitude,
+                  originLng: longitude,
+                  destinationLat: store.geo_location.latitude,
+                  destinationLng: store.geo_location.longitude,
+                  mode: "DRIVE",
+                });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || ''}/api/directions?${params}`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data.route?.distance?.value) {
+                    store.distance = {
+                      ...(store.distance || {}),
+                      meters: data.route.distance.value,
+                      kilometers: parseFloat((data.route.distance.value / 1000).toFixed(1)),
+                      exactRoute: true,
+                    };
+                  }
+                }
+              } catch (err) {}
+              return store;
+            }));
+
+            refinedFallback.sort((a, b) => (a.distance?.meters ?? Infinity) - (b.distance?.meters ?? Infinity));
+            allStores = refinedFallback;
+            // --- END Refine ---
+
             setStoreMapData(allStores);
             setPlaces(allStores);
             setUserLocation(userLoc);
@@ -152,24 +237,24 @@ const MapPage = () => {
     fetchLocationAndStores();
   }, [fetchLocationAndStores]);
 
-  const handleAllowLocation = () => fetchLocationAndStores();
+  // const handleAllowLocation = () => fetchLocationAndStores();
 
-  const handleNotNow = async () => {
-    setStatus("loading");
-    try {
-      const allStores = await fetchAllStores();
-      if (!allStores || allStores.length === 0) {
-        setStatus("no_stores");
-        return;
-      }
-      setStoreMapData(allStores);
-      setPlaces(allStores);
-      setStatus("success");
-    } catch (err) {
-      setStatus("api_error");
-      setErrorMessage("Failed to load stores.");
-    }
-  };
+  // const handleNotNow = async () => {
+  //   setStatus("loading");
+  //   try {
+  //     const allStores = await fetchAllStores();
+  //     if (!allStores || allStores.length === 0) {
+  //       setStatus("no_stores");
+  //       return;
+  //     }
+  //     setStoreMapData(allStores);
+  //     setPlaces(allStores);
+  //     setStatus("success");
+  //   } catch (err) {
+  //     setStatus("api_error");
+  //     setErrorMessage("Failed to load stores.");
+  //   }
+  // };
 
   // ─── Retry handler ────────────────────────────────────────────────────────
   const handleRetry = () => {
