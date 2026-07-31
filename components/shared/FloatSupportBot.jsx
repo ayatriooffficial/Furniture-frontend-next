@@ -112,7 +112,7 @@ export default function FloatSupportBot() {
         }
       `}</style>
       {!open && (
-        <div className="fixed right-4 md:right-8 bottom-4 md:bottom-8 z-[9999] flex items-center gap-4">
+        <div className="fixed right-4 md:right-4 bottom-4 md:bottom-4 z-[9999] flex items-center gap-4">
           {showQueryPill && (
             <div 
               className="relative bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-4 py-4 cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.16)] transition-shadow group"
