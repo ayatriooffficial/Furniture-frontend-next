@@ -26,7 +26,7 @@ const TopHeader = () => {
           <span className="hidden lg:inline mr-1">
             Shop and get up to <span className="font-bold">Rs.50k</span> back on orders. Call on
           </span>
-          <span className="font-bold">+91 9007404292</span>
+          <a href="tel:+919007404292" className="font-bold hover:underline">+91 9007404292</a>
         </div>
 
         <div className="flex items-center">

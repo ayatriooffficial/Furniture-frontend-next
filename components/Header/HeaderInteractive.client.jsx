@@ -423,7 +423,7 @@ export default function HeaderInteractive({ headerLinks }) {
                   </div>
                 )}
 
-                {/* Cart & Profile */}
+                {/* Cart, Phone (mobile), Profile (desktop) */}
                 <div className="flex items-center flex-row-reverse lg:flex-row">
                   {/* Cart */}
                   <div className="w-10 h-10 p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer">
@@ -443,49 +443,72 @@ export default function HeaderInteractive({ headerLinks }) {
                     )}
                   </div>
 
-                  {/* Profile */}
-                  {loggedInUser ? (
-                    <div
-                      className="pro w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
-                      onClick={() => handleProfileNav(loggedInUser._id)}
+                  {/* Phone Call (mobile only) */}
+                  <a
+                    href="tel:+919007404292"
+                    className="md:hidden w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
+                    aria-label="Call +91 9007404292"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      width={22}
+                      height={22}
                     >
-                      <Image
-                        loading="lazy"
-                        src={loggedInUser?.image}
-                        alt="Profile Icon"
-                        className="header-div-icon rounded-full"
-                        width={22}
-                        height={22}
-                        unoptimized
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative inline-flex items-center">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </a>
+
+                  {/* Profile (desktop only) */}
+                  <div className="hidden md:flex">
+                    {loggedInUser ? (
                       <div
                         className="pro w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
-                        onClick={handleLoginNav}
-                        onMouseEnter={() => setIsLoginPopupVisible(true)}
-                        onMouseLeave={() => setIsLoginPopupVisible(false)}
+                        onClick={() => handleProfileNav(loggedInUser._id)}
                       >
                         <Image
                           loading="lazy"
-                          src="/icons/profile.svg"
+                          src={loggedInUser?.image}
                           alt="Profile Icon"
-                          width={18}
-                          height={18}
+                          className="header-div-icon rounded-full"
+                          width={22}
+                          height={22}
+                          unoptimized
                         />
                       </div>
-                      <span
-                        className={`pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black px-3 py-1 text-[12px] text-white shadow-xl transition-all duration-200 ease-out ${
-                          isLoginPopupVisible
-                            ? "opacity-100 visible scale-100"
-                            : "opacity-0 invisible scale-95"
-                        }`}
-                      >
-                        Login
-                      </span>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="relative inline-flex items-center">
+                        <div
+                          className="pro w-10 h-10 flex p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer"
+                          onClick={handleLoginNav}
+                          onMouseEnter={() => setIsLoginPopupVisible(true)}
+                          onMouseLeave={() => setIsLoginPopupVisible(false)}
+                        >
+                          <Image
+                            loading="lazy"
+                            src="/icons/profile.svg"
+                            alt="Profile Icon"
+                            width={18}
+                            height={18}
+                          />
+                        </div>
+                        <span
+                          className={`pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black px-3 py-1 text-[12px] text-white shadow-xl transition-all duration-200 ease-out ${
+                            isLoginPopupVisible
+                              ? "opacity-100 visible scale-100"
+                              : "opacity-0 invisible scale-95"
+                          }`}
+                        >
+                          Login
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -599,7 +622,13 @@ export default function HeaderInteractive({ headerLinks }) {
                 className="w-10 h-10 p-[9px] hover:bg-zinc-100 hover:rounded-full cursor-pointer md:hidden"
                 onClick={toggleMobileMenu}
               >
-                X
+                <Image
+                  loading="lazy"
+                  src="/icons/cancel.svg"
+                  alt="Close menu"
+                  width={18}
+                  height={18}
+                />
               </div>
             )}
           </div>
