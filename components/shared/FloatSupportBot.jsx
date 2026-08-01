@@ -6,7 +6,7 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 
 // Avatar configuration
-const AVATAR_IMG = "/images/customer-service.avif";
+const AVATAR_IMG = "/images/charters-customer-care.avif";
 const WHATSAPP_LINK = "https://wa.me/916291531025";
 
 const suggestedQuestions = [
