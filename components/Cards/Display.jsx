@@ -18,7 +18,13 @@ const Display = () => {
     getData();
   }, []);
 
-  if (!apiData || apiData.length === 0 || !apiData[0].grid || apiData[0].grid.length === 0) {
+  const displayData = apiData?.[0];
+
+  if (
+    !displayData ||
+    !displayData.grid ||
+    displayData.grid.length === 0
+  ) {
     return null;
   }
 
@@ -26,16 +32,29 @@ const Display = () => {
     <section>
       <>
         <div className="md:px-[52px] mt-[20px] lg:mt-0 pt-[60px] mb-[32px] ml-[12px] sm:ml-[20px] md:ml-[0px]">
-          <h2 className="mb-[8px] text-2xl font-semibold">{apiData[0]?.mainHeading}</h2>
+          <h2 className="mb-[8px] text-2xl font-semibold">
+            {displayData.mainHeading}
+          </h2>
+
           <div className="flex items-center justify-between">
             <p className="text-[16px] lg:w-[70%] line-clamp-2 lg:line-clamp-none font-normal">
-              {apiData[0]?.description}
+              {displayData.description}
             </p>
+
             <div className="border hidden border-black rounded-full lg:flex items-center justify-center h-[40px] cursor-pointer hover:border-gray-700 transition-colors">
-              <Link href={apiData[0]?.link}>
+              <Link href={displayData.link || "#"}>
                 <div className="flex items-center px-6 gap-5">
-                  <p className="text-[12px] font-semibold">For more floor inspiration</p>
-                  <Image loading="lazy" src={"/icons/top_arrow-black.svg"} height={15} width={15} alt="arrow icon" />
+                  <p className="text-[12px] font-semibold">
+                    For more floor inspiration
+                  </p>
+
+                  <Image
+                    loading="lazy"
+                    src="/icons/top_arrow-black.svg"
+                    height={15}
+                    width={15}
+                    alt="arrow icon"
+                  />
                 </div>
               </Link>
             </div>
@@ -43,45 +62,81 @@ const Display = () => {
         </div>
 
         <div className="px-[12px] sm:px-[20px] md:px-[52px] max-w-[1536px] mx-auto flex flex-col lg:grid lg:grid-cols-2 md:flex-row gap-4 items-center justify-between my-8">
-          <div className="w-full">
-            <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
-              <TabImage
-                src={apiData[0].grid[0].room.imgSrc}
-                href={`/${apiData[0].grid[0].room?.productCategory?.replace(/ /g, "-")}/collection/all`}
-                alt={`Image of Children`}
-                width={1000}
-                height={338}
-                firstData
-                labelData={apiData[0].grid[0].room.children}
-                className="w-full h-full"
-              />
-              <div className="absolute bottom-0 left-0 justify-start p-[30px]">
-                <h2 className="text-white text-[12px]">{apiData[0].grid[0].text}</h2>
-                <Link href={`/${apiData[0].grid[0].room?.productCategory?.replace(/ /g, "-")}/collection/all`}>
-                  <p className="text-blue-500 text-[12px] font-semibold">View More</p>
-                </Link>
-              </div>
-            </div>
-          </div>
 
-          <div className="max-w-1/2 w-full">
-            <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
-              <TabImage
-                src={apiData[0]?.grid[1].room.imgSrc}
-                href={`/${apiData[0].grid[1].room?.productCategory?.replace(/ /g, "-")}/collection/all`}
-                alt={`Image of Children`}
-                width={1000}
-                height={338}
-                labelData={apiData[0].grid[1].room.children}
-              />
-              <div className="absolute bottom-0 left-0 justify-start p-[30px]">
-                <h2 className="text-white text-[12px]">{apiData[0]?.grid[1].text}</h2>
-                <Link href={`/${apiData[0].grid[1].room?.productCategory?.replace(/ /g, "-")}/collection/all`}>
-                  <p className="text-blue-500 text-[12px] font-semibold">View More</p>
-                </Link>
+          {/* First Card */}
+          {displayData.grid?.[0]?.room && displayData.grid[0].room.imgSrc && (
+            <div className="w-full">
+              <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
+                <TabImage
+                  src={displayData.grid[0].room.imgSrc}
+                  href={`/${displayData.grid[0].room.productCategory?.replace(
+                    / /g,
+                    "-"
+                  )}/collection/all`}
+                  alt="Image of Children"
+                  width={1000}
+                  height={338}
+                  firstData
+                  labelData={displayData.grid[0].room.children || []}
+                  className="w-full h-full"
+                />
+
+                <div className="absolute bottom-0 left-0 justify-start p-[30px]">
+                  <h2 className="text-white text-[12px]">
+                    {displayData.grid[0].text}
+                  </h2>
+
+                  <Link
+                    href={`/${displayData.grid[0].room.productCategory?.replace(
+                      / /g,
+                      "-"
+                    )}/collection/all`}
+                  >
+                    <p className="text-blue-500 text-[12px] font-semibold">
+                      View More
+                    </p>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Second Card */}
+          {displayData.grid?.[1]?.room && displayData.grid[1].room.imgSrc && (
+            <div className="max-w-1/2 w-full">
+              <div className="relative w-full aspect-[5/6] md:aspect-[4/5] lg:h-auto lg:aspect-[5/6]">
+                <TabImage
+                  src={displayData.grid[1].room.imgSrc}
+                  href={`/${displayData.grid[1].room.productCategory?.replace(
+                    / /g,
+                    "-"
+                  )}/collection/all`}
+                  alt="Image of Children"
+                  width={1000}
+                  height={338}
+                  labelData={displayData.grid[1].room.children || []}
+                />
+
+                <div className="absolute bottom-0 left-0 justify-start p-[30px]">
+                  <h2 className="text-white text-[12px]">
+                    {displayData.grid[1].text}
+                  </h2>
+
+                  <Link
+                    href={`/${displayData.grid[1].room.productCategory?.replace(
+                      / /g,
+                      "-"
+                    )}/collection/all`}
+                  >
+                    <p className="text-blue-500 text-[12px] font-semibold">
+                      View More
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </>
     </section>
