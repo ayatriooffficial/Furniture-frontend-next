@@ -25,6 +25,7 @@ import "swiper/css/scrollbar";
 import BlogRelatedProducts from "../Cards/BlogRelatedProducts";
 import TabImage from "../Cards/TabImage";
 import Tabs from "../Cards/Tabs";
+import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 import {
   selectProductData,
   selectRoomData,
@@ -394,6 +395,13 @@ export const RoomsPage = ({ params, initialRoomData }) => {
     
     // Utility: strip HTML tags for plain text rendering
     const stripHtmlTags = (html) => {
+      if (typeof document === "undefined") {
+        // SSR-safe fallback (no DOM available)
+        return (html || "")
+          .replace(/<[^>]*>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
       const div = document.createElement("div");
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
@@ -445,6 +453,23 @@ export const RoomsPage = ({ params, initialRoomData }) => {
   if (!roomMain || !roomMain.position || roomMain.position.length === 0) {
     return <ProductPageSkeleton />;
   }
+
+  // Split features: structured (new admin builder) vs legacy (old HTML cards).
+  const isStructuredFeature = (f) =>
+    !!f?.subHeading ||
+    (Array.isArray(f?.cards) &&
+      f.cards.some(
+        (c) =>
+          c?.heading ||
+          c?.cardType ||
+          c?.leftHeading ||
+          c?.rightHeading ||
+          (Array.isArray(c?.points) && c.points.length > 0)
+      ));
+  const structuredFeatures = (roomMain.features || []).filter(isStructuredFeature);
+  const legacyFeatures = (roomMain.features || []).filter(
+    (f) => !isStructuredFeature(f)
+  );
 
   return (
     <main  className="w-full min-h-screen" role="document">
@@ -807,13 +832,13 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                 Features
               </h2>
 
+              {structuredFeatures.length > 0 && (
+                <StructuredFeatureCards features={structuredFeatures} />
+              )}
+
               {/* <article className="sm:w-3/4 py-3 w-full"> */}
               {(() => {
-                const featuresToRender = roomMain.features.length > 0
-                  ? roomMain.features
-                  : filteredSubCategory && filteredSubCategory[0]?.features?.length > 0
-                    ? filteredSubCategory[0].features
-                    : [];
+                const featuresToRender = legacyFeatures;
 
                 // Helper to safely parse card data
                 const parseCard = (card) => {
