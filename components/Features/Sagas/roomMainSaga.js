@@ -7,7 +7,7 @@ function* fetchRoomMainDataSaga(action) {
         const { params } = action.payload;        
        
 
-        const apiUrl1 = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/rooms/roomType=${params.replace(/-/g, " ")}`;
+        const apiUrl1 = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/rooms/${params.replace(/-/g, " ")}`;
         const apiUrl2 = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/productsByRoomType?roomType=${params.replace(/-/g, " ")}`;
         const apiUrl3 = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getRoommain?roomType=${params.replace(/-/g, " ")}`;
 

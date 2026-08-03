@@ -36,8 +36,10 @@ export async function generateMetadata({ params }) {
       { next: { revalidate: 3600 } }
     );
     const allRooms = await metaRes.json();
+    // Normalize hyphens and spaces so roomType names like "test-room-2" resolve
+    const normalize = (s) => (s || "").toLowerCase().replace(/[-\s]+/g, " ");
     const roomData = Array.isArray(allRooms)
-      ? allRooms.find(room => room.roomType?.toLowerCase() === params.title.replace(/-/g, " ").toLowerCase())
+      ? allRooms.find(room => normalize(room.roomType) === normalize(roomType))
       : allRooms;
 
     return {
@@ -187,11 +189,14 @@ const Page = async ({ params }) => {
     const roomType = params.title.replace(/-/g, " ");
     const roomRes = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllRoommain?roomType=${encodeURIComponent(roomType)}`,
-      { next: { revalidate: 3600 } }
+      { cache: "no-store" }
     );
     const allRooms = await roomRes.json();
+    // Normalize both sides (hyphens and spaces equivalent) so roomType names
+    // like "test-room-2" resolve from a slug like /test-room-2/rooms
+    const normalize = (s) => (s || "").toLowerCase().replace(/[-\s]+/g, " ");
     const roomData = Array.isArray(allRooms)
-      ? allRooms.find(room => room.roomType?.toLowerCase() === roomType.toLowerCase())
+      ? allRooms.find(room => normalize(room.roomType) === normalize(roomType))
       : allRooms;
 
 

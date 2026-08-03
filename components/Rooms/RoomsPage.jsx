@@ -641,7 +641,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       relatedProducts={roomMain.firstSlider}
                       aria-label="Related products slider"
                     />
-                  ) : (
+                  ) : roomMain.sliders?.firstSlider?.products?.length ? (
                     <BlogRelatedProducts
                       relatedProducts={roomMain.sliders.firstSlider.products}
                       title={roomMain.sliders.firstSlider.header}
@@ -652,7 +652,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       aria-label="Related products slider"
                       id="first-slider-heading"
                     />
-                  )}
+                  ) : null}
                 </section>
               )}
               {sectionName === "secondSlider" && (
@@ -662,7 +662,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       relatedProducts={roomMain.secondSlider}
                       aria-label="Second product collection"
                     />
-                  ) : (
+                  ) : roomMain.sliders?.secondSlider?.products?.length ? (
                     <BlogRelatedProducts
                       relatedProducts={roomMain.sliders.secondSlider.products}
                       title={roomMain.sliders.secondSlider.header}
@@ -673,7 +673,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       aria-label="Second product collection"
                       id="second-slider-heading"
                     />
-                  )}
+                  ) : null}
                 </section>
               )}
               {sectionName === "thirdSlider" && (
@@ -683,7 +683,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       relatedProducts={roomMain.thirdSlider}
                       aria-label="Third product collection"
                     />
-                  ) : (
+                  ) : roomMain.sliders?.thirdSlider?.products?.length ? (
                     <BlogRelatedProducts
                       relatedProducts={roomMain.sliders.thirdSlider.products}
                       title={roomMain.sliders.thirdSlider.header}
@@ -694,7 +694,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       aria-label="Third product collection"
                       id="third-slider-heading"
                     />
-                  )}
+                  ) : null}
                 </section>
               )}
               {sectionName === "forthSlider" && (
@@ -704,7 +704,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       relatedProducts={roomMain.forthSlider}
                       aria-label="Fourth product collection"
                     />
-                  ) : (
+                  ) : roomMain.sliders?.forthSlider?.products?.length ? (
                     <BlogRelatedProducts
                       relatedProducts={roomMain.sliders.forthSlider.products}
                       title={roomMain.sliders.forthSlider.header}
@@ -715,7 +715,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       aria-label="Fourth product collection"
                       id="fourth-slider-heading"
                     />
-                  )}
+                  ) : null}
                 </section>
               )}
               {sectionName === "fifthSlider" && (
@@ -725,7 +725,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       relatedProducts={roomMain.fifthSlider}
                       aria-label="Fifth product collection"
                     />
-                  ) : (
+                  ) : roomMain.sliders?.fifthSlider?.products?.length ? (
                     <BlogRelatedProducts
                       relatedProducts={roomMain.sliders.fifthSlider.products}
                       title={roomMain.sliders.fifthSlider.header}
@@ -736,7 +736,7 @@ export const RoomsPage = ({ params, initialRoomData }) => {
                       aria-label="Fifth product collection"
                       id="fifth-slider-heading"
                     />
-                  )}
+                  ) : null}
                 </section>
               )}
             </section>

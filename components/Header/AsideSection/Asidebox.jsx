@@ -55,6 +55,18 @@ const Asidebox = (props) => {
     };
 
     if (parentCategory || props.hoveredIndex === 5) {
+      // For the Offers dropdown (index 5) there is no category endpoint to fetch
+      // (parentCategory is empty) — show the static AYATRIO Offer entry instead
+      // of hitting a URL with a missing :type segment (which 404s).
+      if (props.hoveredIndex === 5) {
+        const ayatrioOffer = {
+          name: "AYATRIO Offer*",
+          subcategories: [],
+        };
+        setAsideCategory([ayatrioOffer]);
+        setSelectedData(ayatrioOffer);
+        return;
+      }
       fetchCategoryData();
     }
   }, [parentCategory, props.hoveredIndex]);
