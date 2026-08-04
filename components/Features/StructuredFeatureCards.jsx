@@ -347,7 +347,8 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
 
               {feature.tip && (
                 <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
-                  <span className="font-bold">{feature.name || feature.title} Tip :</span> {feature.tip}
+                  <span className="font-bold">{feature.name || feature.title} Tip :</span>{" "}
+                  <LinkifiedText text={feature.tip} />
                 </div>
               )}
             </article>

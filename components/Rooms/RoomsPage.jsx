@@ -828,9 +828,13 @@ export const RoomsPage = ({ params, initialRoomData }) => {
               className="mt-20 px-5 sm:px-12"
               aria-labelledby="features-heading"
             >
-              <h2 id="features-heading" className="text-2xl font-semibold">
-                Features
-              </h2>
+              {/* The generic "Features" heading only shows for OLD legacy data.
+                  New structured data already has its own feature names as headings. */}
+              {legacyFeatures.length > 0 && (
+                <h2 id="features-heading" className="text-2xl font-semibold">
+                  Features
+                </h2>
+              )}
 
               {structuredFeatures.length > 0 && (
                 <StructuredFeatureCards features={structuredFeatures} />
