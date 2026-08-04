@@ -150,13 +150,18 @@ const Tabs = ({ data }) => {
   // console.log(isSticky);
 
   // --- Dynamic data assembly -------------------------------------------
-  // "All" tab: one representative item per category (first image/label).
-  const allItems = uniqueRoomCategories.map((category) => ({
-    key: category,
-    src: tabImages[category]?.[0] || FALLBACK_IMAGE,
-    href: labelData[category]?.[0]?.productLink,
-    labelData: labelData[category]?.[0] || [],
-  }));
+  // "All" tab: max 2 representative items per roomType category.
+  const allItems = uniqueRoomCategories.flatMap((category) => {
+    const images = tabImages[category] || [];
+    const labels = labelData[category] || [];
+
+    return images.slice(0, 2).map((src, i) => ({
+      key: `${category}-all-${i}`,
+      src: src || FALLBACK_IMAGE,
+      href: labels[i]?.productLink,
+      labelData: labels[i] || [],
+    }));
+  });
 
   // Specific tab: every image/label belonging to that category.
   const activeItems = (tabImages[activeTab] || []).map((src, i) => ({
