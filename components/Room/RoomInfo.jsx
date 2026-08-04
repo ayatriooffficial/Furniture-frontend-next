@@ -8,6 +8,7 @@ import Link from "next/link";
 import "./styles.css";
 import RoomInfoSlider from "./RoomInfoSlider";
 import AccessoriesPosts from "../Cards/AccessoriesPosts";
+import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 
 const RoomInfo = ({ data, accessories }) => {
   const [categoryDetails, setCategoryDetails] = useState();
@@ -68,11 +69,15 @@ const RoomInfo = ({ data, accessories }) => {
     if (data?.author) {
       fetchOtherProductByAuthorId(data?.author?._id);
     }
+    // Only check clamping when the legacy HTML description element exists
+    // (structured feature cards render instead — no clamp needed)
     const descriptionElement = descriptionRef.current;
-    if (descriptionElement.scrollHeight > descriptionElement.clientHeight) {
-      setIsClamped(true);
-    } else {
-      setIsClamped(false);
+    if (descriptionElement) {
+      if (descriptionElement.scrollHeight > descriptionElement.clientHeight) {
+        setIsClamped(true);
+      } else {
+        setIsClamped(false);
+      }
     }
   }, [data]);
 
@@ -144,20 +149,32 @@ const RoomInfo = ({ data, accessories }) => {
       <div className="font-normal text-sm  flex flex-col gap-4 my-6">
         <>
           <div>
+            {/* Description: plain text (structured) or legacy HTML, always clamped with View more */}
             <div
               className={`relative md:w-[80%] w-full ${
                 showMore ? "" : "line-clamp-3"
               } overflow-hidden product-description-content`}
               ref={descriptionRef}
             >
-              <div
-                className="product-description-content"
-                dangerouslySetInnerHTML={{
-                  __html: data?.productDescription,
-                }}
-              ></div>
+              {data?.structuredFeatures?.length ? (
+                <p className="product-description-content whitespace-pre-line">
+                  {data?.productDescription || ""}
+                </p>
+              ) : (
+                <div
+                  className="product-description-content"
+                  dangerouslySetInnerHTML={{
+                    __html: data?.productDescription,
+                  }}
+                ></div>
+              )}
             </div>
-            {isClamped && (
+            {/* Structured feature cards only show after expanding (View more) */}
+            {showMore && data?.structuredFeatures?.length > 0 && (
+              <StructuredFeatureCards features={data.structuredFeatures} />
+            )}
+            {/* Toggle sits at the bottom, after all content (cards/tables) */}
+            {(isClamped || data?.structuredFeatures?.length > 0) && (
               <span
                 className="cursor-pointer hover:underline text-[16px] font-semibold"
                 onClick={() => setShowMore(!showMore)}

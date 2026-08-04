@@ -7,6 +7,7 @@ import {
   selectproductstatus,
 } from "../Features/Slices/compareSlice";
 import { useRouter } from "next/navigation";
+import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 
 const CompareDetails = ({ data }) => {
   // const datas = useSelector(selectproductdata);
@@ -69,17 +70,23 @@ const CompareDetails = ({ data }) => {
               <div className="flex flex-col items-center justify-center">
                 {/* <p>Product description</p> */}
                 <div className="text-sm max-h-48 overflow-auto">
-                  <span className="font-semibold">Product description: </span>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: item.productDescription || "N/A",
-                    }}
-                    style={{
-                      fontSize: "14px",
-                      color: "#222222",
-                      lineHeight: "1.5",
-                    }}
-                  />
+                  {item.structuredFeatures?.length ? (
+                    <StructuredFeatureCards features={item.structuredFeatures} />
+                  ) : (
+                    <>
+                      <span className="font-semibold">Product description: </span>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: item.productDescription || "N/A",
+                        }}
+                        style={{
+                          fontSize: "14px",
+                          color: "#222222",
+                          lineHeight: "1.5",
+                        }}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col items-center justify-center">

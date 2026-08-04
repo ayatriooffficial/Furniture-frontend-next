@@ -131,7 +131,8 @@ const page = async ({ params }) => {
   // Determine if it's a category or subcategory page and fetch the appropriate FAQs
   if (isSubcategoryPage) {
     const currentSubcategory = category?.subcategories?.find(
-      (subcategory) => subcategory.name === title.replace(/-/g, " ")
+      (subcategory) =>
+        subcategory.name?.toLowerCase() === title.replace(/-/g, " ").toLowerCase()
     );
     faqs = currentSubcategory?.faq || [];
   } else {

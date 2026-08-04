@@ -411,6 +411,15 @@ const ProductPage = ({
       h1title={category?.h1title}
       pdesc={category?.pdesc}
       features={category?.features}
+      structuredFeatures={
+        isSubcategoryPage
+          ? category?.subcategories?.find(
+              (sub) =>
+                sub.name?.toLowerCase() ===
+                (pathname?.split("/")[1] || "").replace(/-/g, " ").toLowerCase()
+            )?.structuredFeatures
+          : category?.structuredFeatures
+      }
       card={category?.card}
       tips={category?.tips}
       faq={category?.faq}

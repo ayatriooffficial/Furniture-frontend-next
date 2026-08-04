@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 
 const createApiEndpoint = (endpoint) => {
   const BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api`;
@@ -54,13 +55,20 @@ const CategoryFeatures = (props) => {
         // console.log("API Response:", response.data);
         
         const data = response.data;
-        if (data && data.features) {
-          setFeatures(data.features);
+        if (data && (data.features || data.structuredFeatures)) {
+          setFeatures([
+            ...(data.features || []),
+            ...(data.structuredFeatures || [])
+          ]);
         } else if (data && data.subcategories && data.subcategories.length > 0) {
           // Handle subcategory case
           setIsSubcategoryPage(true);
+          const sub = data.subcategories[0];
           setFilteredSubCategory([{
-            features: data.subcategories[0]?.features || []
+            features: [
+              ...(sub?.features || []),
+              ...(sub?.structuredFeatures || [])
+            ]
           }]);
         } else {
           // console.log("No features found in the response data:", data);
@@ -126,20 +134,32 @@ const CategoryFeatures = (props) => {
       );
     }
   
-    return featureItems.map((feature, featureIdx) => (
-      <article key={featureIdx} className="feature-item mb-4" aria-labelledby={`feature-${featureIdx}`}>
-        <h3 className="text-lg font-medium text-gray-800 mb-2" id={`feature-${featureIdx}`} aria-live="assertive">
-          {feature.title}
-        </h3>
-        <ul className="list-disc pl-6 space-y-2" aria-describedby={`feature-description-${featureIdx}`}>
-          {feature.description && feature.description.map((desc, i) => (
-            <li key={i} className="text-gray-700">
-              {renderFeatureDescription({ ...feature, description: [desc] })}
-            </li>
-          ))}
-        </ul>
-      </article>
-    ));
+    return featureItems.map((feature, featureIdx) => {
+      // If the feature contains structured cards, render it via the new component
+      if (feature.cards && feature.cards.length > 0) {
+        return (
+          <div key={featureIdx} className="mb-8">
+            <StructuredFeatureCards features={[feature]} showHeading={false} />
+          </div>
+        );
+      }
+
+      // Legacy fallback
+      return (
+        <article key={featureIdx} className="feature-item mb-4" aria-labelledby={`feature-${featureIdx}`}>
+          <h3 className="text-lg font-medium text-gray-800 mb-2" id={`feature-${featureIdx}`} aria-live="assertive">
+            {feature.name || feature.title}
+          </h3>
+          <ul className="list-disc pl-6 space-y-2" aria-describedby={`feature-description-${featureIdx}`}>
+            {feature.description && feature.description.map((desc, i) => (
+              <li key={i} className="text-gray-700">
+                {renderFeatureDescription({ ...feature, description: [desc] })}
+              </li>
+            ))}
+          </ul>
+        </article>
+      );
+    });
   };
   
   return (

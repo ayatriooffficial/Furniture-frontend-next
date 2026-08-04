@@ -19,6 +19,7 @@ const iconMap = {
 
 import BlogRelatedProducts from "@/components/Cards/BlogRelatedProducts";
 import Tabs from "@/components/Cards/Tabs";
+import StructuredFeatureCards from "@/components/Features/StructuredFeatureCards";
 import { selectRecommendedProduct } from "@/components/Features/Slices/recommendationSlice";
 import axios from "axios";
 import Image from "next/image";
@@ -485,6 +486,9 @@ const Suggestion = ({ id }) => {
         <h2 className="text-2xl font-semibold">Features</h2>
 
         <article className="sm:w-3/4 py-3 w-full ">
+          {suggestion?.structuredFeatures?.length > 0 && (
+            <StructuredFeatureCards features={suggestion.structuredFeatures} />
+          )}
           {suggestion.features.length > 0
             ?
             <div className="">

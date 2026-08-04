@@ -28,6 +28,7 @@ import axios from "axios";
 import { selecteddbItems } from "../Features/Slices/cartSlice";
 import TabsProductCard from "./TabsProductCard";
 import CategoryGrid from "./CategoryGrid";
+import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 
 import { viewItemList } from "@/tag-manager/events/view_item_list";
 import SubcategorySlider from "./SubcategorySlider";
@@ -49,6 +50,7 @@ const Tabs = ({
   h1title,
   pdesc,
   features,
+  structuredFeatures,
   faq,
   description,
   setType,
@@ -652,12 +654,16 @@ const Tabs = ({
   useEffect(() => {
     if (isSubcategoryPage) {
       const filtered = subCategory?.filter(
-        (sub) => sub.name === pathname?.split("/")[1]?.replace(/-/g, " "),
+        (sub) =>
+          sub.name?.toLowerCase() ===
+          pathname?.split("/")[1]?.replace(/-/g, " ").toLowerCase(),
       );
       setFilteredSubCategory(filtered || null);
     } else if (pathname?.split("/")[3] !== "all") {
       const filtered = subCategory?.filter(
-        (data) => data.name === pathname?.split("/")[3]?.replace(/-/g, " "),
+        (data) =>
+          data.name?.toLowerCase() ===
+          pathname?.split("/")[3]?.replace(/-/g, " ").toLowerCase(),
       );
       setFilteredSubCategory(filtered || null);
     }
@@ -1589,6 +1595,9 @@ const Tabs = ({
 
       <section className="md:mx-[52px] sm:mx-[20px] mx-[10px] bg-[#ffffff] sm:flex-row flex flex-col gap-7 mt-6">
         <article className="sm:w-3/4  w-full ">
+          {structuredFeatures?.length > 0 && (
+            <StructuredFeatureCards features={structuredFeatures} />
+          )}
           {!isSubcategoryPage && features?.length > 0
             ? features.map((feature, featureIdx) => (
                 <div key={featureIdx} className="">
