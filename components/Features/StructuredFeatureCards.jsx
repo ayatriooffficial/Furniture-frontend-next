@@ -347,7 +347,15 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
               )}
 
               {feature.tip && (
-                <div className="bg-green-200 text-[12px] text-green-700 w-full mt-4 p-3">
+                <div
+                  className={`w-full mt-4 p-3 text-[12px] ${
+                    feature.tipBgColor === "yellow"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : feature.tipBgColor === "blue"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-green-200 text-green-700"
+                  }`}
+                >
                   <span className="font-bold">{feature.name || feature.title} Tip :</span>{" "}
                   <LinkifiedText text={feature.tip} />
                 </div>
