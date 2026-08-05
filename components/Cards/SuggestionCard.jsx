@@ -5,11 +5,13 @@ import Link from "next/link";
 import PopUp from "../Reviews/PopUp";
 
 function SuggestionCard(props) {
-  
+  // Encode special chars (e.g. "&") so the URL slug round-trips: /Premium-Flooring-%26-Design-Solutions/inspiration
+  const slug = encodeURIComponent(props.title.replace(/ /g, "-"));
+
   return (
     <article aria-labelledby={`card-title-${props.cardkey}`}>
       <div key={props.cardkey} className="pb-8 cursor-pointer">
-        <Link href={`/${props.title.replace(/ /g, "-")}/inspiration`} aria-label={`View inspiration for ${props.title}`}>
+        <Link href={`/${slug}/inspiration`} aria-label={`View inspiration for ${props.title}`}>
 
           <figure className="flex h-full w-full items-center justify-center cursor-pointer overflow-hidden">
             <Image

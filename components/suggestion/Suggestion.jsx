@@ -472,7 +472,13 @@ const Suggestion = ({ id }) => {
   };
 
   const FeaturesSection = ({ suggestion, iconMap }) => {
-    if (!suggestion || !suggestion.features || suggestion.features.length === 0) {
+    const hasLegacyFeatures =
+      suggestion && suggestion.features && suggestion.features.length > 0;
+    const hasStructuredFeatures =
+      suggestion &&
+      suggestion.structuredFeatures &&
+      suggestion.structuredFeatures.length > 0;
+    if (!hasLegacyFeatures && !hasStructuredFeatures) {
       return null;
     }
 
@@ -483,7 +489,9 @@ const Suggestion = ({ id }) => {
     return (
       <div className="mt-20 px-5 sm:px-12">
         <h></h>
-        <h2 className="text-2xl font-semibold">Features</h2>
+        {hasLegacyFeatures && (
+          <h2 className="text-2xl font-semibold">Features</h2>
+        )}
 
         <article className="sm:w-3/4 py-3 w-full ">
           {suggestion?.structuredFeatures?.length > 0 && (
@@ -540,46 +548,7 @@ const Suggestion = ({ id }) => {
                 )}
               </div>
             </div>
-            : filteredSubCategory &&
-            filteredSubCategory[0]?.features?.length > 0 &&
-            filteredSubCategory[0]?.features.map((feature, featureIdx) => (
-              <div key={featureIdx} className="">
-                <div className="flex flex-col ">
-                  <div>
-                    <h2 className="text-[14px] font-medium text-[#6e6e73] mt-10">
-                      {feature.title || "Feature"}:
-                    </h2>
-                    <div className="text-[13px] text-[#6e6e73] pt-[3px] pb-[15px]">
-                      {renderFeatureDescription(feature)}
-                    </div>
-                  </div>
-                  <div className="w-full h-auto flex justify-start gap-6 flex-nowrap overflow-auto scrollbar-hidden bg-white" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {feature.cards &&
-                      feature.cards.map((card, cardIdx) => (
-                        <div
-                          key={cardIdx}
-                          className="bg-white border-[1px] border-gray-200  text-[12px] text-black font-semibold pt-[3px] max-h-full min-w-[240px] max-w-[240px] aspect-square overflow-auto p-2 rounded-xl px-8"
-                          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                        >
-                          {card.svgUrl && (<img className="size-20 text-center mx-auto mt-6" src={card.svgUrl} alt="" />)}
-                          {cardDescriptionRenderer(card)}
-                          {/* {Array.isArray(card.description)
-        ? card.description.map((desc, i) => (
-            <div key={i} dangerouslySetInnerHTML={{ __html: desc }} />
-          ))
-        : <div dangerouslySetInnerHTML={{ __html: card.description }} />} */}
-                        </div>
-                      ))}
-                  </div>
-
-                  {suggestion.features[0].icon && (
-                    <div className="bg-blue-400 text-[12px] text-white w-full mt-10 p-4">
-                      <span className="font-bold">{suggestion.features[0].title} Tip :</span> {suggestion.features[0].icon}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+            : null}
         </article>
 
 
@@ -803,7 +772,10 @@ const Suggestion = ({ id }) => {
             <Tabs data={recommended} aria-label="Recommended product tabs" />
           </section>
 
-          {suggestion && suggestion.features && suggestion.features.length > 0 && (
+          {(suggestion &&
+            ((suggestion.features && suggestion.features.length > 0) ||
+              (suggestion.structuredFeatures &&
+                suggestion.structuredFeatures.length > 0))) && (
             <section aria-labelledby="features-section">
               <h2 id="features-section" className="sr-only">Product Features</h2>
               <FeaturesSection

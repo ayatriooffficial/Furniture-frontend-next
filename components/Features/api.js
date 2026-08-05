@@ -206,7 +206,7 @@ export const fetchSuggestionData = async (heading) => {
     const response = await axios.get(
       createApiEndpoint("fetchSuggestionByTitle"),
       {
-        params: { heading: decodeURI(heading) },
+        params: { heading },
       },
     );
     console.log("response", response.data);
