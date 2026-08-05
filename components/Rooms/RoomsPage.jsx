@@ -966,8 +966,8 @@ export const RoomsPage = ({ params, initialRoomData }) => {
           )}
 
           {roomMain?.faqs?.length > 0 && (
-            <section className="mt-20 px-5 sm:px-12 pb-20">
-              <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+            <section className="mt-10 px-5 sm:px-12 pb-10">
+              <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h2>
               {roomMain.faqs.map((faq, index) => (
                 <div key={index} className="mt-4">
                   <div className="text-[14px] text-[#000000]">

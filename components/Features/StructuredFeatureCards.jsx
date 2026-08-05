@@ -139,7 +139,7 @@ function CardPoints({ points, accent = false }) {
 
 function StructuredCard({ card }) {
   return (
-    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-4">
       {card.heading && (
         <h4 className="text-base font-semibold text-gray-900">{card.heading}</h4>
       )}
@@ -151,7 +151,7 @@ function StructuredCard({ card }) {
 
 function StructuredSvgCard({ card }) {
   return (
-    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-4">
       {card.svgUrl && (
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-gray-50 p-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -189,17 +189,18 @@ function StructuredComparisonTable({ feature, card }) {
   if (hasNewFormat) {
     const colCount = Math.max(columns.length, 1);
     return (
-      <div className="w-full overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="w-full overflow-x-auto rounded-xl border border-gray-200 bg-white">
         <table className="w-full min-w-[480px] border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-700">
+              <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-700 w-[20%]">
                 {mainHeading}
               </th>
               {columns.map((col, i) => (
                 <th
                   key={i}
                   className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-900"
+                  style={{ width: `${80 / columns.length}%` }}
                 >
                   {col.name}
                 </th>
@@ -254,17 +255,17 @@ function StructuredComparisonTable({ feature, card }) {
   const rightLabel = card.rightHeading || "B";
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="w-full overflow-x-auto rounded-xl border border-gray-200 bg-white">
       <table className="w-full min-w-[480px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50">
-            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-700">
+            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-700 w-[20%]">
               {mainHeading}
             </th>
-            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-900">
+            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-900 w-[40%]">
               {leftLabel}
             </th>
-            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-900">
+            <th className="border border-gray-200 px-5 py-3.5 text-sm font-semibold text-gray-900 w-[40%]">
               {rightLabel}
             </th>
           </tr>
@@ -293,7 +294,7 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
   if (!features || features.length === 0) return null;
 
   return (
-    <div className="space-y-14">
+    <div className="space-y-8">
       {showHeading && (
         <h2 className="text-2xl font-semibold">Features</h2>
       )}
@@ -306,8 +307,8 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
           return (
             <article key={fi}>
               {/* Feature heading + sub-heading */}
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
                   <LinkifiedText text={feature.name} />
                 </h3>
                 {feature.subHeading ? (
@@ -326,7 +327,7 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
               </div>
 
               {cards.length > 0 && (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {cards.map((card, ci) => {
                     const cardType = card.cardType || feature.displayType || "card";
                     if (cardType === "comparison") {
@@ -346,7 +347,7 @@ export function StructuredFeatureCards({ features, showHeading = false }) {
               )}
 
               {feature.tip && (
-                <div className="bg-green-200 text-[12px] text-green-700 w-full mt-10 p-4">
+                <div className="bg-green-200 text-[12px] text-green-700 w-full mt-4 p-3">
                   <span className="font-bold">{feature.name || feature.title} Tip :</span>{" "}
                   <LinkifiedText text={feature.tip} />
                 </div>
