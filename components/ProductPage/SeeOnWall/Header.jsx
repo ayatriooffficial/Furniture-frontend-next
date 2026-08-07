@@ -561,47 +561,62 @@ function Header() {
     "Dining Room": [],
     Bedroom: [],
   }); // State to store fetched images
-  const [selectedImage, setSelectedImage] = useState(""); // State to store the selected image for the left section
+  // --- OLD STATE (Commented out for fallback) ---
+  // const [selectedImage, setSelectedImage] = useState(""); 
+  // const [otherImage, setOtherImage] = useState(""); 
+  
+  const [sidebarMode, setSidebarMode] = useState(""); // 'room' or 'product'
+  const [activeMainRoomImage, setActiveMainRoomImage] = useState("/3d/livingroom2.webp");
+  const [activeProductImage, setActiveProductImage] = useState("");
   const [otherImage, setOtherImage] = useState(""); // Second image (variant B)
+  const [categoryName, setCategoryName] = useState(""); // State to hold the category from URL
+  const [categoryProducts, setCategoryProducts] = useState([]); // NEW STATE to hold fetched products
+  
+  const staticRoomImages = {
+    "Living Room": ["/3d/livingroom.webp", "/3d/livingroom2.webp"],
+    "Dining Room": ["/3d/kitchen.webp"], 
+    "Bedroom": ["/3d/bedroom1.webp"]
+  };
 
-  // Fetch the product data based on roomType
-  const fetchProducts = async (roomType) => {
-    const categoryName = "wallpaper"; // Assuming "wallpaper" is the category name
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aimodelcategories/${categoryName}/${roomType}`;
+  // Extract the category from the URL query params
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const category = params.get("category");
+      if (category) {
+        setCategoryName(category);
+      }
+    }
+  }, []);
+
+  // Fetch the product data based on categoryName
+  const fetchProducts = async (currentCategory) => {
+    if (!currentCategory) return;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${currentCategory}`;
     
-
     try {
       const response = await fetch(apiUrl);
       const data = await response.json();
     
-
-      // Check if 'images' exists and is an array
-      if (data && Array.isArray(data.images)) {
-        const images = data.images.map((imageObj) => imageObj.url); // Map image URLs from 'images' array
-        
-
-        // Set the fetched images for the active room
-        setRoomImages((prevImages) => ({
-          ...prevImages,
-          [activeRoom]: images,
-        }));
-
-        // Set the first image as the default selected image for the left section
-        if (images.length > 0) {
-          setSelectedImage(images[0]);
-        }
+      if (Array.isArray(data)) {
+        // Keep the full product object as long as it has at least one image
+        const products = data.filter(product => product.images && product.images.length > 0);
+        setCategoryProducts(products);
       } else {
-        console.warn("No 'images' found or 'images' is not an array.");
+        console.warn("No products found or incorrect response format.");
+        setCategoryProducts([]);
       }
     } catch (error) {
       console.error("Error fetching product data:", error);
     }
   };
 
-  // Use effect to fetch data when the roomType changes
+  // Use effect to fetch data when the categoryName changes
   useEffect(() => {
-    fetchProducts(roomType); // Send lowercase room type to API
-  }, [roomType]);
+    if (categoryName) {
+      fetchProducts(categoryName);
+    }
+  }, [categoryName]);
 
   // Function to handle tab clicks and set both roomType and activeRoom
   const handleTabClick = (room) => {
@@ -621,6 +636,20 @@ function Header() {
     setOpenSidebar(true); // Open the sidebar
   };
 
+  // const handleOpenSidebar = () => {
+  //   setOpenSidebar(true); // Open the sidebar
+  // };
+
+  const handleOpenSidebarForRoom = () => {
+    setSidebarMode('room');
+    setOpenSidebar(true);
+  };
+
+  const handleOpenSidebarForProduct = () => {
+    setSidebarMode('product');
+    setOpenSidebar(true);
+  };
+
   const handleCloseSidebar = () => {
     setOpenSidebar(false); // Close the sidebar
   };
@@ -630,17 +659,25 @@ function Header() {
     setShowSlider(!showSlider); // Toggle the slider visibility
   };
 
-  // Function to handle image click in the grid and update the left section
+  // /* OLD LOGIC */
+  // const handleImageClick = (image) => {
+  //   if (!selectedImage) {
+  //     setSelectedImage(image); // Set the first image
+  //    } else if (!otherImage) {
+  //     setOtherImage(image); // Set the first image
+  //   } else if (selectedImage && !otherImage) {
+  //     setOtherImage(image); // Set the second image for comparison
+  //   } else {
+  //     setSelectedImage(image); // Reset and set a new selected image
+  //     setOtherImage(""); // Clear the other image
+  //   }
+  // };
+
   const handleImageClick = (image) => {
-    if (!selectedImage) {
-      setSelectedImage(image); // Set the first image
-     } else if (!otherImage) {
-      setOtherImage(image); // Set the first image
-    } else if (selectedImage && !otherImage) {
-      setOtherImage(image); // Set the second image for comparison
-    } else {
-      setSelectedImage(image); // Reset and set a new selected image
-      setOtherImage(""); // Clear the other image
+    if (sidebarMode === 'room') {
+      setActiveMainRoomImage(image);
+    } else if (sidebarMode === 'product') {
+      setActiveProductImage(image);
     }
   };
   
@@ -683,6 +720,7 @@ function Header() {
       <div className="flex-grow relative flex flex-col">
         {/* Left Section */}
         <div className="flex-grow p-4 flex justify-center items-center">
+          {/* OLD LOGIC
           {showSlider ? (
             <Slider variantA={selectedImage} variantB={otherImage}/>
           ) : selectedImage ? (
@@ -694,14 +732,26 @@ function Header() {
           ) : (
             <div>
               <p>No images available for {activeRoom}.</p>
-               {/* <img
-              src={"https://ayatrio-bucket.s3.ap-south-1.amazonaws.com/_Hall_St_0256_v2.jpg"}
-              alt={`${activeRoom} default`}
-              className="object-cover w-full h-[87vh]"
-            /> */}
-
             </div>
-          )}
+          )} 
+          */}
+          
+          <div className="relative w-[72vw] h-[75vh]">
+             {/* The Main Room Background */}
+             <img
+                src={activeMainRoomImage}
+                alt={`Room default`}
+                className="object-cover w-full h-full"
+              />
+              
+              {/* Overlay active product as a floating thumbnail for now (until AI merge is ready) */}
+              {activeProductImage && (
+                <div className="absolute top-4 left-4 bg-white p-2 shadow-lg border-2 border-blue-500 rounded-md">
+                   <p className="text-xs font-bold text-center mb-1">Selected Product</p>
+                   <img src={activeProductImage} alt="Selected Product" className="w-24 h-24 object-cover" />
+                </div>
+              )}
+          </div>
         </div>
 
         {/* Right Section that stays on screen */}
@@ -733,7 +783,8 @@ function Header() {
             {/* Choose a Room */}
             <div
               className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebar}
+              // onClick={handleOpenSidebar} // OLD
+              onClick={handleOpenSidebarForRoom}
             >
               {/* Hidden text that appears on hover */}
               <div className="absolute right-14 bg-white  text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -755,7 +806,8 @@ function Header() {
             {/* Choose a Product */}
             <div
               className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebar}
+              // onClick={handleOpenSidebar} // OLD
+              onClick={handleOpenSidebarForProduct}
             >
               {/* Hidden text that appears on hover */}
               <div className="absolute right-14 bg-white text-black w-48 p-[14px]  flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -828,41 +880,44 @@ function Header() {
             </div>
           </div>
 
-          {/* Tab Section */}
-          <div className="p-4 flex justify-between">
-            <button
-              onClick={() => handleTabClick("livingroom")}
-              className={`${
-                activeRoom === "Living Room"
-                  ? "text-blue-600 border-blue-600"
-                  : "text-black border-gray-400"
-              } px-4 py-2 border-b-2`}
-            >
-              Living Room
-            </button>
-            <button
-              onClick={() => handleTabClick("diningroom")}
-              className={`${
-                activeRoom === "Dining Room"
-                  ? "text-blue-600 border-blue-600"
-                  : "text-black border-gray-400"
-              } px-4 py-2 border-b-2`}
-            >
-              Dining Room
-            </button>
-            <button
-              onClick={() => handleTabClick("bedroom")}
-              className={`${
-                activeRoom === "Bedroom"
-                  ? "text-blue-600 border-blue-600"
-                  : "text-black border-gray-400"
-              } px-4 py-2 border-b-2`}
-            >
-              Bedroom
-            </button>
-          </div>
+          {/* Tab Section - Only show for rooms */}
+          {sidebarMode === 'room' && (
+            <div className="p-4 flex justify-between">
+              <button
+                onClick={() => handleTabClick("livingroom")}
+                className={`${
+                  activeRoom === "Living Room"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-black border-gray-400"
+                } px-4 py-2 border-b-2`}
+              >
+                Living Room
+              </button>
+              <button
+                onClick={() => handleTabClick("diningroom")}
+                className={`${
+                  activeRoom === "Dining Room"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-black border-gray-400"
+                } px-4 py-2 border-b-2`}
+              >
+                Dining Room
+              </button>
+              <button
+                onClick={() => handleTabClick("bedroom")}
+                className={`${
+                  activeRoom === "Bedroom"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-black border-gray-400"
+                } px-4 py-2 border-b-2`}
+              >
+                Bedroom
+              </button>
+            </div>
+          )}
 
           {/* Image Grid Section */}
+          {/* OLD LOGIC
           <div className="grid grid-cols-3 gap-4 p-4">
             {roomImages[activeRoom].map((image, index) => (
               <img
@@ -870,9 +925,58 @@ function Header() {
                 src={image}
                 alt={`${activeRoom} ${index}`}
                 className="w-full h-32 object-cover cursor-pointer"
-                onClick={() => handleImageClick(image)} // Click handler to update the left section image
+                onClick={() => handleImageClick(image)} 
               />
             ))}
+          </div> 
+          */}
+          {/* Content Section */}
+          <div className={`${sidebarMode === 'room' ? 'grid grid-cols-3' : 'flex flex-col'} gap-4 p-4`}>
+            {/* Rooms (Grid) */}
+            {sidebarMode === 'room' && staticRoomImages[activeRoom]?.map((image, index) => (
+              <img
+                key={`room-${index}`}
+                src={image}
+                alt={`Static ${activeRoom} ${index}`}
+                className={`w-full h-32 object-cover cursor-pointer ${activeMainRoomImage === image ? 'border-4 border-blue-500' : ''}`}
+                onClick={() => handleImageClick(image)} 
+              />
+            ))}
+
+            {/* Products (Vertical Cards) */}
+            {sidebarMode === 'product' && categoryProducts.map((product, index) => (
+              <div 
+                key={`product-${index}`}
+                className={`flex gap-4 p-3 border rounded-lg cursor-pointer hover:shadow-md transition-shadow bg-white ${activeProductImage === product.images[0] ? 'border-blue-600 ring-1 ring-blue-600' : 'border-gray-200'}`}
+                onClick={() => handleImageClick(product.images[0])}
+              >
+                {/* Product Image */}
+                <div className="w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                  <img src={product.images[0]} alt={product.productTitle} className="w-full h-full object-cover" />
+                </div>
+                {/* Product Info */}
+                <div className="flex flex-col flex-grow justify-center">
+                   <p className="text-sm font-semibold text-gray-900 line-clamp-2">{product.productTitle}</p>
+                   <p className="text-lg font-bold text-black mt-1">
+                     ₹{product.perUnitPrice || product.discountedprice?.price || "N/A"}
+                     <span className="text-xs font-normal text-gray-500 ml-1">/sq.ft</span>
+                   </p>
+                   {/* Dummy Rating (can be replaced with real data later) */}
+                   <div className="flex items-center gap-1 mt-1">
+                      <span className="text-yellow-400 text-sm">★★★★☆</span>
+                      <span className="text-xs text-blue-600 hover:underline">124</span>
+                   </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Fallbacks */}
+            {sidebarMode === 'room' && (!staticRoomImages[activeRoom] || staticRoomImages[activeRoom].length === 0) && (
+              <p className="col-span-3 text-center text-gray-500">No 3D rooms uploaded for {activeRoom} yet.</p>
+            )}
+            {sidebarMode === 'product' && categoryProducts.length === 0 && (
+              <p className="text-center text-gray-500">No products available for this category.</p>
+            )}
           </div>
           {/* Compare Button */}
           <div className="p-4 flex items-center justify-center">

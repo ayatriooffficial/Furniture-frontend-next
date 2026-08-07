@@ -144,19 +144,15 @@ const RoomToolbar = ({ data }) => {
   };
 
   const handleSeeOnWall = () => {
-    router.push("/seeonwall");
+    if (data?.category && data?._id) {
+      const category = encodeURIComponent(data.category);
+      const id = encodeURIComponent(data._id);
+      router.push(`/seeonwall?category=${category}&id=${id}`);
+    } else {
+      console.error("Data is missing category or id");
+      router.push("/seeonwall"); // Fallback
+    }
   };
-  // const handleSeeOnWall = (data) => {
-  //   // Ensure data.category and data._id are defined
-  //   console.log(data);
-  //   if (data.category && data._id) {
-  //     const category = encodeURIComponent(data.category);
-  //     const id = encodeURIComponent(data._id);
-  //     router.push(`/seeonwall?category=${category}&id=${id}`);
-  //   } else {
-  //     console.error("Data is missing category or id");
-  //   }
-  // };
  
 
   const handleClose = () => {
@@ -326,8 +322,7 @@ const RoomToolbar = ({ data }) => {
       </div>
       <span></span>
       <div
-        // onClick={() => handleSeeOnWall(data)}
-        // onClick={handleSeeOnWall}
+        onClick={handleSeeOnWall}
         className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 "
       >
         <Image
