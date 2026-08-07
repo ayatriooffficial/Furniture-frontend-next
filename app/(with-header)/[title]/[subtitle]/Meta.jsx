@@ -389,22 +389,11 @@ const ProductPage = ({
   return (
     <Tabproduct
       filteredProductData={
-        parentCategory === "virtualexperience"
-          ? filteredProducts
-          : parentCategory === "offers"
-            ? offerProductData
-            : parentCategory === "demandtype"
-              ? demandTypeProduct
-              : filteredProductData
+        filteredProductData
       }
       heading={
-        parentCategory === "offers"
-          ? type === "all"
-            ? "Highest Offer"
-            : type
-          : parentCategory === "demandtype"
-            ? type
-            : category.name
+        
+            category.name
       }
       type={type}
       description={category?.description}
@@ -412,20 +401,12 @@ const ProductPage = ({
       pdesc={category?.pdesc}
       features={category?.features}
       structuredFeatures={
-        isSubcategoryPage
-          ? category?.subcategories?.find(
-              (sub) =>
-                sub.name?.toLowerCase() ===
-                (pathname?.split("/")[1] || "").replace(/-/g, " ").toLowerCase()
-            )?.structuredFeatures
-          : category?.structuredFeatures
+         category?.structuredFeatures
       }
       card={category?.card}
       tips={category?.tips}
       faq={category?.faq}
-      subCategory={category?.subcategories?.filter(
-        (subcategory) => !subcategory.isAccessories
-      )}
+      subCategory={category?.subcategories}
       allTypes={allTypes}
       parentCategory={parentCategory}
       offerCategory={offerCategory}
@@ -433,7 +414,7 @@ const ProductPage = ({
       setSelectedOfferCategory={setSelectedOfferCategory}
       currentPage={currentPage}
       totalPages={
-        parentCategory === "offers" ? totalPagesOffer : totalPages
+        totalPages
       }
       onPageChange={handlePageChange}
       firstGrid={firstGrid}

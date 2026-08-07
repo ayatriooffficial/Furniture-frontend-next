@@ -8,7 +8,7 @@ import fixImageUrl from "@/utils/modifyUrl";
 
 const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) => {
   const pathname = usePathname();
-  const currentCategorySlug = pathname.slice(1).split('/')[0].replace('-', ' ')
+  const currentCategorySlug = pathname.slice(1).split('/')[0].replace(/-/g, ' ')
   // console.log(currentCategorySlug)
   // console.log(isSubcategoryPage)
   const swiperRef = useRef(null);
@@ -43,9 +43,9 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) =
       class="subcategory-slider w-full"
     >
       {!isSubcategoryPage && subCategory.map((category) => (
-        <swiper-slide key={category.id} class="!w-auto">
+        <swiper-slide key={category._id} class="!w-auto">
           <Link
-            href={`/${category.name.replace(' ', '-')}/subcollection/${parentCategory}/`}
+            href={`/${category.name.replace(/ /g, '-')}/subcollection/${parentCategory}/`}
             className="flex flex-col items-center gap-1"
           >
             <div className="w-[138px] h-[72px] relative  overflow-hidden mb-2">
@@ -63,9 +63,9 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) =
       {isSubcategoryPage &&
         subCategory.map((category) =>
           category.name === currentCategorySlug ? (
-            <swiper-slide key={category.id} class="!w-auto">
+            <swiper-slide key={category._id} class="!w-auto">
               <Link
-                href={`/${category.name.replace(' ', '-')}/subcollection/${parentCategory}/`}
+                href={`/${category.name.replace(/ /g, '-')}/subcollection/${parentCategory}/`}
                 className="flex flex-col items-center gap-1"
               >
                 <div className="w-[138px] h-[72px] relative overflow-hidden mb-2">
@@ -87,3 +87,4 @@ const SubCategorySlider = ({ subCategory, isSubcategoryPage, parentCategory }) =
 };
 
 export default SubCategorySlider;
+
