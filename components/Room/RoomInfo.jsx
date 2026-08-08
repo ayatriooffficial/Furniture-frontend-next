@@ -7,7 +7,7 @@ import axios from "axios";
 import Link from "next/link";
 import "./styles.css";
 import RoomInfoSlider from "./RoomInfoSlider";
-import AccessoriesPosts from "../Cards/AccessoriesPosts";
+// import AccessoriesPosts from "../Cards/AccessoriesPosts";
 import StructuredFeatureCards from "../Features/StructuredFeatureCards";
 
 const RoomInfo = ({ data, accessories }) => {
