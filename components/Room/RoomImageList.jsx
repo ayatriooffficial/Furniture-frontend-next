@@ -221,7 +221,7 @@ export default function RoomImageList({ data, images, alt }) {
                 }
               }}
             >
-              <Image
+              <img
                 loading="lazy"
                 src={fixImageUrl(image)}
                 alt={alt || `Gallery image ${index + 1}`}
