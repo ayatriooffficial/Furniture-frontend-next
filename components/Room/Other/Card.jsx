@@ -1114,7 +1114,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
             ${color === item.color ? " border-black " : " border-black"}   
           `}
                     >
-                      <Image
+                      <img
                         className="relative w-full h-full object-cover"
                         src={fixImageUrl(item.image)}
                         alt={item.color}
@@ -1961,7 +1961,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                             </button>
                           </div>
                           <div className="flex items-start w-[100%]  mb-4">
-                            <Image
+                            <img
                               loading="lazy"
                               src={data?.images[0]}
                               height={100}
@@ -2172,7 +2172,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                                     onMouseLeave={() => setShowCart(false)}
                                   >
                                     <div className="flex">
-                                      <Image
+                                      <img
                                         loading="lazy"
                                         src={product?.images[0]}
                                         height={100}

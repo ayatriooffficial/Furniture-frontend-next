@@ -1,22 +1,8 @@
-const runtimeCaching = require("next-pwa/cache"); 
-
 const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
-  runtimeCaching: [
-    {
-      urlPattern: ({ pathname }) => pathname.startsWith("/_next/image"),
-      handler: "NetworkFirst",
-      options: {
-        cacheName: "next-image-cache",
-        expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
-        networkTimeoutSeconds: 10, // avoid hanging forever if network is slow
-      },
-    },
-    ...runtimeCaching,
-  ],
 });
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
