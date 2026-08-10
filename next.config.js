@@ -11,6 +11,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const nextConfig = withPWA({
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
