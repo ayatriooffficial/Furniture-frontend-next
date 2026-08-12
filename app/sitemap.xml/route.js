@@ -7,6 +7,16 @@ import {
 import { BASE_URL } from "@/constants/base-url";
 import { fetchHeaderCategoryDataOnlyNames } from "@/components/Features/api";
 
+// XML-escape a URL string so special chars (&, <, >, ", ') never break the sitemap.
+function escapeXml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 // Optional: remove this line if you don't specifically need edge runtime.
 // export const runtime = "edge";  // ⚠️ Optional.
 
@@ -16,7 +26,7 @@ export async function GET() {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${urls.map(({ url }) => `<url><loc>${url}</loc></url>`).join("")}
+      ${urls.map(({ url }) => `<url><loc>${escapeXml(url)}</loc></url>`).join("")}
     </urlset>`;
 
     return new Response(xml, {
@@ -37,7 +47,7 @@ async function generateSitemapUrls() {
   for (const category of homedecorData) {
     for (const sub of category.subcategories) {
       homedecorPaths.push(
-        encodeURI(`/${category.name}/homedecor/${sub.name}`).replace(/&/g, "&amp;")
+        encodeURI(`/${category.name}/homedecor/${sub.name}`)
       );
     }
   }
@@ -47,7 +57,7 @@ async function generateSitemapUrls() {
   for (const category of walldecorData) {
     for (const sub of category.subcategories) {
       walldecorPaths.push(
-        encodeURI(`/${category.name}/walldecor/${sub.name}`).replace(/&/g, "&amp;")
+        encodeURI(`/${category.name}/walldecor/${sub.name}`)
       );
     }
   }
@@ -57,14 +67,14 @@ async function generateSitemapUrls() {
   for (const category of flooringData) {
     for (const sub of category.subcategories) {
       flooringPaths.push(
-        encodeURI(`/${category.name}/flooring/${sub.name}`).replace(/&/g, "&amp;")
+        encodeURI(`/${category.name}/flooring/${sub.name}`)
       );
     }
   }
 
   const categories = await fetchHeaderCategoryDataOnlyNames();
   const categoryPaths = categories.map((category) =>
-    encodeURI(`/${category.name}/category/all`.replace(" ", "-")).replace(/&/g, "&amp;")
+    encodeURI(`/${category.name}/category/all`.replace(" ", "-"))
   );
 
   const subcategoryPaths = [];
@@ -72,7 +82,6 @@ async function generateSitemapUrls() {
     category.subcategories.forEach((subcategory) => {
       subcategoryPaths.push(
         encodeURI(`/${category.name}/category/${subcategory.name}`.replace(" ", "-"))
-          .replace(/&/g, "&amp;")
       );
     });
   });
@@ -84,7 +93,7 @@ async function generateSitemapUrls() {
 
   const offers = await getOffers();
   const offerPaths = offers.map((offer) =>
-    encodeURI(`/offers/new/${offer.type}`.replace(" ", "-")).replace(/&/g, "&amp;")
+    encodeURI(`/offers/new/${offer.type}`.replace(" ", "-"))
   );
 
   const paths = [
