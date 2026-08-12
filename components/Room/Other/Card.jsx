@@ -1104,15 +1104,15 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
               )}
             </div>
             {imageData?.length > 1 && (
-              <>
-                <div className="colors flex gap-3">
-                  {imageData?.map((item, index) => (
+              <div className="colors flex gap-3">
+                {imageData?.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleColor(item.color)}
+                    className="flex flex-col items-center cursor-pointer"
+                  >
                     <div
-                      key={index}
-                      onClick={() => handleColor(item.color)}
-                      className={`parent relative w-[55px] h-[55px] text-gray-900 text-center text-xs flex justify-center items-center cursor-pointer
-            ${color === item.color ? " border-black " : " border-black"}   
-          `}
+                      className={`parent relative w-[55px] h-[55px] ${color === item.color ? "border border-black" : ""}`}
                     >
                       <Image
                         className="relative w-full h-full object-cover"
@@ -1121,15 +1121,16 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                         fill
                         style={{ objectFit: "cover" }}
                       />
-                      {color === item.color ? (
-                        <div className="w-[100%] h-[2px] bg-black mt-[57px]" />
-                      ) : (
-                        ""
-                      )}
                     </div>
-                  ))}
-                </div>
-              </>
+                    {color === item.color && (
+                      <div className="w-[55px] h-[2px] bg-black" />
+                    )}
+                    <span className="text-[11px] text-gray-600 mt-1 text-center leading-tight">
+                      {item.color}
+                    </span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
