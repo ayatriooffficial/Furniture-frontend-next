@@ -183,16 +183,14 @@ const TabImage = ({
 
       {/* Product Title Overlay */}
       {(labelData?.productTitle || circledData[0]?.productTitle) && (
-        <div className="absolute bottom-4 left-4 right-4 z-40">
-          <div className="flex items-center justify-between group cursor-pointer">
-            <h3 className="text-white font-bold group-hover:underline text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4 z-40">
+          <div className="flex items-center justify-between group cursor-pointer gap-2">
+            <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-2">
               {labelData?.productTitle || circledData[0]?.productTitle}
             </h3>
             <svg 
-              width="36" 
-              height="36" 
               viewBox="0 0 25 25" 
-              className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] shrink-0 transition-transform duration-300 group-hover:translate-x-2"
+              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] shrink-0 transition-transform duration-300 group-hover:translate-x-1 md:group-hover:translate-x-2"
             >
               <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
             </svg>
