@@ -7,21 +7,34 @@ import { useRouter } from "next/navigation";
 
 const Label = ({ data }) => {
   const router = useRouter();
-  // console.log(data)
+  
   const handleTab = () => {
     router.push(`${data?.productLink}`);
   };
 
-  // console.log(data)
+  const leftPos = Number(data?.leftPosition) || 50;
+  const topPos = Number(data?.topPosition) || 50;
+
+  const showOnRight = leftPos <= 50;
+  const showOnBottom = topPos <= 50;
+
+  const horizontalClasses = showOnRight
+    ? "lg:left-[34px] lg:right-auto -left-4 right-auto"
+    : "lg:right-[34px] lg:left-auto -right-4 left-auto";
+
+  const verticalClasses = showOnBottom
+    ? "lg:top-0 lg:bottom-auto top-[40px] bottom-auto"
+    : "lg:bottom-0 lg:top-auto bottom-[40px] top-auto";
+
   return (
-    <div className="absolute lg:top-2 lg:left-7 -left-12 top-[70px] z-50" onClick={handleTab}>
+    <div className={`absolute z-50 ${horizontalClasses} ${verticalClasses}`} onClick={handleTab}>
       <div
-        className={`flex-row z-10 mt-5 box-container-product w-fit h-auto flex items-center  bg-white cursor-pointer`}
+        className={`flex-row z-10 box-container-product w-fit h-auto flex items-center bg-white cursor-pointer`}
       >
-        <div className="flex absolute bg-white" style={{ boxShadow: '0 1px 4px rgba(var(--colour-static-black, 17, 17, 17), 0.55)' }}>
+        <div className="flex bg-white" style={{ boxShadow: '0 1px 4px rgba(var(--colour-static-black, 17, 17, 17), 0.55)' }}>
           <div className="flex flex-row relative min-w-[148px] w-[148px]">
             <div
-              className="flex flex-col basis-3/4 lg:w-28  flex-grow relative  m-[12px] "
+              className="flex flex-col basis-3/4 lg:w-28 flex-grow relative m-[12px] "
             >
               <p className="text-[12px] line-clamp-1 mb-[4px]  text-[#0152be] font-semibold">
                 Ayatrio Family price

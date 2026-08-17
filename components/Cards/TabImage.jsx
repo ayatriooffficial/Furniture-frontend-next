@@ -180,6 +180,25 @@ const TabImage = ({
           return null;
         })}
       </div>
+
+      {/* Product Title Overlay */}
+      {(labelData?.productTitle || circledData[0]?.productTitle) && (
+        <div className="absolute bottom-4 left-4 right-4 z-40">
+          <div className="flex items-center justify-between group cursor-pointer">
+            <h3 className="text-white font-bold group-hover:underline text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              {labelData?.productTitle || circledData[0]?.productTitle}
+            </h3>
+            <svg 
+              width="36" 
+              height="36" 
+              viewBox="0 0 25 25" 
+              className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] shrink-0 transition-transform duration-300 group-hover:translate-x-2"
+            >
+              <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
+            </svg>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

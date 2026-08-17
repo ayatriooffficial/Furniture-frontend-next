@@ -260,3 +260,18 @@
 /* .swiper .swiper-initialized .swiper-horizontal .swiper-backface-hidden{
   padding-right: 10px;
 } */
+
+@keyframes bounce-high {
+  0%, 100% {
+    transform: translateY(-150%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce-high {
+  animation: bounce-high 1s infinite;
+}

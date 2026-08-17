@@ -54,7 +54,7 @@ const PlaceInfo = (data) => {
   const groupedCoreValues = groupIntoThrees(coreValuesData);
   //
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
-  const [isFeaturesDropdownOpen, setIsFeaturesDropdownOpen] = useState(true);
+  const [isFeaturesDropdownOpen, setIsFeaturesDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -72,6 +72,20 @@ const PlaceInfo = (data) => {
             className="core-values-section"
             aria-labelledby="core-values-heading"
           >
+            {isDropdownOpen && (
+              <div className="flex flex-col gap-2 mb-5">
+                <p className="text-[#484848] text-xs font-normal">Pattern Number</p>
+                <div className="flex">
+                  <p
+                    className="bg-black px-4 py-1 text-white text-xs font-bold min-w-min"
+                    aria-label="Pattern number"
+                  >
+                    {data?.data?.patternNumber}
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between">
               <h2
                 id="core-values-heading"
@@ -102,9 +116,8 @@ const PlaceInfo = (data) => {
             {isDropdownOpen && (
               <div
                 id="core-values-content"
-                className={`place-features mt-7 hidden md:grid ${
-                  coreValuesData.length > 6 ? "grid-cols-2 gap-4" : ""
-                }`}
+                className={`place-features mt-7 hidden md:grid ${coreValuesData.length > 6 ? "grid-cols-2 gap-4" : ""
+                  }`}
                 aria-live="polite"
               >
                 {coreValuesData.length > 0 &&
@@ -251,9 +264,8 @@ const PlaceInfo = (data) => {
             {isFeaturesDropdownOpen && (
               <div
                 id="core-functionality-content"
-                className={`place-features mt-7 hidden md:grid ${
-                  featuresData.length > 6 ? "grid-cols-2 gap-4" : ""
-                }`}
+                className={`place-features mt-7 hidden md:grid ${featuresData.length > 6 ? "grid-cols-2 gap-4" : ""
+                  }`}
                 aria-live="polite"
               >
                 {featuresData.map((item, index) => (
@@ -355,20 +367,6 @@ const PlaceInfo = (data) => {
               </div>
             )}
           </section>
-        )}
-
-        {isDropdownOpen && (
-          <div className="flex flex-col gap-2">
-            <p className="text-[#484848] text-xs font-normal">Pattern Number</p>
-            <div className="flex">
-              <p
-                className="bg-black px-4 py-1 text-white text-xs font-bold min-w-min"
-                aria-label="Pattern number"
-              >
-                {data?.data?.patternNumber}
-              </p>
-            </div>
-          </div>
         )}
       </>
     </div>

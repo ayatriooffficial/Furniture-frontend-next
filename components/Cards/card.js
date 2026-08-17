@@ -205,18 +205,32 @@ function Card(props) {
 
   const cartData = useSelector(selecteddbItems);
 
+  const [cartStatus, setCartStatus] = useState("idle");
+
   const addProductToCart = async () => {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
-      {
-        deviceId: localStorage.getItem("deviceId"),
-        productId: props.id,
-        quantity: 1,
-      },
-    );
-    if (response.status === 200) {
-      setInCart(true);
-      dispatch(setDbItems(response.data));
+    try {
+      setCartStatus("loading");
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
+        {
+          deviceId: localStorage.getItem("deviceId"),
+          productId: props.id,
+          quantity: 1,
+        },
+      );
+      if (response.status === 200) {
+        setInCart(true);
+        dispatch(setDbItems(response.data));
+        setCartStatus("added");
+        setTimeout(() => {
+          setCartStatus("idle");
+        }, 3000);
+      } else {
+        setCartStatus("idle");
+      }
+    } catch (error) {
+      console.error(error);
+      setCartStatus("idle");
     }
   };
 
@@ -574,17 +588,25 @@ function Card(props) {
 
         <div className="flex my-2 items-center gap-2 hide-on-mobile">
           <div
-            className="bg-[#0152be] hover:bg-[#0049ab] p-2 mr-2 rounded-full"
+            className="bg-[#0152be] hover:bg-[#0049ab] w-[41px] h-[41px] mr-2 rounded-full flex justify-center items-center cursor-pointer"
             onClick={addProductToCart}
           >
-            <Image
-              loading="lazy"
-              src={"/icons/adtocart plush.svg"}
-              height={25}
-              width={25}
-              alt="add to cart icon"
-              className="cursor-pointer rounded-full"
-            />
+            {cartStatus === "loading" ? (
+              <div className="w-2 h-2 bg-white rounded-full animate-bounce-high" />
+            ) : cartStatus === "added" ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ) : (
+              <Image
+                loading="lazy"
+                src={"/icons/adtocart plush.svg"}
+                height={25}
+                width={25}
+                alt="add to cart icon"
+                className="cursor-pointer rounded-full"
+              />
+            )}
           </div>
 
           <div className="bg-[#fff] border border-solid border-[#efefef] hover:bg-[#f5f5f5] p-2 mr-2 rounded-full">
