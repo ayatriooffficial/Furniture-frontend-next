@@ -150,23 +150,32 @@ const RoomCard = () => {
                   href={`offers/new/${gallery.items[0].offer
                     .replace(/%/g, "percent")
                     .replace(/ /g, "-")}`}
+                  className="block w-full h-full"
                 >
-                  <div className="parent relative w-full h-full overflow-hidden">
+                  <div className="parent relative w-full h-full overflow-hidden group">
                     <Image
                       loading="lazy"
-                      className="child object-cover hover-zoom"
+                      className="child object-cover hover-zoom h-full w-full"
                       src={fixImageUrl(gallery.items[0].img)}
                       fill
                       alt={gallery.items[0].heading}
                     />
-                    <div className="absolute bottom-0 left-0 justify-start p-[30px] items-center">
-                      <div className="flex flex-col">
-                        <h2 className="text-white text-[12px]">
+
+                    {/* Smooth ease-out bottom scrim gradient */}
+                    <div className="absolute inset-x-0 bottom-0 h-44 sm:h-48 md:h-56 max-h-[80%] bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none z-10" />
+
+                    {/* Text and Icon Container */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-4 md:p-5 z-20">
+                      <div className="flex items-center justify-between group cursor-pointer gap-2">
+                        <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2">
                           {gallery.items[0].heading}
-                        </h2>
-                        <p className="text-[12px] font-semibold text-blue-500">
-                          View More
-                        </p>
+                        </h3>
+                        <svg 
+                          viewBox="0 0 25 25" 
+                          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 shrink-0 text-white fill-current transition-transform duration-300 group-hover:translate-x-1 md:group-hover:translate-x-1.5"
+                        >
+                          <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
+                        </svg>
                       </div>
                     </div>
                   </div>
