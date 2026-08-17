@@ -171,41 +171,98 @@ const Tabs = ({ data }) => {
     labelData: labelData[activeTab]?.[i] || [],
   }));
 
-  const visibleAllItems = allItems.slice(0, loadMoreAll ? 12 : 6);
-  const visibleActiveItems = activeItems.slice(0, loadMore ? 12 : 6);
+  const visibleAllItems = allItems.slice(0, loadMoreAll ? 12 : 3);
+  const visibleActiveItems = activeItems.slice(0, loadMore ? 12 : 3);
 
-  // Renders a single grid cell, alternating tile type based on GRID_PATTERN.
-  const renderTile = (item, idx) => {
-    const type = GRID_PATTERN[idx % GRID_PATTERN.length];
+  // Height / aspect rhythm matching IKEA design:
+  // Card 0 (Col 0): tall portrait (h-[480px] lg:h-[600px])
+  // Card 1 (Col 1): square/shorter (h-[360px] lg:h-[450px]) -> produces the middle gap
+  // Card 2 (Col 2): tall portrait (h-[480px] lg:h-[600px])
+  // Card 3 (Col 0): landscape/medium (h-[360px] lg:h-[450px])
+  // Card 4 (Col 1): tall portrait (h-[480px] lg:h-[600px]) -> starts directly inside the gap
+  // Card 5 (Col 2): square/medium (h-[360px] lg:h-[450px])
+  const getCardHeightClass = (idx) => {
+    const pattern = [
+      "h-[450px] sm:h-[500px] lg:h-[620px]", // 0 (Col 0, row 1 - tall)
+      "h-[340px] sm:h-[380px] lg:h-[460px]", // 1 (Col 1, row 1 - square/short -> leaves gap)
+      "h-[450px] sm:h-[500px] lg:h-[620px]", // 2 (Col 2, row 1 - tall)
+      "h-[340px] sm:h-[380px] lg:h-[460px]", // 3 (Col 0, row 2 - medium)
+      "h-[450px] sm:h-[500px] lg:h-[620px]", // 4 (Col 1, row 2 - tall -> fills gap)
+      "h-[340px] sm:h-[380px] lg:h-[460px]", // 5 (Col 2, row 2 - medium)
+    ];
+    return pattern[idx % pattern.length];
+  };
 
-    if (type === "tab") {
-      return (
+  const renderItemCard = (item, idx) => {
+    if (!item) return null;
+    return (
+      <div
+        key={item.key || `card-${idx}`}
+        className={`w-full ${getCardHeightClass(idx)} relative overflow-hidden bg-gray-100 transition-all duration-300`}
+      >
         <TabImage
-          key={item.key}
-          width={450}
+          width={600}
           height={700}
           src={item.src}
-          href={item.href}
           labelData={item.labelData}
           alt="Room"
           handleTab={handleTab}
-          onError={(e) => (e.target.style.display = "none")}
-        />
-      );
-    }
-
-    return (
-      <div key={item.key} className="overflow-hidden relative">
-        <Image
-          loading="lazy"
-          className="h-full w-full object-cover"
-          src={item.src}
-          alt="Room"
-          width={450}
-          height={350}
-          onError={(e) => (e.target.style.display = "none")}
+          showTitleOverlay={false}
+          onError={(e) => {
+            if (e?.target?.style) e.target.style.display = "none";
+          }}
         />
       </div>
+    );
+  };
+
+  const renderMasonryWaterfall = (items) => {
+    if (!items || items.length === 0) return null;
+
+    // Desktop 3 columns (Round-robin column distribution)
+    const col0 = [];
+    const col1 = [];
+    const col2 = [];
+
+    items.forEach((item, idx) => {
+      if (idx % 3 === 0) col0.push({ item, idx });
+      else if (idx % 3 === 1) col1.push({ item, idx });
+      else col2.push({ item, idx });
+    });
+
+    // Mobile 2 columns
+    const mobCol0 = [];
+    const mobCol1 = [];
+    items.forEach((item, idx) => {
+      if (idx % 2 === 0) mobCol0.push({ item, idx });
+      else mobCol1.push({ item, idx });
+    });
+
+    return (
+      <>
+        {/* Desktop 3-Column Waterfall (md and above) */}
+        <div className="hidden md:grid md:grid-cols-3 gap-4 lg:gap-6 items-start">
+          <div className="flex flex-col gap-4 lg:gap-6">
+            {col0.map(({ item, idx }) => renderItemCard(item, idx))}
+          </div>
+          <div className="flex flex-col gap-4 lg:gap-6">
+            {col1.map(({ item, idx }) => renderItemCard(item, idx))}
+          </div>
+          <div className="flex flex-col gap-4 lg:gap-6">
+            {col2.map(({ item, idx }) => renderItemCard(item, idx))}
+          </div>
+        </div>
+
+        {/* Mobile 2-Column Waterfall (< md screens) */}
+        <div className="grid grid-cols-2 md:hidden gap-3 items-start">
+          <div className="flex flex-col gap-3">
+            {mobCol0.map(({ item, idx }) => renderItemCard(item, idx))}
+          </div>
+          <div className="flex flex-col gap-3">
+            {mobCol1.map(({ item, idx }) => renderItemCard(item, idx))}
+          </div>
+        </div>
+      </>
     );
   };
 
@@ -222,11 +279,6 @@ const Tabs = ({ data }) => {
           style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}
         >
           <div
-            // className={`px-5 py-2 tabS cursor-pointer ${
-            //   activeTab === "all"
-            //     ? "active-tabs border border-black mr-2.5 rounded-full flex items-center justify-center bg-gray-100 whitespace-nowrap"
-            //     : "tabs border border-white mr-2.5 rounded-full flex items-center justify-center bg-gray-100 whitespace-nowrap"
-            // }`}
             className={`px-5 py-2 tabS mr-2.5 cursor-pointer font-extrabold text-sm rounded-full whitespace-nowrap ${
               activeTab === "all"
                 ? " bg-gray-100 text-black border-2 border-black"
@@ -254,33 +306,15 @@ const Tabs = ({ data }) => {
         {activeTab === "all" ? (
           <div
             ref={navbarRef}
-            className={`classic-tabs  ${isSticky ? "mt-20" : ""}`}
+            className={`classic-tabs ${isSticky ? "mt-20" : ""}`}
           >
-            <div className=" text-green-800 grid sm:grid-cols-3 grid-cols-2 gap-[1rem] grid-rows-3 ">
-              {visibleAllItems.map((item, idx) => (
-                <Fragment key={item.key}>
-                  {renderTile(item, idx)}
-                  {idx === 8 && loadMoreAll && (
-                    <div className="overflow-hidden sm:hidden block">
-                      <Image
-                        loading="lazy"
-                        className="h-full w-full object-cover "
-                        src=""
-                        alt="Room"
-                        width={200}
-                        height={200}
-                        onError={(e) => (e.target.style.display = "none")}
-                      />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </div>
+            {renderMasonryWaterfall(visibleAllItems)}
+
             {!loadMoreAll && (
-              <div className="flex items-center justify-center mt-[20px]">
+              <div className="flex items-center justify-center mt-[24px]">
                 <p
                   onClick={handleLoadMoreAll}
-                  className="text-center text-[14px] bg-[#f5f5f5] border-none font-semibold border max-w-fit p-2 px-4 rounded-full  cursor-pointer"
+                  className="text-center text-[14px] bg-[#f5f5f5] border-none font-semibold border max-w-fit p-2 px-6 rounded-full cursor-pointer hover:bg-gray-200 transition-colors"
                 >
                   More
                 </p>
@@ -292,31 +326,13 @@ const Tabs = ({ data }) => {
             ref={navbarRef}
             className={`classic-tabs ${isSticky ? "mt-20" : ""}`}
           >
-            <div className=" text-green-800 grid sm:grid-cols-3 grid-cols-2 gap-3 grid-rows-3">
-              {visibleActiveItems.map((item, idx) => (
-                <Fragment key={item.key}>
-                  {renderTile(item, idx)}
-                  {idx === 2 && (
-                    <div className="overflow-hidden sm:hidden block">
-                      <Image
-                        loading="lazy"
-                        className="h-full w-full object-cover "
-                        src="/images/temp.svg"
-                        alt="Room"
-                        width={200}
-                        height={200}
-                        onError={(e) => (e.target.style.display = "none")}
-                      />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </div>
+            {renderMasonryWaterfall(visibleActiveItems)}
+
             {!loadMore && (
-              <div className="flex items-center justify-center mt-[20px]">
+              <div className="flex items-center justify-center mt-[24px]">
                 <p
                   onClick={handleLoadMore}
-                  className="text-center border-none text-[14px] font-semibold border max-w-fit p-2 px-4 rounded-full bg-[#f5f5f5] cursor-pointer"
+                  className="text-center border-none text-[14px] font-semibold border max-w-fit p-2 px-6 rounded-full bg-[#f5f5f5] cursor-pointer hover:bg-gray-200 transition-colors"
                 >
                   More
                 </p>

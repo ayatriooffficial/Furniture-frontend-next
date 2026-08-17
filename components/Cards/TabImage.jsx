@@ -17,6 +17,7 @@ const TabImage = ({
   href,
   firstData,
   hovered,
+  showTitleOverlay = true,
 }) => {
   const circledData = Array.isArray(labelData) ? labelData : [labelData];
 
@@ -55,7 +56,7 @@ const TabImage = ({
   const [openData, setOpenData] = useState(new Array(circledData.length).fill(false));
 
   return (
-    <div className="child w-full h-full row-span-2 relative overflow-hidden">
+    <div className="child w-full h-full relative overflow-hidden">
       {src && (
         // Check if src is a valid value before rendering the image
         href ? (
@@ -182,7 +183,7 @@ const TabImage = ({
       </div>
 
       {/* Product Title Overlay */}
-      {(labelData?.productTitle || circledData[0]?.productTitle) && (
+      {showTitleOverlay && (labelData?.productTitle || circledData[0]?.productTitle) && (
         <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4 z-40">
           <div className="flex items-center justify-between group cursor-pointer gap-2">
             <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-2">
