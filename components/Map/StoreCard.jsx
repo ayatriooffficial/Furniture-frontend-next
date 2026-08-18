@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-const StoreCard = ({ place, userLocation, isSelected, onClick, onStartNavigation }) => {
+const StoreCard = ({ place, userLocation, isSelected, onClick }) => {
   const [actualDistance, setActualDistance] = useState(
     place.distance?.exactRoute ? place.distance.kilometers : null
   );
@@ -110,25 +110,6 @@ const StoreCard = ({ place, userLocation, isSelected, onClick, onStartNavigation
             {place.phone}
           </a>
         </p>
-
-        {/* Start Navigation button — visible only on selected card */}
-        {isSelected && onStartNavigation && (
-          <div className="flex justify-end mt-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onStartNavigation(place);
-              }}
-              className="flex items-center gap-1 bg-black text-white text-[10px] sm:text-[11px] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-md"
-              aria-label={`Start navigation to ${place.name}`}
-            >
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5,3 19,12 5,21" />
-              </svg>
-              Start
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

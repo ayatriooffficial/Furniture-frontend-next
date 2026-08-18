@@ -20,8 +20,6 @@ import { mapStyles } from "./mapStyles";
 import MapMarker from "./MapMarker";
 import StoreCard from "./StoreCard";
 import Search from "./Search";
-import NavigationOverlay from "./NavigationOverlay";
-import { useNavigation } from "./useNavigation";
 import "./styles.css";
 
 // Libraries to load once (must be stable array reference)
@@ -52,11 +50,6 @@ const Map = ({
 }) => {
   const polylineRef = useRef(null); // imperative handle to the single route polyline
   const [map, setMap] = useState(null);
-  const mapRef = useRef(null); // ref kept in sync with map state for use in hook
-
-  // Cached route data from the most recent successful fetch
-  // (so navigation can reuse it without a second API call)
-  const lastRouteDataRef = useRef(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: REACT_APP_GMAP_API_KEY,
@@ -68,24 +61,9 @@ const Map = ({
   const india_zoom = 5;
   const hotels_zoom = 13;
   const [zoom, setZoom] = useState(india_zoom);
-  const [selectedCoords, setSelectedCoords] = useState(coords);
+  const [selectedCoords, setSelectedCoords] = useState(coords); // ← FIX: was missing
 
   const dispatch = useDispatch();
-
-  // ── Navigation hook ────────────────────────────────────────────────────────
-  const {
-    isNavigating,
-    livePosition,
-    heading,
-    currentStep,
-    nextStep,
-    remainingDist,
-    eta,
-    isRerouting,
-    hasArrived,
-    startNavigation,
-    stopNavigation,
-  } = useNavigation({ mapRef, userLocation });
 
   const handleResultClick = ({ lat, lng }) => {
     if (lat && lng && lat !== null && lng !== null) {
@@ -106,7 +84,6 @@ const Map = ({
   const onLoad = useCallback(
     (mapInstance) => {
       setMap(mapInstance);
-      mapRef.current = mapInstance; // keep ref in sync
 
       // Auto-fit bounds to show ONLY the closest store + user location
       if (PlacesData && PlacesData.length > 0 && window.google?.maps) {
@@ -161,6 +138,8 @@ const Map = ({
 
   // ─── CENTRAL ROUTE CONTROLLER ──────────────────────────────────────────────
   // Imperatively manages ONE native google.maps.Polyline via polylineRef.
+  // Calling .setMap(null) on the previous ref guarantees the old blue line is
+  // DESTROYED before drawing a new one. No React <Polyline> re-mount races.
   useEffect(() => {
     if (!clickedItem || !userLocation || !map) {
       if (polylineRef.current) {
@@ -196,10 +175,6 @@ const Map = ({
         );
         if (!res.ok) return;
         const data = await res.json();
-
-        // Cache the route so Start Navigation can reuse it without a second fetch
-        lastRouteDataRef.current = data.route || null;
-
         const encoded = data.route?.polyline;
         if (!encoded) return;
 
@@ -260,10 +235,8 @@ const Map = ({
   }, [clickedItem, userLocation, map]);
 
   // ─── Camera re-framing ────────────────────────────────────────────────────
-  // Only re-frame when NOT actively navigating (navigation hook handles panning)
   useEffect(() => {
     if (!map || !userLocation || !clickedItem || !window.google?.maps) return;
-    if (isNavigating) return; // navigation hook owns the camera
     const bounds = new window.google.maps.LatLngBounds();
     bounds.extend(userLocation);
     if (clickedItem.geo_location?.latitude && clickedItem.geo_location?.longitude) {
@@ -278,58 +251,7 @@ const Map = ({
       map.panTo(bounds.getCenter());
       setTimeout(() => map.fitBounds(bounds, { top: 100, right: 80, bottom: 120, left: 80 }), 500);
     }
-  }, [clickedItem, userLocation, map, isNavigating]);
-
-  // ── Helper for navigation: draw a fresh polyline from a decoded path array
-  const drawNavPolyline = useCallback((path) => {
-    if (!map || !path?.length) return;
-    if (polylineRef.current) {
-      polylineRef.current.setMap(null);
-      polylineRef.current = null;
-    }
-    polylineRef.current = new window.google.maps.Polyline({
-      path,
-      strokeColor: "#4285F4",
-      strokeOpacity: 0.9,
-      strokeWeight: 5,
-      geodesic: true,
-      zIndex: 100,
-      map,
-    });
-  }, [map]);
-
-  // ── Handle "Start Navigation" from a StoreCard ────────────────────────────
-  const handleStartNavigation = useCallback((store) => {
-    const destLat = parseFloat(store.geo_location?.latitude);
-    const destLng = parseFloat(store.geo_location?.longitude);
-    if (!destLat || !destLng) return;
-    const dest = { lat: destLat, lng: destLng };
-    // Zoom in closer for nav mode
-    if (map) {
-      map.setZoom(17);
-      if (userLocation) map.panTo(userLocation);
-    }
-    startNavigation(dest, lastRouteDataRef.current, drawNavPolyline);
-  }, [map, userLocation, startNavigation, drawNavPolyline]);
-
-  // ── Stop navigation and restore normal view ───────────────────────────────
-  const handleStopNavigation = useCallback(() => {
-    stopNavigation();
-    // Restore camera to show route
-    if (map && userLocation && clickedItem) {
-      const bounds = new window.google.maps.LatLngBounds();
-      bounds.extend(userLocation);
-      if (clickedItem.geo_location?.latitude && clickedItem.geo_location?.longitude) {
-        bounds.extend({
-          lat: parseFloat(clickedItem.geo_location.latitude),
-          lng: parseFloat(clickedItem.geo_location.longitude),
-        });
-      }
-      if (!bounds.isEmpty()) {
-        setTimeout(() => map.fitBounds(bounds, { top: 100, right: 80, bottom: 120, left: 80 }), 300);
-      }
-    }
-  }, [stopNavigation, map, userLocation, clickedItem]);
+  }, [clickedItem, userLocation, map]);
 
   // Kept for backward-compat (no-ops — routing is now fully imperative)
   const handleRouteDisplay = () => {};
@@ -442,85 +364,34 @@ const Map = ({
               gestureHandling: "greedy",
             }}
           >
-            {/* User location marker — directional arrow during nav, blue dot otherwise */}
+            {/* User location marker (blue dot) + search radius circle */}
             {userLocation && (
               <>
-                {isNavigating && livePosition ? (
-                  // ── Rotating navigation arrow marker ────────────────────
-                  <OverlayViewF
-                    position={livePosition}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                  >
-                    {/* Outer div only centers the element on the coordinate — NO rotation here */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        transform: "translate(-50%, -50%)",
-                        width: 40,
-                        height: 40,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.45))",
-                      }}
-                    >
-                      {/* SVG rotates around its own center — stays pinned on coordinate */}
-                      <svg
-                        width="40"
-                        height="40"
-                        viewBox="0 0 40 40"
-                        fill="none"
-                        style={{
-                          transform: `rotate(${heading ?? 0}deg)`,
-                          transformOrigin: "center",
-                          transition: "transform 0.4s ease",
-                          display: "block",
-                        }}
-                      >
-                        {/* Outer glow ring */}
-                        <circle cx="20" cy="20" r="18" fill="rgba(66,133,244,0.2)" />
-                        {/* Main body circle */}
-                        <circle cx="20" cy="20" r="14" fill="#4285F4" />
-                        {/* Direction arrow — points up (north = 0°) */}
-                        <polygon points="20,6 26,28 20,23 14,28" fill="white" />
-                        {/* White border ring */}
-                        <circle cx="20" cy="20" r="14" stroke="white" strokeWidth="2.5" fill="none" />
-                      </svg>
-                    </div>
-                  </OverlayViewF>
-                ) : (
-                  // ── Static blue dot (non-navigation) ──────────────────
-                  <MarkerF
-                    position={userLocation}
-                    icon={{
-                      path: window.google.maps.SymbolPath.CIRCLE,
-                      scale: 10,
-                      fillColor: "#4285F4",
-                      fillOpacity: 1,
-                      strokeColor: "#ffffff",
-                      strokeWeight: 3,
-                      // Anchor at circle center so the dot sits exactly on the coordinate
-                      anchor: new window.google.maps.Point(0, 0),
-                    }}
-                    title="Your location"
-                    zIndex={1000}
-                  />
-                )}
-                {/* Search radius circle — hide during navigation for cleaner UI */}
-                {!isNavigating && (
-                  <CircleF
-                    center={userLocation}
-                    radius={50000}
-                    options={{
-                      strokeColor: "#4285F4",
-                      strokeOpacity: 0.35,
-                      strokeWeight: 2,
-                      fillColor: "#4285F4",
-                      fillOpacity: 0.06,
-                      clickable: false,
-                    }}
-                  />
-                )}
+                <MarkerF
+                  position={userLocation}
+                  icon={{
+                    path: window.google.maps.SymbolPath.CIRCLE,
+                    scale: 10,
+                    fillColor: "#4285F4",
+                    fillOpacity: 1,
+                    strokeColor: "#ffffff",
+                    strokeWeight: 3,
+                  }}
+                  title="Your location"
+                  zIndex={1000}
+                />
+                <CircleF
+                  center={userLocation}
+                  radius={50000} // 50 km in meters
+                  options={{
+                    strokeColor: "#4285F4",
+                    strokeOpacity: 0.35,
+                    strokeWeight: 2,
+                    fillColor: "#4285F4",
+                    fillOpacity: 0.06,
+                    clickable: false,
+                  }}
+                />
               </>
             )}
 
@@ -554,20 +425,8 @@ const Map = ({
             })}
           </GoogleMap>
 
-          {/* Navigation Overlay HUD */}
-          <NavigationOverlay
-            isNavigating={isNavigating}
-            currentStep={currentStep}
-            nextStep={nextStep}
-            remainingDist={remainingDist}
-            eta={eta}
-            isRerouting={isRerouting}
-            hasArrived={hasArrived}
-            onStop={handleStopNavigation}
-          />
-
-          {/* Horizontal scrollable bottom list of store cards — hidden during nav */}
-          {PlacesData && PlacesData.length > 0 && !isNavigating && (
+          {/* Horizontal scrollable bottom list of store cards */}
+          {PlacesData && PlacesData.length > 0 && (
             <div className="fixed bottom-0 left-0 w-full z-[1000] overflow-x-auto pb-1 pt-10 px-4 custom-scrollbar pointer-events-none">
               <div className="flex gap-4 pointer-events-auto items-stretch">
                 {PlacesData.map((store, i) => {
@@ -582,7 +441,6 @@ const Map = ({
                       userLocation={userLocation}
                       isSelected={isSelected}
                       onClick={() => dispatch(setClickedItem(store))}
-                      onStartNavigation={handleStartNavigation}
                     />
                   );
                 })}
