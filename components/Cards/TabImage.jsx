@@ -190,17 +190,31 @@ const TabImage = ({
 
           {/* Text and Icon Container */}
           <div className="relative z-10 p-3.5 sm:p-4 md:p-5 pointer-events-auto">
-            <div className="flex items-center justify-between group cursor-pointer gap-2">
-              <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2">
-                {labelData?.productTitle || circledData[0]?.productTitle}
-              </h3>
-              <svg 
-                viewBox="0 0 25 25" 
-                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 shrink-0 text-white fill-current transition-transform duration-300 group-hover:translate-x-1 md:group-hover:translate-x-1.5"
-              >
-                <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
-              </svg>
-            </div>
+            {href ? (
+              <Link href={href} className="flex items-center justify-between group cursor-pointer gap-2">
+                <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2">
+                  {labelData?.productTitle || circledData[0]?.productTitle}
+                </h3>
+                <svg 
+                  viewBox="0 0 25 25" 
+                  className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 shrink-0 text-white fill-current transition-transform duration-300 group-hover:translate-x-1 md:group-hover:translate-x-1.5"
+                >
+                  <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
+                </svg>
+              </Link>
+            ) : (
+              <div className="flex items-center justify-between group cursor-pointer gap-2">
+                <h3 className="text-white font-bold group-hover:underline text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2">
+                  {labelData?.productTitle || circledData[0]?.productTitle}
+                </h3>
+                <svg 
+                  viewBox="0 0 25 25" 
+                  className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 shrink-0 text-white fill-current transition-transform duration-300 group-hover:translate-x-1 md:group-hover:translate-x-1.5"
+                >
+                  <path fill="white" d="M11.1,17.9l-1-1l4.4-4.4L9.9,8.1l1.1-1.1l5.5,5.6L11.1,17.9z"/>
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       )}
