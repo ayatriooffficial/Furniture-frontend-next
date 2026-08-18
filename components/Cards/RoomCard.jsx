@@ -116,9 +116,9 @@ const RoomCard = () => {
           </p>
           <div className="border hidden border-black rounded-full lg:flex items-center justify-center h-[40px] cursor-pointer hover:border-gray-700 transition-colors">
             <Link
-              href={`offers/new/${gallery.items[0].offer
-                .replace(/%/g, "percent")
-                .replace(/ /g, "-")}`}
+              href={`offers/new/${encodeURIComponent(gallery.items[0]?.offer || "")
+                .replace(/%25/g, "percent")
+                .replace(/%20/g, "-")}`}
             >
               <div className="flex items-center gap-5 px-5">
                 <p className="text-[12px] font-semibold">
@@ -147,10 +147,9 @@ const RoomCard = () => {
       lg:col-start-1 lg:col-end-7 lg:row-start-1 lg:row-end-12"
               >
                 <Link
-                  href={`offers/new/${gallery.items[0].offer
-                    .replace(/%/g, "percent")
-                    .replace(/ /g, "-")}`}
-                  className="block w-full h-full"
+                  href={`offers/new/${encodeURIComponent(gallery.items[0]?.offer || "")
+                    .replace(/%25/g, "percent")
+                    .replace(/%20/g, "-")}`}
                 >
                   <div className="parent relative w-full h-full overflow-hidden group">
                     <Image
@@ -187,15 +186,12 @@ const RoomCard = () => {
                   <>
                     <div className="parent col-start-1 col-end-2 row-start-6 row-span-2 lg:col-start-7 lg:col-end-10 lg:row-start-1 lg:row-end-6">
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[0]?.imgSrc)}
-                        href={`/${gallery?.rooms[0]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
-                        alt={`Image of ${gallery?.rooms[0]?.children}`}
+                        src={fixImageUrl(gallery?.rooms[0]?.room?.imgSrc)}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        alt={`Image of ${gallery?.rooms[0]?.room?.children}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[0]?.children}
+                        labelData={gallery?.rooms[0]?.room?.children}
                         firstData
                       />
                     </div>
@@ -204,15 +200,12 @@ const RoomCard = () => {
     lg:col-start-10 lg:col-end-13 lg:row-start-1 lg:row-end-7"
                     >
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[1]?.imgSrc)}
-                        alt={`Image of ${gallery?.rooms[1]?.children}`}
-                        href={`/${gallery?.rooms[1]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
+                        src={fixImageUrl(gallery?.rooms[1]?.room?.imgSrc)}
+                        alt={`Image of ${gallery?.rooms[1]?.room?.children}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[1]?.children}
+                        labelData={gallery?.rooms[1]?.room?.children}
                       />
                     </div>
                     <div
@@ -220,15 +213,12 @@ const RoomCard = () => {
       lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12"
                     >
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[2]?.imgSrc)}
-                        alt={`Image of ${gallery?.rooms[2]?.children}`}
-                        href={`/${gallery?.rooms[2]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
+                        src={fixImageUrl(gallery?.rooms[2]?.room?.imgSrc)}
+                        alt={`Image of ${gallery?.rooms[2]?.room?.children}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[2]?.children}
+                        labelData={gallery?.rooms[2]?.room?.children}
                       />
                     </div>
                     <div
@@ -236,15 +226,12 @@ const RoomCard = () => {
       lg:col-start-10 lg:col-end-13 lg:row-start-7 lg:row-end-12"
                     >
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[3]?.imgSrc)}
-                        href={`/${gallery?.rooms[3]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
-                        alt={`Image of ${gallery?.rooms[3]?.children}`}
+                        src={fixImageUrl(gallery?.rooms[3]?.room?.imgSrc)}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[3]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        alt={`Image of ${gallery?.rooms[3]?.room?.children}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[3]?.children}
+                        labelData={gallery?.rooms[3]?.room?.children}
                       />
                     </div>
                   </>
@@ -252,42 +239,33 @@ const RoomCard = () => {
                   <>
                     <div className="parent col-start-1 col-end-3 row-start-6 row-span-2 lg:col-start-7 lg:col-end-13 lg:row-start-1 lg:row-end-6">
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[0]?.imgSrc)}
-                        href={`/${gallery?.rooms[0]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
-                        alt={`Image of ${gallery?.rooms[0]?.children}`}
+                        src={fixImageUrl(gallery?.rooms[0]?.room?.imgSrc)}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        alt={`Image of ${gallery?.rooms[0]?.room?.children}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[0]?.children}
+                        labelData={gallery?.rooms[0]?.room?.children}
                         firstData
                       />
                     </div>
                     <div className="parent col-start-1 col-end-2 row-start-8 row-span-3 lg:col-start-7 lg:col-end-10 lg:row-start-6 lg:row-end-12">
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[2]?.imgSrc)}
-                        alt={`Image of ${gallery?.rooms[2]?.children}`}
-                        href={`/${gallery?.rooms[2]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
+                        src={fixImageUrl(gallery?.rooms[2]?.room?.imgSrc)}
+                        alt={`Image of ${gallery?.rooms[2]?.room?.children}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[2]?.children}
+                        labelData={gallery?.rooms[2]?.room?.children}
                       />
                     </div>
                     <div className="parent col-start-2 col-end-3 row-start-8 row-span-3 lg:col-start-10 lg:col-end-13 lg:row-start-6 lg:row-end-12">
                       <TabImage
-                        src={fixImageUrl(gallery?.rooms[1]?.imgSrc)}
-                        alt={`Image of ${gallery?.rooms[1]?.children}`}
-                        href={`/${gallery?.rooms[1]?.productCategory.replace(
-                          / /g,
-                          "-"
-                        )}/collection/all`}
+                        src={fixImageUrl(gallery?.rooms[1]?.room?.imgSrc)}
+                        alt={`Image of ${gallery?.rooms[1]?.room?.children}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
                         width={1000}
                         height={338}
-                        labelData={gallery?.rooms[1]?.children}
+                        labelData={gallery?.rooms[1]?.room?.children}
                       />
                     </div>
                   </>

@@ -56,7 +56,9 @@ const ProductPage = ({
 
   const pathname = usePathname();
   const [type, setType] = useState(
-    initialSubcategory || params.cat.replace(/-/g, " ").replace(/percent/g, "%")
+    initialSubcategory || decodeURIComponent(
+      params.cat.replace(/-/g, "%20").replace(/percent/g, "%25")
+    )
   );
 
   const [isFilterVisible, setIsFilterVisible] = useState(true);
@@ -349,8 +351,8 @@ const ProductPage = ({
     }
 
     dispatch(setFilteredProductCurrentPage(pageNumber));
-    
-    const payload = type === "all" 
+
+    const payload = type === "all"
       ? { heading: "collection", parentCategoryVar: parentCategory.replace(/-/g, " ") }
       : { parentCategoryVar: parentCategory.replace(/-/g, " "), cat: type };
 
@@ -358,7 +360,7 @@ const ProductPage = ({
       type: "FETCH_FILTER_PRODUCTS",
       payload,
     });
-    
+
     // Scroll to the top of the page when navigating to a new page
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -389,7 +391,7 @@ const ProductPage = ({
   return (
     <Tabproduct
       filteredProductData={
-                parentCategory === "virtualexperience"
+        parentCategory === "virtualexperience"
           ? filteredProducts
           : parentCategory === "offers"
             ? offerProductData
@@ -414,10 +416,10 @@ const ProductPage = ({
       structuredFeatures={
         isSubcategoryPage
           ? category?.subcategories?.find(
-              (sub) =>
-                sub.name?.toLowerCase() ===
-                (pathname?.split("/")[1] || "").replace(/-/g, " ").toLowerCase()
-            )?.structuredFeatures
+            (sub) =>
+              sub.name?.toLowerCase() ===
+              (pathname?.split("/")[1] || "").replace(/-/g, " ").toLowerCase()
+          )?.structuredFeatures
           : category?.structuredFeatures
       }
       card={category?.card}

@@ -137,18 +137,23 @@ function TabsProductCard(props) {
   };
 
   const addProductToCart = async () => {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
-      {
-        deviceId: localStorage.getItem("deviceId"),
-        productId: props.id,
-        quantity: 1,
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart`,
+        {
+          deviceId: localStorage.getItem("deviceId"),
+          productId: props.id,
+          quantity: 1,
+        }
+      );
+      if (response.status === 200) {
+        setInCart(true);
+        dispatch(setDbItems(response.data));
       }
-    );
-    if (response.status === 200) {
-      setInCart(true);
-      dispatch(setDbItems(response.data));
+    } catch (err) {
+      console.log("Not able to add in cart: ", err);
     }
+
   };
 
 

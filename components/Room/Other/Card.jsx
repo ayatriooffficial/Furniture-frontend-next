@@ -1929,7 +1929,7 @@ const Card = ({ data, productId, isModalOpen, setIsModalOpen }) => {
                               />
                             </button>
                           </div>
-                          <Calculation priceData={data} />
+                          <Calculation priceData={data} selectedDimension={selectedSpecData} />
                         </div>
                       </div>
                     </section>

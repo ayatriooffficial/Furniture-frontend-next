@@ -50,7 +50,9 @@ export async function generateMetadata({ params }) {
   }
 
   if (isOfferPage) {
-    const offerType = cat?.replace(/-/g, " ").replace("percent", "%");
+    const offerType = decodeURIComponent(
+      cat?.replace(/-/g, "%20").replace(/percent/g, "%25") || ""
+    );
 
     const offer = await getOffer(offerType);
 
