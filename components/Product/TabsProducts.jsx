@@ -384,7 +384,7 @@ const Tabs = ({
   const [showCompare, setShowCompare] = useState(false);
   const [activeCompare, setActiveCompare] = useState(true);
   const [filteredSubCategory, setFilteredSubCategory] = useState(null);
-  const [offerCategoryData, setOfferCategoryData] = useState([]);
+
 
   const handleOpen = () => {
     if (
@@ -669,23 +669,7 @@ const Tabs = ({
     }
   }, [subCategory, pathname]);
 
-  useEffect(() => {
-    const fetchOfferCategory = async () => {
-      try {
-        const apiUrl = `${
-          process.env.NEXT_PUBLIC_API_BASE_URL
-        }/api/getAllCategoryByOffer/${encodeURI(type || "")}`;
-        const response = await axios.get(apiUrl);
-        setOfferCategoryData(response.data || []);
-      } catch (error) {
-        console.error("Error fetching offer category:", error.message);
-        setOfferCategoryData([]);
-      }
-    };
-    if (parentCategory === "offers") {
-      fetchOfferCategory();
-    }
-  }, [type]);
+
 
   const renderDescription = (description) => {
     if (!description) return null;
@@ -1049,7 +1033,7 @@ const Tabs = ({
 
           <div className="flex items-center">
             {!subCategory &&
-              offerCategoryData.length === 0 &&
+              offerCategory.length === 0 &&
               allTypes.length === 0 && (
                 <div className="group flex flex-col justify-start gap-6 mb-4">
                   <div className="flex gap-4">
@@ -1074,10 +1058,10 @@ const Tabs = ({
                   parentCategory={parentCategory}
                 />
               </div>
-            ) : parentCategory === "offers" && offerCategoryData.length > 0 ? (
+            ) : parentCategory === "offers" && offerCategory.length > 0 ? (
               <div className="group flex flex-row items-center justify-start gap-2 mb-4 w-full">
                 <OfferSlider
-                  offerCategoryData={offerCategoryData}
+                  offerCategoryData={offerCategory}
                   setSelectedOfferCategory={setSelectedOfferCategory}
                   subCategory={subCategory}
                 />

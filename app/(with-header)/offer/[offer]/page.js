@@ -1,7 +1,7 @@
 "use client";
 import Image from 'next/image';
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Card from "../../../../components/Cards/card";
 
@@ -11,6 +11,8 @@ const transformOffer = (str) => {
 
 const OfferPage = () => {
   const { offer } = useParams(); // e.g., 50percent-Off
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,9 @@ const OfferPage = () => {
         if (offer) {
           const transformedOffer = transformOffer(offer);
           url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllProductsByOffer/${encodeURIComponent(transformedOffer)}`;
+          if (category) {
+            url += `?category=${encodeURIComponent(category)}`;
+          }
         } else {
           url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/productsWithOffers`;
         }
@@ -37,7 +42,7 @@ const OfferPage = () => {
     };
 
     fetchOfferData();
-  }, [offer]);
+  }, [offer, category]);
 
   if (loading) return <p className="p-4">Loading offer...</p>;
 

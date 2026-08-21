@@ -17,7 +17,7 @@ import { allSelectedData } from "@/components/Features/Slices/virtualDataSlice";
 import "@/components/Product/styles.css";
 import Tabproduct from "@/components/Product/TabsProducts";
 import axios from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -33,26 +33,11 @@ const ProductPage = ({
 
   const subtitle = params.subtitle.replace(/-/g, " ");
   // console.log(parentCategory.replace(/-/g, " "))
-  let queryString;
-  if (typeof window !== "undefined") {
-    queryString = window.location.search;
-  }
-
-  // const [products, setProducts] = useState([]);
-  // const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
-
-  const parseQueryString = (queryString) => {
-    const params = new URLSearchParams(queryString);
-    const queryParams = {};
-    for (const [key, value] of params.entries()) {
-      queryParams[key] = value;
-    }
-    return queryParams;
-  };
-  const queryParams = parseQueryString(queryString);
-  const demandtype = queryParams?.demandtype;
-  const offer = queryParams?.offer?.replace(/-/g, " ").replace(/percent/g, "%");
+  const searchParams = useSearchParams();
+  const demandtype = searchParams.get("demandtype");
+  const offerRaw = searchParams.get("offer");
+  const offer = offerRaw ? offerRaw.replace(/-/g, " ").replace(/percent/g, "%") : undefined;
+  const categoryParam = searchParams.get("category");
 
   const pathname = usePathname();
   const [type, setType] = useState(
@@ -73,15 +58,33 @@ const ProductPage = ({
   const [allTypes, setAllTypes] = useState([]);
   const [selectedOfferCategory, setSelectedOfferCategory] = useState("");
 
-  const [offerCategory, setOfferCategory] = useState([]);
+  const [allOfferCategories, setAllOfferCategories] = useState([]);
+
+  useEffect(() => {
+    if (parentCategory === "offers") {
+      const fetchOfferCategory = async () => {
+        try {
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllCategoryByOffer/${encodeURI(type || "")}`;
+          const response = await axios.get(apiUrl);
+          setAllOfferCategories(response.data || []);
+        } catch (error) {
+          console.error("Error fetching offer category:", error.message);
+          setAllOfferCategories([]);
+        }
+      };
+      fetchOfferCategory();
+    }
+  }, [type, parentCategory]);
+
+  let offerCategory = [];
 
   if (
     parentCategory === "offers" &&
     offerProductData &&
     offerProductData.length > 0
   ) {
-    // offerCategory = offerProductData.map((product) => product.category);
-    // if (offerCategory.length > 0) offerCategory = [...new Set(offerCategory)];
+    const shownCategoryNames = [...new Set(offerProductData.map((p) => p.category))];
+    offerCategory = allOfferCategories.filter((c) => shownCategoryNames.includes(c.name));
 
     if (selectedOfferCategory) {
       offerProductData = offerProductData.filter(
@@ -157,7 +160,7 @@ const ProductPage = ({
       // console.log({ encodedType });
       dispatch({
         type: "FETCH_PRODUCTS_FROM_OFFER",
-        payload: encodedType,
+        payload: { type: encodedType, category: categoryParam },
       });
 
       const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllOffers`;
@@ -268,7 +271,7 @@ const ProductPage = ({
         },
       });
     }
-  }, [parentCategory, subtitle, params.cat, type]);
+  }, [parentCategory, subtitle, params.cat, type, categoryParam]);
 
   useEffect(() => {
     let prevScrollPos = window.scrollY;
@@ -288,38 +291,36 @@ const ProductPage = ({
     };
   }, []);
 
-  if (queryParams) {
-    if (queryParams.demandtype) {
-      if (offerProductData.length > 0)
-        offerProductData = offerProductData?.filter(
-          (product) =>
-            product.demandtype.toLowerCase() === demandtype.toLowerCase()
-        );
-      if (filteredProductData.length > 0)
-        filteredProductData = filteredProductData?.filter(
-          (product) =>
-            product.demandtype.toLowerCase() === demandtype.toLowerCase()
-        );
-      if (demandTypeProduct.length > 0)
-        demandTypeProduct = demandTypeProduct?.filter(
-          (product) =>
-            product.demandtype.toLowerCase() === demandtype.toLowerCase()
-        );
-    }
-    if (queryParams.offer) {
-      if (offerProductData.length > 0)
-        offerProductData = offerProductData?.filter(
-          (product) => product.offer?.toLowerCase() === offer.toLowerCase()
-        );
-      if (filteredProductData.length > 0)
-        filteredProductData = filteredProductData?.filter(
-          (product) => product.offer?.toLowerCase() === offer.toLowerCase()
-        );
-      if (demandTypeProduct.length > 0)
-        demandTypeProduct = demandTypeProduct?.filter(
-          (product) => product.offer?.toLowerCase() === offer.toLowerCase()
-        );
-    }
+  if (demandtype) {
+    if (offerProductData.length > 0)
+      offerProductData = offerProductData?.filter(
+        (product) =>
+          product.demandtype?.toLowerCase() === demandtype.toLowerCase()
+      );
+    if (filteredProductData.length > 0)
+      filteredProductData = filteredProductData?.filter(
+        (product) =>
+          product.demandtype?.toLowerCase() === demandtype.toLowerCase()
+      );
+    if (demandTypeProduct.length > 0)
+      demandTypeProduct = demandTypeProduct?.filter(
+        (product) =>
+          product.demandtype?.toLowerCase() === demandtype.toLowerCase()
+      );
+  }
+  if (offer) {
+    if (offerProductData.length > 0)
+      offerProductData = offerProductData?.filter(
+        (product) => product.offer?.toLowerCase() === offer.toLowerCase()
+      );
+    if (filteredProductData.length > 0)
+      filteredProductData = filteredProductData?.filter(
+        (product) => product.offer?.toLowerCase() === offer.toLowerCase()
+      );
+    if (demandTypeProduct.length > 0)
+      demandTypeProduct = demandTypeProduct?.filter(
+        (product) => product.offer?.toLowerCase() === offer.toLowerCase()
+      );
   }
 
   // useEffect(() => {
@@ -346,7 +347,7 @@ const ProductPage = ({
       const encodedType = encodeURI(type);
       dispatch({
         type: "FETCH_PRODUCTS_FROM_OFFER",
-        payload: encodedType,
+        payload: { type: encodedType, category: categoryParam },
       });
     }
 

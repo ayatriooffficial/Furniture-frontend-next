@@ -187,7 +187,7 @@ const RoomCard = () => {
                     <div className="parent col-start-1 col-end-2 row-start-6 row-span-2 lg:col-start-7 lg:col-end-10 lg:row-start-1 lg:row-end-6">
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[0]?.room?.imgSrc)}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[0]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[0].category.name)}` : ""}`}
                         alt={`Image of ${gallery?.rooms[0]?.room?.children}`}
                         width={1000}
                         height={338}
@@ -202,7 +202,7 @@ const RoomCard = () => {
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[1]?.room?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[1]?.room?.children}`}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[1]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[1].category.name)}` : ""}`}
                         width={1000}
                         height={338}
                         labelData={gallery?.rooms[1]?.room?.children}
@@ -215,7 +215,7 @@ const RoomCard = () => {
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[2]?.room?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[2]?.room?.children}`}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[2]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[2].category.name)}` : ""}`}
                         width={1000}
                         height={338}
                         labelData={gallery?.rooms[2]?.room?.children}
@@ -227,7 +227,7 @@ const RoomCard = () => {
                     >
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[3]?.room?.imgSrc)}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[3]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[3]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[3]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[3].category.name)}` : ""}`}
                         alt={`Image of ${gallery?.rooms[3]?.room?.children}`}
                         width={1000}
                         height={338}
@@ -240,7 +240,7 @@ const RoomCard = () => {
                     <div className="parent col-start-1 col-end-3 row-start-6 row-span-2 lg:col-start-7 lg:col-end-13 lg:row-start-1 lg:row-end-6">
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[0]?.room?.imgSrc)}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[0]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[0]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[0].category.name)}` : ""}`}
                         alt={`Image of ${gallery?.rooms[0]?.room?.children}`}
                         width={1000}
                         height={338}
@@ -252,7 +252,7 @@ const RoomCard = () => {
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[2]?.room?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[2]?.room?.children}`}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[2]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[2]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[2].category.name)}` : ""}`}
                         width={1000}
                         height={338}
                         labelData={gallery?.rooms[2]?.room?.children}
@@ -262,7 +262,7 @@ const RoomCard = () => {
                       <TabImage
                         src={fixImageUrl(gallery?.rooms[1]?.room?.imgSrc)}
                         alt={`Image of ${gallery?.rooms[1]?.room?.children}`}
-                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}`}
+                        href={`offers/new/${encodeURIComponent(gallery?.rooms[1]?.offer || "").replace(/%25/g, "percent").replace(/%20/g, "-")}${gallery?.rooms[1]?.category?.name ? `?category=${encodeURIComponent(gallery.rooms[1].category.name)}` : ""}`}
                         width={1000}
                         height={338}
                         labelData={gallery?.rooms[1]?.room?.children}

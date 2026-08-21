@@ -23,7 +23,19 @@ function* fetchProductsFromOffers(action) {
     // const data = yield call(fetchProductsFromOffersApi, action.payload);
     // console.log(currentPage)
     // console.log(itemsPerPage)
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllProductsByOffer/${action.payload}?page=${currentPage}&itemsPerPage=${itemsPerPage}`;
+    let type = action.payload;
+    let category = null;
+    
+    if (typeof action.payload === 'object' && action.payload !== null) {
+      type = action.payload.type;
+      category = action.payload.category;
+    }
+
+    let apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getAllProductsByOffer/${type}?page=${currentPage}&itemsPerPage=${itemsPerPage}`;
+    
+    if (category) {
+      apiUrl += `&category=${encodeURIComponent(category)}`;
+    }
     const response = yield call(axios.get, apiUrl);
     
     // console.log(response.data)
