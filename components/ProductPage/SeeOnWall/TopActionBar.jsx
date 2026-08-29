@@ -29,7 +29,7 @@ function TopActionBar({
       <div className="flex lg:hidden items-center gap-2">
         <button
           onClick={onOpenRoomOptions}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#002d62] hover:text-blue-700 bg-white hover:bg-blue-50/50 border border-gray-300 rounded-full transition-all active:scale-95 shadow-2xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-white hover:bg-blue-50/50 border border-gray-300 rounded-full transition-all active:scale-95 shadow-2xs"
         >
           <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -102,10 +102,7 @@ function TopActionBar({
           aria-label="Close Visualizer"
           className="p-1.5 text-gray-600 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" x2="6" y1="6" y2="18" />
-            <line x1="6" x2="18" y1="6" y2="18" />
-          </svg>
+          <Image src="/icons/cancel.svg" alt="Close" width={16} height={16} />
         </button>
       </div>
 
@@ -124,10 +121,7 @@ function TopActionBar({
           aria-label="Close Visualizer"
           className="p-1.5 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" x2="6" y1="6" y2="18" />
-            <line x1="6" x2="18" y1="6" y2="18" />
-          </svg>
+          <Image src="/icons/cancel.svg" alt="Close" width={16} height={16} />
         </button>
 
         {/* Mobile Dropdown Popover */}

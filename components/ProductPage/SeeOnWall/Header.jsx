@@ -112,10 +112,16 @@ function Header() {
 
   // Active Category Key Normalization
   const currentCategoryKey = useMemo(() => {
-    if (activeCategory.toLowerCase().includes("floor")) return "Flooring";
-    if (activeCategory.toLowerCase().includes("wall")) return "Wallpapers";
-    if (activeCategory.toLowerCase().includes("curtain")) return "Curtains";
-    return "Flooring";
+    const lower = (activeCategory || "").toLowerCase();
+    if (lower.includes("floor")) return "Flooring";
+    if (lower.includes("wall")) return "Wallpaper";
+    if (lower.includes("curtain")) return "Curtains";
+    if (lower.includes("blind")) return "Window Blinds";
+    if (lower.includes("carpet") || lower.includes("rug")) return "Carpet & Rugs";
+    if (lower.includes("furnish") || lower.includes("home")) return "Home furnishing";
+    if (lower.includes("green") || lower.includes("grass") || lower.includes("plant")) return "Artificial Green";
+    if (lower.includes("upholster")) return "Upholstery";
+    return activeCategory;
   }, [activeCategory]);
 
   const activeProduct = surfaces[currentCategoryKey]?.product;
@@ -129,8 +135,14 @@ function Header() {
       const rotParam = params.get("rot");
 
       if (catParam) {
-        if (catParam.toLowerCase().includes("wall")) setActiveCategory("Wallpapers");
-        else if (catParam.toLowerCase().includes("curtain")) setActiveCategory("Curtains");
+        const lower = catParam.toLowerCase();
+        if (lower.includes("wall")) setActiveCategory("Wallpaper");
+        else if (lower.includes("curtain")) setActiveCategory("Curtains");
+        else if (lower.includes("blind")) setActiveCategory("Window Blinds");
+        else if (lower.includes("carpet") || lower.includes("rug")) setActiveCategory("Carpet & Rugs");
+        else if (lower.includes("furnish") || lower.includes("home")) setActiveCategory("Home furnishing");
+        else if (lower.includes("green")) setActiveCategory("Artificial Green");
+        else if (lower.includes("upholster")) setActiveCategory("Upholstery");
         else setActiveCategory("Flooring");
       }
 
@@ -148,66 +160,123 @@ function Header() {
     }
   }, []);
 
-  // 2. FETCH PRODUCTS BY CATEGORY WITH CACHING
+  // 2. FETCH PRODUCTS BY CATEGORY WITH CACHING & BACKEND ALIAS FALLBACKS
   const fetchProductsForCategory = async (catKey) => {
     if (categoryProductsMap[catKey]?.length > 0) return;
 
-    const queryCategory = catKey === "Wallpapers" ? "Wallpaper" : catKey;
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${queryCategory}`;
+    // Normalizing category query candidate names for backend
+    const queryCandidates = [];
+    if (catKey === "Wallpaper" || catKey === "Wallpapers") queryCandidates.push("Wallpaper", "Wallpapers", "wallpaper");
+    else if (catKey === "Window Blinds" || catKey === "Blinds") queryCandidates.push("Window Blinds", "Blinds", "blinds");
+    else if (catKey === "Curtains") queryCandidates.push("Curtains", "curtains");
+    else if (catKey === "Carpet & Rugs" || catKey === "Rugs") queryCandidates.push("Carpet & Rugs", "Carpet and Rugs", "rugs", "carpets");
+    else if (catKey === "Home furnishing" || catKey === "Home Decor") queryCandidates.push("Home furnishing", "home furnishing", "Home Decor", "homedecor");
+    else if (catKey === "Artificial Green") queryCandidates.push("Artificial Green", "artificial green", "Artificial Grass");
+    else if (catKey === "Upholstery") queryCandidates.push("Upholstery", "upholstery", "Fabric");
+    else queryCandidates.push(catKey, catKey.toLowerCase());
 
-    try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        console.warn(`Could not fetch products for category ${queryCategory}`);
-        return;
-      }
-      const data = await response.json();
-
-      if (Array.isArray(data) && data.length > 0) {
-        const validProducts = data.filter((p) => p.images && p.images.length > 0);
-
-        setCategoryProductsMap((prev) => ({
-          ...prev,
-          [catKey]: validProducts,
-        }));
-
-        setSurfaces((prev) => {
-          if (prev[catKey]?.product) return prev;
-
-          const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-          const productId = params?.get("id");
-
-          let initial = null;
-          if (productId) {
-            initial = validProducts.find((p) => p._id === productId);
+    let rawList = [];
+    for (const q of queryCandidates) {
+      try {
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${encodeURIComponent(q)}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const resJson = await response.json();
+          const list = Array.isArray(resJson) ? resJson : Array.isArray(resJson?.products) ? resJson.products : [];
+          if (list.length > 0) {
+            rawList = list;
+            break;
           }
-          if (!initial && validProducts.length > 0) {
-            initial = validProducts[0];
-          }
-
-          if (initial && !originalProduct && catKey === "Flooring") {
-            setOriginalProduct(initial);
-          }
-
-          return {
-            ...prev,
-            [catKey]: {
-              ...prev[catKey],
-              product: initial,
-              enabled: true,
-            },
-          };
-        });
-
-        if (validProducts.length > 0) {
-          setHistory((prev) => {
-            const first = validProducts[0];
-            return prev.find((x) => x._id === first._id) ? prev : [first, ...prev];
-          });
         }
+      } catch (err) {
+        // Try next alias candidate
       }
-    } catch (error) {
-      console.error("Safe fetch error for products:", error);
+    }
+
+    // Fallback 1: If category endpoint is empty, search by keyword query
+    if (rawList.length === 0) {
+      try {
+        const fallbackSearch = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchProducts?query=${encodeURIComponent(catKey)}`);
+        if (fallbackSearch.ok) {
+          const searchData = await fallbackSearch.json();
+          const list = Array.isArray(searchData) ? searchData : Array.isArray(searchData?.products) ? searchData.products : [];
+          if (list.length > 0) rawList = list;
+        }
+      } catch (err) {
+        // Continue to fallback 2
+      }
+    }
+
+    // Fallback 2: Query /api/products and filter by category/subcategory/title
+    if (rawList.length === 0) {
+      try {
+        const allProductsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products`);
+        if (allProductsRes.ok) {
+          const allProducts = await allProductsRes.json();
+          const list = Array.isArray(allProducts) ? allProducts : Array.isArray(allProducts?.products) ? allProducts.products : [];
+
+          const lowerKey = catKey.toLowerCase().replace(/s$/, ""); // "curtain", "blind", "wall decor", "home decor"
+          const matched = list.filter((p) => {
+            const cat = (p.category || "").toLowerCase();
+            const sub = (p.subcategory || "").toLowerCase();
+            const title = (p.productTitle || "").toLowerCase();
+            return cat.includes(lowerKey) || sub.includes(lowerKey) || title.includes(lowerKey);
+          });
+
+          rawList = matched.length > 0 ? matched : list.slice(0, 40);
+        }
+      } catch (err) {
+        console.warn(`Could not fallback fetch for ${catKey}:`, err);
+      }
+    }
+
+    if (rawList.length > 0) {
+      const validProducts = rawList.filter(
+        (p) =>
+          (Array.isArray(p.images) && p.images.length > 0) ||
+          (Array.isArray(p.productImages) && p.productImages.length > 0) ||
+          typeof p.image === "string"
+      );
+
+      setCategoryProductsMap((prev) => ({
+        ...prev,
+        [catKey]: validProducts,
+      }));
+
+      setSurfaces((prev) => {
+        if (prev[catKey]?.product) return prev;
+
+        const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+        const productId = params?.get("id");
+
+        let initial = null;
+        if (productId) {
+          initial = validProducts.find((p) => p._id === productId);
+        }
+        if (!initial && validProducts.length > 0) {
+          initial = validProducts[0];
+        }
+
+        if (initial && !originalProduct && catKey === "Flooring") {
+          setOriginalProduct(initial);
+        }
+
+        return {
+          ...prev,
+          [catKey]: {
+            ...prev[catKey],
+            product: initial,
+            enabled: true,
+          },
+        };
+      });
+
+      if (validProducts.length > 0) {
+        setHistory((prev) => {
+          const first = validProducts[0];
+          return prev.find((x) => x._id === first._id) ? prev : [first, ...prev];
+        });
+      }
     }
   };
 
@@ -269,15 +338,37 @@ function Header() {
   // 5. HANDLERS
   const handleSelectCategory = (catKey) => {
     setActiveCategory(catKey);
+
+    const lower = (catKey || "").toLowerCase();
+    const key = lower.includes("floor")
+      ? "Flooring"
+      : lower.includes("wall")
+      ? "Wallpaper"
+      : lower.includes("curtain")
+      ? "Curtains"
+      : lower.includes("blind")
+      ? "Window Blinds"
+      : lower.includes("carpet") || lower.includes("rug")
+      ? "Carpet & Rugs"
+      : lower.includes("furnish") || lower.includes("home")
+      ? "Home furnishing"
+      : lower.includes("green") || lower.includes("grass")
+      ? "Artificial Green"
+      : lower.includes("upholster")
+      ? "Upholstery"
+      : catKey;
+
+    fetchProductsForCategory(key);
+
     setSurfaces((prev) => ({
       ...prev,
-      [catKey]: {
-        ...prev[catKey],
+      [key]: {
+        ...prev[key],
         enabled: true,
       },
     }));
 
-    const prod = surfaces[catKey]?.product;
+    const prod = surfaces[key]?.product;
     updateUrlParams(catKey, prod?._id, activeRoomImage, rotation);
   };
 
@@ -662,6 +753,8 @@ function Header() {
       {!isRoomOptionsOpen && (
         <div className="block lg:hidden">
           <MobileBottomSheet
+            activeCategory={activeCategory}
+            onSelectCategory={handleSelectCategory}
             activeProduct={activeProduct}
             originalProduct={originalProduct || currentCategoryProducts[0]}
             products={filteredProducts}

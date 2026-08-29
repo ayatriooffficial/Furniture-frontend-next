@@ -1,6 +1,8 @@
 "use client";
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { ALL_8_CATEGORIES } from "./ProductSidebar";
 
 // Helper to get valid image
 const getProductImage = (prod) => {
@@ -17,6 +19,8 @@ const getProductImage = (prod) => {
 };
 
 function MobileBottomSheet({
+  activeCategory,
+  onSelectCategory,
   activeProduct,
   originalProduct,
   products = [],
@@ -26,14 +30,14 @@ function MobileBottomSheet({
   onOpenFilters,
   activeFilterCount = 0,
   onOpenHistory,
-  sheetHeight = 280,
+  sheetHeight = 310,
   setSheetHeight,
   isDragging = false,
   setIsDragging,
 }) {
   const touchStartY = useRef(0);
-  const touchStartHeight = useRef(280);
-  const minHeightRef = useRef(240);
+  const touchStartHeight = useRef(310);
+  const minHeightRef = useRef(260);
   const maxHeightRef = useRef(620);
 
   // Initialize responsive min and max bounds based on window height
@@ -81,13 +85,41 @@ function MobileBottomSheet({
     }
   };
 
-  // Unified single list with original product at top
+  // Unified single list with original product at top when matching category
   const unifiedProductList = useMemo(() => {
-    if (!originalProduct) return products;
+    const isMatchingCategory =
+      !activeCategory ||
+      activeCategory.toLowerCase().includes("floor") ||
+      (originalProduct?.category && originalProduct.category.toLowerCase() === activeCategory.toLowerCase());
+
+    if (!originalProduct || !isMatchingCategory) return products;
     const others = products.filter((p) => p._id !== originalProduct._id);
     return [originalProduct, ...others];
-  }, [originalProduct, products]);
+  }, [originalProduct, products, activeCategory]);
 
+  // CONTINUOUS INFINITE SCROLL STATE (+20 items per batch)
+  const [visibleCount, setVisibleCount] = useState(20);
+  const sentinelRef = useRef(null);
+
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [activeCategory, searchTerm, activeFilterCount]);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < unifiedProductList.length) {
+          setVisibleCount((prev) => Math.min(prev + 20, unifiedProductList.length));
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [visibleCount, unifiedProductList.length]);
+
+  const displayedProducts = unifiedProductList.slice(0, visibleCount);
   const currentDisplayProduct = activeProduct || originalProduct || products[0];
 
   return (
@@ -109,12 +141,51 @@ function MobileBottomSheet({
         <div className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full transition-colors" />
       </div>
 
-      {/* 2. SEARCH, FILTERS, HISTORY CONTROLS */}
+      {/* 2. ALL 8 CATEGORIES: HORIZONTAL SCROLL TRACK WITH 3-TAB PEEK RATIO */}
+      <div className="border-b border-gray-100 px-1 shrink-0 bg-white">
+        <div
+          className="overflow-x-auto flex items-center scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {ALL_8_CATEGORIES.map((cat) => {
+            const lowerActive = (activeCategory || "").toLowerCase();
+            const isActive =
+              lowerActive === cat.id.toLowerCase() ||
+              (cat.id === "Flooring" && lowerActive.includes("floor")) ||
+              (cat.id === "Wallpaper" && lowerActive.includes("wall")) ||
+              (cat.id === "Window Blinds" && lowerActive.includes("blind")) ||
+              (cat.id === "Curtains" && lowerActive.includes("curtain")) ||
+              (cat.id === "Carpet & Rugs" && (lowerActive.includes("carpet") || lowerActive.includes("rug"))) ||
+              (cat.id === "Home furnishing" && (lowerActive.includes("furnish") || lowerActive.includes("home"))) ||
+              (cat.id === "Artificial Green" && lowerActive.includes("green")) ||
+              (cat.id === "Upholstery" && lowerActive.includes("upholster"));
+
+            return (
+              <button
+                key={cat.id}
+                onClick={() => onSelectCategory && onSelectCategory(cat.id)}
+                className={`flex flex-col items-center justify-center py-2 px-2.5 min-w-[85px] sm:min-w-[95px] border-b-2 transition-all cursor-pointer shrink-0 ${
+                  isActive
+                    ? "border-blue-600 text-blue-600 font-bold"
+                    : "border-transparent text-gray-500 hover:text-gray-900 font-medium"
+                }`}
+              >
+                <div className={`mb-1 ${isActive ? "text-blue-600" : "text-gray-500"}`}>
+                  {cat.icon}
+                </div>
+                <span className="text-[11px] tracking-tight whitespace-nowrap">{cat.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. SEARCH, FILTERS, HISTORY CONTROLS */}
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="px-3 sm:px-4 pb-2 flex items-center gap-2 border-b border-gray-100 shrink-0 touch-none"
+        className="px-3 sm:px-4 py-2 flex items-center gap-2 border-b border-gray-100 shrink-0 touch-none"
       >
         {/* Search Input */}
         <div className="relative flex-1">
@@ -145,20 +216,13 @@ function MobileBottomSheet({
         {/* Filters Button */}
         <button
           onClick={onOpenFilters}
-          className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer shadow-2xs shrink-0 ${
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer shadow-2xs shrink-0 ${
             activeFilterCount > 0
               ? "border-blue-600 bg-blue-50 text-blue-700 font-bold"
               : "border-gray-300 hover:bg-gray-50 text-gray-700"
           }`}
         >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" x2="4" y1="21" y2="14" />
-            <line x1="4" x2="4" y1="10" y2="3" />
-            <line x1="12" x2="12" y1="21" y2="12" />
-            <line x1="12" x2="12" y1="8" y2="3" />
-            <line x1="20" x2="20" y1="21" y2="16" />
-            <line x1="20" x2="20" y1="12" y2="3" />
-          </svg>
+          <Image src="/icons/filter.svg" alt="Filters" width={14} height={14} />
           <span>Filters</span>
           {activeFilterCount > 0 && (
             <span className="bg-blue-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
@@ -180,17 +244,16 @@ function MobileBottomSheet({
         </button>
       </div>
 
-      {/* 3. SCROLLABLE PRODUCT LIST */}
+      {/* 4. SCROLLABLE PRODUCT LIST */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-2 space-y-2.5 overscroll-contain">
         {/* NOW VIEWING HERO CARD */}
         {currentDisplayProduct && (
           <div className="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs">
-            <span className="inline-block bg-[#002d62] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-1.5">
+            <span className="inline-block bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-1.5">
               Now Viewing
             </span>
 
             <div className="flex gap-2.5 items-center">
-              {/* Strictly sized thumbnail container */}
               <div
                 style={{ width: "56px", height: "56px", minWidth: "56px", minHeight: "56px", maxWidth: "56px", maxHeight: "56px" }}
                 className="w-14 h-14 min-w-[56px] min-h-[56px] max-w-[56px] max-h-[56px] rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200"
@@ -249,19 +312,19 @@ function MobileBottomSheet({
           </div>
         )}
 
-        {/* 4. 2-COLUMN SIMILAR PRODUCTS GRID */}
+        {/* 5. 2-COLUMN SIMILAR PRODUCTS GRID WITH INFINITE SCROLL */}
         <div>
           <h3 className="text-xs font-bold text-gray-800 mb-2">
             Similar to your original selection
           </h3>
 
-          {unifiedProductList.length === 0 ? (
+          {displayedProducts.length === 0 ? (
             <div className="py-8 text-center text-gray-400 text-xs font-medium">
               No products match your current search.
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2 pb-8">
-              {unifiedProductList.map((item) => {
+            <div className="grid grid-cols-2 gap-2 pb-4">
+              {displayedProducts.map((item) => {
                 const isSelected = item._id === activeProduct?._id;
                 const isOriginal = item._id === originalProduct?._id;
 
@@ -280,12 +343,13 @@ function MobileBottomSheet({
                       <img
                         src={getProductImage(item)}
                         alt={item.productTitle}
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
 
                       {/* Original Badge */}
                       {isOriginal && (
-                        <span className="absolute top-1.5 left-1.5 bg-[#002d62] text-white text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow-xs">
+                        <span className="absolute top-1.5 left-1.5 bg-blue-600 text-white text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow-xs">
                           Original
                         </span>
                       )}
@@ -329,6 +393,16 @@ function MobileBottomSheet({
               })}
             </div>
           )}
+
+          {/* INFINITE SCROLL SENTINEL */}
+          <div ref={sentinelRef} className="h-6 w-full shrink-0 flex items-center justify-center pb-6">
+            {visibleCount < unifiedProductList.length && (
+              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
+                <div className="w-3 h-3 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
+                <span>Loading more...</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

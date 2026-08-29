@@ -1,11 +1,12 @@
 "use client";
+import React, { Suspense } from "react";
 import Header from "@/components/ProductPage/SeeOnWall/Header";
-import React from "react";
+
 const SeeOnWallPage = () => {
   return (
-    <div>
+    <Suspense fallback={<div className="h-screen w-screen bg-white" />}>
       <Header />
-    </div>
+    </Suspense>
   );
 };
 

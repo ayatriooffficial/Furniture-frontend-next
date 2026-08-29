@@ -87,10 +87,7 @@ function ShowroomGallery({
           aria-label="Close"
           className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
+          <Image src="/icons/cancel.svg" alt="Close" width={16} height={16} />
         </button>
       </div>
 
@@ -104,14 +101,15 @@ function ShowroomGallery({
             onChange={handleFileChange}
             className="hidden"
           />
-          {/* Blue Camera Icon */}
-          <div className="w-14 h-14 flex items-center justify-center text-blue-600 mb-2">
-            <svg className="w-12 h-12 stroke-current" viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-              <circle cx="12" cy="13" r="3" />
-              <line x1="12" y1="11" x2="12" y2="15" />
-              <line x1="10" y1="13" x2="14" y2="13" />
-            </svg>
+          {/* Blue Camera Icon from public */}
+          <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mb-3">
+            <Image
+              src="/icons/camera.svg"
+              alt="Camera"
+              width={26}
+              height={26}
+              className="text-blue-600"
+            />
           </div>
 
           <button
