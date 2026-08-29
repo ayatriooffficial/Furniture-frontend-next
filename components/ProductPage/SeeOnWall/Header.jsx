@@ -1,1014 +1,720 @@
-// "use client";
-// import { useRouter } from "next/navigation";
-// import React, { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// import Footer from "./Footer";
-// import Slider from "./Slider";
-
-// function Header() {
-//   const router = useRouter();
-
-//   console.log("Router object:", router);
-//   console.log("Router query:", router.query);
-//   console.log("Router isReady:", router.isReady);
-
-//   // Check if router is ready and query is defined
-//   if (!router.isReady) {
-//     console.log("Router is not ready.");
-//     return <div>Loading...</div>; // Or some loading indicator
-//   }
-
-//   const { query } = router;
-//   const category = query?.category;
-//   const id = query?.id;
-
-//   const [openSidebar, setOpenSidebar] = useState(false);
-//   const [showSlider, setShowSlider] = useState(false);
-//   const [activeRoom, setActiveRoom] = useState("Living Room");
-//   const [roomType, setRoomType] = useState("livingroom");
-//   const [roomImages, setRoomImages] = useState({
-//     "Living Room": [],
-//     "Dining Room": [],
-//     Bedroom: [],
-//   });
-//   const [selectedImage, setSelectedImage] = useState("");
-
-//   const fetchProducts = async (roomType, category) => {
-//     if (!category) return;
-//     const lowerCaseCategory = category.toLowerCase();
-//     const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aimodelcategories/${lowerCaseCategory}/${roomType}`;
-
-//     try {
-//       const response = await fetch(apiUrl);
-//       const data = await response.json();
-
-//       if (data && Array.isArray(data.images)) {
-//         const images = data.images.map((imageObj) => imageObj.url);
-//         setRoomImages((prevImages) => ({
-//           ...prevImages,
-//           [activeRoom]: images,
-//         }));
-
-//         if (images.length > 0) {
-//           setSelectedImage(images[0]);
-//         }
-//       } else {
-//         console.warn("No 'images' found or 'images' is not an array.");
-//       }
-//     } catch (error) {
-//       console.error("Error fetching product data:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (category) {
-//       try {
-//         fetchProducts(roomType, category.toLowerCase());
-//       } catch (error) {
-//         console.error("Error fetching product data:", error);
-//       }
-//     }
-//   }, [category, roomType]);
-
-//   const handleTabClick = (room) => {
-//     if (room === "livingroom") {
-//       setRoomType("livingroom");
-//       setActiveRoom("Living Room");
-//     } else if (room === "diningroom") {
-//       setRoomType("diningroom");
-//       setActiveRoom("Dining Room");
-//     } else if (room === "bedroom") {
-//       setRoomType("bedroom");
-//       setActiveRoom("Bedroom");
-//     }
-//   };
-
-//   const handleOpenSidebar = () => {
-//     setOpenSidebar(true);
-//   };
-
-//   const handleCloseSidebar = () => {
-//     setOpenSidebar(false);
-//   };
-
-//   const handleCompareClick = () => {
-//     setShowSlider(!showSlider);
-//   };
-
-//   const handleImageClick = (image) => {
-//     setSelectedImage(image);
-//   };
-
-//   return (
-//     <div className="bg-gray-100 w-full h-auto flex flex-col">
-//       {/* Header Section */}
-//       <div className="flex items-center justify-between py-4 px-8">
-//         <div className="flex">
-//           <Link href="/">
-//             <Image
-//               src="/images/ayatriologo.webp"
-//               alt="Ayatrio Logo"
-//               width={300}
-//               height={40}
-//               priority
-//               className="w-36 lg:w-36 object-cover"
-//             />
-//           </Link>
-//         </div>
-//         <button className="text-xl px-2 hover:bg-[#e5e5e5] rounded-full cursor-pointer">
-//           <Image
-//             loading="lazy"
-//             src="/icons/cancel.svg"
-//             alt="close"
-//             width={20}
-//             height={20}
-//             className="py-2 font-bold"
-//           />
-//         </button>
-//       </div>
-//       {/* Content Section */}
-//       <div className="flex-grow relative flex flex-row items-center">
-//         {/* Left Section */}
-//         {/* <div className="flex-grow pl-10 relative w-[75%]">
-//           {selectedImage ? (
-//             <img
-//               src={selectedImage} // Display the selected image in the left section
-//               alt={`${activeRoom} default`}
-//               className="object-cover w-full h-[90vh]"
-//             />
-//           ) : (
-//             <p>No images available for {activeRoom}.</p>
-//           )}
-//         </div> */}
-//         <div className="flex-grow p-10 relative w-[75%]">
-//           {showSlider ? (
-//             <Slider /> // Render the Slider component when showSlider is true
-//           ) : selectedImage ? (
-//             <img
-//               src={selectedImage} // Display the selected image in the left section
-//               alt={`${activeRoom} default`}
-//               className="object-cover w-full h-[90vh]"
-//             />
-//           ) : (
-//             <p>No images available for {activeRoom}.</p>
-//           )}
-//         </div>
-
-//         {/* Right Section that stays on screen */}
-//         <div className=" h-full flex flex-col justify-center items-center p-4 relative w-[25%]">
-//           {/* Text and Icons */}
-//           <div className="flex flex-col space-y-4">
-//             <div
-//               onClick={handleOpenSidebar}
-//               className="flex items-center cursor-pointer"
-//             >
-//               <div className="bg-white text-black py-2 px-4 flex-1">
-//                 Upload Your Room
-//               </div>
-//               <div className="flex flex-col">
-//                 <div className="bg-black p-4 group hover:bg-white cursor-pointer">
-//                   <Image
-//                     src="/icons/camera.svg"
-//                     alt="Upload Your Room"
-//                     width={20}
-//                     height={20}
-//                     className="group-hover:filter group-hover:invert-0 invert"
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div
-//               onClick={handleOpenSidebar}
-//               className="flex items-center cursor-pointer"
-//             >
-//               <div className="bg-white text-black py-2 px-4 flex-1">
-//                 Choose a Room
-//               </div>
-//               <div className="flex flex-col">
-//                 <div className="bg-black p-4 group hover:bg-white cursor-pointer">
-//                   <Image
-//                     src="/icons/click and collect.svg"
-//                     alt="Choose a Room"
-//                     width={20}
-//                     height={20}
-//                     className="group-hover:filter group-hover:invert-0 invert"
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div
-//               onClick={handleOpenSidebar}
-//               className="flex items-center cursor-pointer"
-//             >
-//               <div className="bg-white text-black py-2 px-4 flex-1">
-//                 Choose a Product
-//               </div>
-//               <div className="flex flex-col">
-//                 <div className="bg-black p-4 group hover:bg-white cursor-pointer">
-//                   <Image
-//                     src="/icons/instalation.svg"
-//                     alt="Choose a Product"
-//                     width={20}
-//                     height={20}
-//                     className="group-hover:filter group-hover:invert-0 invert"
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div
-//               onClick={handleOpenSidebar}
-//               className="flex items-center cursor-pointer"
-//             >
-//               <div className="bg-white text-black py-2 px-4 flex-1">
-//                 Live Specialist Guide
-//               </div>
-//               <div className="flex flex-col">
-//                 <div className="bg-black p-4 group hover:bg-white cursor-pointer">
-//                   <Image
-//                     src="/icons/golive.svg"
-//                     alt="Live Specialist Guide"
-//                     width={20}
-//                     height={20}
-//                     className="group-hover:filter group-hover:invert"
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       {/* Sidebar Overlay */}
-//       {openSidebar && (
-//         <div className="fixed top-0 right-0 w-[450px] overflow-y-auto bg-white h-full shadow-lg z-50 transition-transform transform translate-x-0">
-//           <div className="flex justify-between items-center p-4">
-//             <h2 className="text-lg font-semibold">Choose Products</h2>
-//             <button onClick={handleCloseSidebar}>
-//               <Image
-//                 loading="lazy"
-//                 src="/icons/cancel.svg"
-//                 alt="close"
-//                 width={20}
-//                 height={20}
-//               />
-//             </button>
-//           </div>
-
-//           {/* Upload Your Room Button */}
-//           <div className="p-4 flex flex-col items-center justify-center">
-//             <button className="bg-blue-600 text-sm text-white py-3 px-4 rounded-full">
-//               Upload Your Room
-//             </button>
-//             <div className=" flex mt-2 ">
-//               <p className="px-[10px] text-center text-sm text-gray-800">
-//                 Choose the Right (product name) for Your Rooms is the fast step
-//                 of future of living
-//               </p>
-//             </div>
-//           </div>
-
-//           {/* Tab Section */}
-//           <div className="p-4 flex justify-between">
-//             <button
-//               onClick={() => handleTabClick("livingroom")}
-//               className={`${
-//                 activeRoom === "Living Room"
-//                   ? "text-blue-600 border-blue-600"
-//                   : "text-black border-gray-400"
-//               } px-4 py-2 border-b-2`}
-//             >
-//               Living Room
-//             </button>
-//             <button
-//               onClick={() => handleTabClick("diningroom")}
-//               className={`${
-//                 activeRoom === "Dining Room"
-//                   ? "text-blue-600 border-blue-600"
-//                   : "text-black border-gray-400"
-//               } px-4 py-2 border-b-2`}
-//             >
-//               Dining Room
-//             </button>
-//             <button
-//               onClick={() => handleTabClick("bedroom")}
-//               className={`${
-//                 activeRoom === "Bedroom"
-//                   ? "text-blue-600 border-blue-600"
-//                   : "text-black border-gray-400"
-//               } px-4 py-2 border-b-2`}
-//             >
-//               Bedroom
-//             </button>
-//           </div>
-
-//           {/* Image Grid Section */}
-//           <div className="grid grid-cols-3 gap-4 p-4">
-//             {roomImages[activeRoom].map((image, index) => (
-//               <img
-//                 key={index}
-//                 src={image}
-//                 alt={`${activeRoom} ${index}`}
-//                 className="w-full h-32 object-cover cursor-pointer"
-//                 onClick={() => handleImageClick(image)} // Click handler to update the left section image
-//               />
-//             ))}
-//           </div>
-//         </div>
-//       )}
-//       {/* Footer Section */}
-//       <Footer handleCompareClick={handleCompareClick} />{" "}
-//       {/* Pass the compare handler */}
-//     </div>
-//   );
-// }
-
-// export default Header;
-// // "use client";
-// // import React, { useState, useEffect } from "react";
-// // import Link from "next/link";
-// // import Image from "next/image";
-// // import Footer from "./Footer";
-// // import Slider from "./Slider";
-
-// // function Header() {
-// //   const [openSidebar, setOpenSidebar] = useState(false); // State to control sidebar visibility
-// //   const [showSlider, setShowSlider] = useState(false); // State to control slider visibility
-// //   const [activeRoom, setActiveRoom] = useState("Living Room"); // State for active room display
-// //   const [roomType, setRoomType] = useState("livingroom"); // State for sending lowercase values in API
-// //   const [roomImages, setRoomImages] = useState({
-// //     "Living Room": [],
-// //     "Dining Room": [],
-// //     Bedroom: [],
-// //   }); // State to store fetched images
-// //   const [selectedImage, setSelectedImage] = useState(""); // State to store the selected image for the left section
-// //   const [categoryName, setCategoryName] = useState("wallpaper"); // State to hold the categoryName from the query param
-
-// //   // Fetch the product data based on roomType and categoryName
-// //   const fetchProducts = async (roomType, categoryName) => {
-// //     if (!categoryName) return; // Ensure categoryName is available
-
-// //     const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aimodelcategories/${categoryName}/${roomType}`;
-// //     console.log("Fetching from URL:", apiUrl);
-
-// //     try {
-// //       const response = await fetch(apiUrl);
-// //       const data = await response.json();
-// //       console.log("Fetched data:", data);
-
-// //       // Check if 'images' exists and is an array
-// //       if (data && Array.isArray(data.images)) {
-// //         const images = data.images.map((imageObj) => imageObj.url); // Map image URLs from 'images' array
-// //         setRoomImages((prevImages) => ({
-// //           ...prevImages,
-// //           [activeRoom]: images,
-// //         }));
-
-// //         // Set the first image as the default selected image for the left section
-// //         if (images.length > 0) {
-// //           setSelectedImage(images[0]);
-// //         }
-// //       } else {
-// //         console.warn("No 'images' found or 'images' is not an array.");
-// //       }
-// //     } catch (error) {
-// //       console.error("Error fetching product data:", error);
-// //     }
-// //   };
-
-// //   // Extract the categoryName from the query params using window.location
-// //   useEffect(() => {
-// //     if (typeof window !== "undefined") {
-// //       const params = new URLSearchParams(window.location.search);
-// //       const category = params.get("category"); // Get 'category' from the URL
-// //       if (category) {
-// //         setCategoryName(category);
-// //       }
-// //     }
-// //   }, []);
-
-// //   // Use effect to fetch data when roomType or categoryName changes
-// //   useEffect(() => {
-// //     fetchProducts(roomType, categoryName); // Fetch products based on the roomType and categoryName
-// //   }, [roomType, categoryName]);
-
-// //   // Function to handle tab clicks and set both roomType and activeRoom
-// //   const handleTabClick = (room) => {
-// //     if (room === "livingroom") {
-// //       setRoomType("livingroom");
-// //       setActiveRoom("Living Room");
-// //     } else if (room === "diningroom") {
-// //       setRoomType("diningroom");
-// //       setActiveRoom("Dining Room");
-// //     } else if (room === "bedroom") {
-// //       setRoomType("bedroom");
-// //       setActiveRoom("Bedroom");
-// //     }
-// //   };
-
-// //   const handleOpenSidebar = () => {
-// //     setOpenSidebar(true); // Open the sidebar
-// //   };
-
-// //   const handleCloseSidebar = () => {
-// //     setOpenSidebar(false); // Close the sidebar
-// //   };
-
-// //   const handleCompareClick = () => {
-// //     setShowSlider(!showSlider); // Toggle the slider visibility
-// //   };
-
-// //   // Function to handle image click in the grid and update the left section
-// //   const handleImageClick = (image) => {
-// //     setSelectedImage(image); // Update the selected image to the clicked one
-// //   };
-
-// //   return (
-// //     <div className="bg-gray-100 w-full h-[100vh] flex flex-col">
-// //       {/* Header Section */}
-// //       <div className="flex items-center justify-between py-4 px-8">
-// //         <div className="flex">
-// //           <Link href="/">
-// //             <Image
-// //               src="/images/ayatriologo.webp"
-// //               alt="Ayatrio Logo"
-// //               width={300}
-// //               height={40}
-// //               priority
-// //               className="w-36 lg:w-36 object-cover"
-// //             />
-// //           </Link>
-// //         </div>
-// //         <button className="text-xl px-2 hover:bg-[#e5e5e5] rounded-full cursor-pointer">
-// //           <Image
-// //             loading="lazy"
-// //             src="/icons/cancel.svg"
-// //             alt="close"
-// //             width={20}
-// //             height={20}
-// //             className="py-2 font-bold"
-// //           />
-// //         </button>
-// //       </div>
-
-// //       {/* Content Section */}
-// //       <div className="flex-grow relative flex flex-col">
-// //         <div className="flex-grow p-4">
-// //           {showSlider ? (
-// //             <Slider />
-// //           ) : selectedImage ? (
-// //             <img
-// //               src={selectedImage}
-// //               alt={`${activeRoom} default`}
-// //               className="object-cover w-full h-96"
-// //             />
-// //           ) : (
-// //             <p>No images available for {activeRoom}.</p>
-// //           )}
-// //         </div>
-
-// //         {/* Right Section */}
-// //         <div className="absolute top-0 right-0 h-full flex flex-col justify-center items-end p-4">
-// //           <div className="flex flex-col space-y-4">
-// //             {/* Action buttons go here */}
-// //           </div>
-// //         </div>
-// //       </div>
-
-// //       {openSidebar && (
-// //         <div className="fixed top-0 right-0 w-[450px] overflow-y-auto bg-white h-full shadow-lg z-50 transition-transform transform translate-x-0">
-// //           <button
-// //             onClick={handleCloseSidebar}
-// //             className="absolute top-2 right-2 text-xl px-2 hover:bg-[#e5e5e5] rounded-full cursor-pointer"
-// //           >
-// //             <Image
-// //               loading="lazy"
-// //               src="/icons/cancel.svg"
-// //               alt="close"
-// //               width={20}
-// //               height={20}
-// //               className="py-2 font-bold"
-// //             />
-// //           </button>
-// //           <div className="p-4">
-// //             <div className="py-4">
-// //               <h2 className="text-xl font-bold mb-4">Choose Your Options</h2>
-// //               <ul>
-// //                 <li>
-// //                   <button
-// //                     onClick={() => handleTabClick("livingroom")}
-// //                     className={`${
-// //                       activeRoom === "Living Room"
-// //                         ? "text-blue-600 border-blue-600"
-// //                         : "text-black border-gray-400"
-// //                     } px-4 py-2 border-b-2`}
-// //                   >
-// //                     Living Room
-// //                   </button>
-// //                 </li>
-// //                 <li>
-// //                   <button
-// //                     onClick={() => handleTabClick("diningroom")}
-// //                     className={`${
-// //                       activeRoom === "Dining Room"
-// //                         ? "text-blue-600 border-blue-600"
-// //                         : "text-black border-gray-400"
-// //                     } px-4 py-2 border-b-2`}
-// //                   >
-// //                     Dining Room
-// //                   </button>
-// //                 </li>
-// //                 <li>
-// //                   <button
-// //                     onClick={() => handleTabClick("bedroom")}
-// //                     className={`${
-// //                       activeRoom === "Bedroom"
-// //                         ? "text-blue-600 border-blue-600"
-// //                         : "text-black border-gray-400"
-// //                     } px-4 py-2 border-b-2`}
-// //                   >
-// //                     Bedroom
-// //                   </button>
-// //                 </li>
-// //               </ul>
-// //             </div>
-// //           </div>
-// //         </div>
-// //       )}
-
-// //       <Footer handleCompareClick={handleCompareClick} />
-// //     </div>
-// //   );
-// // }
-
-// // export default Header;
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
-import Footer from "./Footer";
+import TopActionBar from "./TopActionBar";
+import ProductSidebar from "./ProductSidebar";
+import MobileBottomSheet from "./MobileBottomSheet";
+import BottomToolbar from "./BottomToolbar";
+import ShowroomGallery from "./ShowroomGallery";
+import ShareModal from "./ShareModal";
+import SaveAuthModal from "./SaveAuthModal";
+import FiltersModal from "./FiltersModal";
+import HistoryDrawer from "./HistoryDrawer";
 import Slider from "./Slider";
 
-function Header() {
-  const [openSidebar, setOpenSidebar] = useState(false); // State to control sidebar visibility
-  const [showSlider, setShowSlider] = useState(false); // State to control slider visibility
-  const [activeRoom, setActiveRoom] = useState("Living Room"); // State for active room display
-  const [roomType, setRoomType] = useState("livingroom"); // State for sending lowercase values in API
-  const [roomImages, setRoomImages] = useState({
-    "Living Room": [],
-    "Dining Room": [],
-    Bedroom: [],
-  }); // State to store fetched images
-  // --- OLD STATE (Commented out for fallback) ---
-  // const [selectedImage, setSelectedImage] = useState(""); 
-  // const [otherImage, setOtherImage] = useState(""); 
-  
-  const [sidebarMode, setSidebarMode] = useState(""); // 'room' or 'product'
-  const [activeMainRoomImage, setActiveMainRoomImage] = useState("/3d/livingroom2.webp");
-  const [activeProductImage, setActiveProductImage] = useState("");
-  const [otherImage, setOtherImage] = useState(""); // Second image (variant B)
-  const [categoryName, setCategoryName] = useState(""); // State to hold the category from URL
-  const [categoryProducts, setCategoryProducts] = useState([]); // NEW STATE to hold fetched products
-  
-  const staticRoomImages = {
-    "Living Room": ["/3d/livingroom.webp", "/3d/livingroom2.webp"],
-    "Dining Room": ["/3d/kitchen.webp"], 
-    "Bedroom": ["/3d/bedroom1.webp"]
-  };
+const INITIAL_SHOWROOMS = [
+  {
+    id: "livingroom2",
+    title: "Modern Living Room",
+    category: "Living Room",
+    image: "/3d/livingroom2.webp",
+  },
+  {
+    id: "livingroom",
+    title: "Classic Living Room",
+    category: "Living Room",
+    image: "/3d/livingroom.webp",
+  },
+  {
+    id: "bedroom1",
+    title: "Master Bedroom",
+    category: "Bedroom",
+    image: "/3d/bedroom1.webp",
+  },
+  {
+    id: "kitchen",
+    title: "Contemporary Kitchen",
+    category: "Dining / Kitchen",
+    image: "/3d/kitchen.webp",
+  },
+  {
+    id: "washroom",
+    title: "Luxury Bathroom",
+    category: "Bathroom",
+    image: "/3d/washroom.webp",
+  },
+];
 
-  // Extract the category from the URL query params
+// Helper to extract valid image URL
+const getProductImage = (prod) => {
+  if (!prod) return null;
+  if (Array.isArray(prod.images) && prod.images.length > 0 && typeof prod.images[0] === "string") {
+    return prod.images[0];
+  }
+  if (typeof prod.image === "string") return prod.image;
+  if (Array.isArray(prod.productImages) && prod.productImages.length > 0) {
+    const item = prod.productImages[0];
+    if (Array.isArray(item?.images) && item.images.length > 0) return item.images[0];
+  }
+  return "/images/default.jpg";
+};
+
+function Header() {
+  // Visualizer & Room State
+  const [activeCategory, setActiveCategory] = useState("Flooring");
+  const [activeRoomImage, setActiveRoomImage] = useState("/3d/livingroom2.webp");
+  const [activeRoomTitle, setActiveRoomTitle] = useState("Modern Living Room");
+  const [rotation, setRotation] = useState(0); // 0 or 90
+  const [zoomLevel, setZoomLevel] = useState(100); // 100 to 200
+
+  // Sidebar Collapse / Expand state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Mobile Bottom Sheet real-time dynamic height state
+  const [sheetHeight, setSheetHeight] = useState(280);
+  const [isSheetDragging, setIsSheetDragging] = useState(false);
+
+  // Pan offset for zoomed state
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
+  // Dynamic Surfaces State
+  const [surfaces, setSurfaces] = useState({
+    Flooring: { enabled: true, product: null },
+    Wallpapers: { enabled: false, product: null },
+    Curtains: { enabled: false, product: null },
+  });
+
+  // Products Cache by Category
+  const [categoryProductsMap, setCategoryProductsMap] = useState({});
+  const [originalProduct, setOriginalProduct] = useState(null);
+  const [userUploadedRooms, setUserUploadedRooms] = useState([]);
+
+  // Search & Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState("list");
+  const [activeFilters, setActiveFilters] = useState({
+    material: "All",
+    style: "All",
+    room: "All",
+    price: "All",
+  });
+  const [history, setHistory] = useState([]);
+
+  // Modals State
+  const [isRoomOptionsOpen, setIsRoomOptionsOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isCompareActive, setIsCompareActive] = useState(false);
+
+  // Active Category Key Normalization
+  const currentCategoryKey = useMemo(() => {
+    if (activeCategory.toLowerCase().includes("floor")) return "Flooring";
+    if (activeCategory.toLowerCase().includes("wall")) return "Wallpapers";
+    if (activeCategory.toLowerCase().includes("curtain")) return "Curtains";
+    return "Flooring";
+  }, [activeCategory]);
+
+  const activeProduct = surfaces[currentCategoryKey]?.product;
+
+  // 1. EXTRACT URL PARAMETERS ON INITIAL MOUNT
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const category = params.get("category");
-      if (category) {
-        setCategoryName(category);
+      const catParam = params.get("category");
+      const roomParam = params.get("room");
+      const rotParam = params.get("rot");
+
+      if (catParam) {
+        if (catParam.toLowerCase().includes("wall")) setActiveCategory("Wallpapers");
+        else if (catParam.toLowerCase().includes("curtain")) setActiveCategory("Curtains");
+        else setActiveCategory("Flooring");
+      }
+
+      if (rotParam) {
+        setRotation(parseInt(rotParam, 10) === 90 ? 90 : 0);
+      }
+
+      if (roomParam) {
+        const matched = INITIAL_SHOWROOMS.find((r) => r.id === roomParam || r.image.includes(roomParam));
+        if (matched) {
+          setActiveRoomImage(matched.image);
+          setActiveRoomTitle(matched.title);
+        }
       }
     }
   }, []);
 
-  // Fetch the product data based on categoryName
-  const fetchProducts = async (currentCategory) => {
-    if (!currentCategory) return;
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${currentCategory}`;
-    
+  // 2. FETCH PRODUCTS BY CATEGORY WITH CACHING
+  const fetchProductsForCategory = async (catKey) => {
+    if (categoryProductsMap[catKey]?.length > 0) return;
+
+    const queryCategory = catKey === "Wallpapers" ? "Wallpaper" : catKey;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/fetchProductsByCategory/${queryCategory}`;
+
     try {
       const response = await fetch(apiUrl);
+      if (!response.ok) {
+        console.warn(`Could not fetch products for category ${queryCategory}`);
+        return;
+      }
       const data = await response.json();
-    
-      if (Array.isArray(data)) {
-        // Keep the full product object as long as it has at least one image
-        const products = data.filter(product => product.images && product.images.length > 0);
-        setCategoryProducts(products);
-      } else {
-        console.warn("No products found or incorrect response format.");
-        setCategoryProducts([]);
+
+      if (Array.isArray(data) && data.length > 0) {
+        const validProducts = data.filter((p) => p.images && p.images.length > 0);
+
+        setCategoryProductsMap((prev) => ({
+          ...prev,
+          [catKey]: validProducts,
+        }));
+
+        setSurfaces((prev) => {
+          if (prev[catKey]?.product) return prev;
+
+          const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+          const productId = params?.get("id");
+
+          let initial = null;
+          if (productId) {
+            initial = validProducts.find((p) => p._id === productId);
+          }
+          if (!initial && validProducts.length > 0) {
+            initial = validProducts[0];
+          }
+
+          if (initial && !originalProduct && catKey === "Flooring") {
+            setOriginalProduct(initial);
+          }
+
+          return {
+            ...prev,
+            [catKey]: {
+              ...prev[catKey],
+              product: initial,
+              enabled: true,
+            },
+          };
+        });
+
+        if (validProducts.length > 0) {
+          setHistory((prev) => {
+            const first = validProducts[0];
+            return prev.find((x) => x._id === first._id) ? prev : [first, ...prev];
+          });
+        }
       }
     } catch (error) {
-      console.error("Error fetching product data:", error);
+      console.error("Safe fetch error for products:", error);
     }
   };
 
-  // Use effect to fetch data when the categoryName changes
   useEffect(() => {
-    if (categoryName) {
-      fetchProducts(categoryName);
+    fetchProductsForCategory(currentCategoryKey);
+  }, [currentCategoryKey]);
+
+  // 3. SYNCHRONIZE URL STATE
+  const updateUrlParams = (catKey, productId, roomImg, rot) => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (catKey) url.searchParams.set("category", catKey);
+      if (productId) url.searchParams.set("id", productId);
+      if (roomImg) {
+        const roomObj = INITIAL_SHOWROOMS.find((r) => r.image === roomImg);
+        url.searchParams.set("room", roomObj ? roomObj.id : "custom");
+      }
+      if (rot !== undefined) url.searchParams.set("rot", rot.toString());
+      window.history.replaceState({}, "", url.toString());
     }
-  }, [categoryName]);
+  };
 
-  // Function to handle tab clicks and set both roomType and activeRoom
-  const handleTabClick = (room) => {
-    if (room === "livingroom") {
-      setRoomType("livingroom");
-      setActiveRoom("Living Room");
-    } else if (room === "diningroom") {
-      setRoomType("diningroom");
-      setActiveRoom("Dining Room");
-    } else if (room === "bedroom") {
-      setRoomType("bedroom");
-      setActiveRoom("Bedroom");
+  // 4. FILTERING & SEARCH LOGIC
+  const currentCategoryProducts = categoryProductsMap[currentCategoryKey] || [];
+
+  const filteredProducts = useMemo(() => {
+    return currentCategoryProducts.filter((item) => {
+      // Search
+      if (searchTerm.trim()) {
+        const term = searchTerm.toLowerCase();
+        const matchesTitle = item.productTitle?.toLowerCase().includes(term);
+        const matchesCategory = item.category?.toLowerCase().includes(term);
+        const matchesMaterial = item.material?.toLowerCase().includes(term);
+        if (!matchesTitle && !matchesCategory && !matchesMaterial) return false;
+      }
+
+      // Material filter
+      if (activeFilters.material !== "All") {
+        const itemMat = (item.material || item.subcategory || "").toLowerCase();
+        if (!itemMat.includes(activeFilters.material.toLowerCase())) return false;
+      }
+
+      // Price filter
+      const price = item.perUnitPrice || item.discountedprice?.price || item.price || 95;
+      if (activeFilters.price === "Under ₹80" && price >= 80) return false;
+      if (activeFilters.price === "₹80 - ₹120" && (price < 80 || price > 120)) return false;
+      if (activeFilters.price === "₹120+" && price < 120) return false;
+
+      return true;
+    });
+  }, [currentCategoryProducts, searchTerm, activeFilters]);
+
+  const activeFilterCount =
+    (activeFilters.material !== "All" ? 1 : 0) +
+    (activeFilters.style !== "All" ? 1 : 0) +
+    (activeFilters.room !== "All" ? 1 : 0) +
+    (activeFilters.price !== "All" ? 1 : 0);
+
+  // 5. HANDLERS
+  const handleSelectCategory = (catKey) => {
+    setActiveCategory(catKey);
+    setSurfaces((prev) => ({
+      ...prev,
+      [catKey]: {
+        ...prev[catKey],
+        enabled: true,
+      },
+    }));
+
+    const prod = surfaces[catKey]?.product;
+    updateUrlParams(catKey, prod?._id, activeRoomImage, rotation);
+  };
+
+  const handleSelectProduct = (product) => {
+    setSurfaces((prev) => ({
+      ...prev,
+      [currentCategoryKey]: {
+        ...prev[currentCategoryKey],
+        product,
+        enabled: true,
+      },
+    }));
+
+    updateUrlParams(currentCategoryKey, product._id, activeRoomImage, rotation);
+
+    setHistory((prev) => {
+      const filtered = prev.filter((p) => p._id !== product._id);
+      return [product, ...filtered].slice(0, 10);
+    });
+  };
+
+  const handleSelectRoom = (roomImg, roomTitle) => {
+    setActiveRoomImage(roomImg);
+    setActiveRoomTitle(roomTitle);
+    updateUrlParams(currentCategoryKey, activeProduct?._id, roomImg, rotation);
+  };
+
+  const handleUploadRoom = (newRoom) => {
+    setUserUploadedRooms((prev) => [newRoom, ...prev]);
+    handleSelectRoom(newRoom.image, newRoom.title);
+  };
+
+  // ROTATE: 0° (vertical) vs 90° (horizontal)
+  const handleToggleRotate = () => {
+    const nextRot = rotation === 0 ? 90 : 0;
+    setRotation(nextRot);
+    updateUrlParams(currentCategoryKey, activeProduct?._id, activeRoomImage, nextRot);
+  };
+
+  // ZOOM CONTROLS
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 25, 200));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => {
+      const next = Math.max(prev - 25, 100);
+      if (next === 100) setPanOffset({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
+  const handleSetZoom = (val) => {
+    setZoomLevel(val);
+    if (val === 100) setPanOffset({ x: 0, y: 0 });
+  };
+
+  // RESET
+  const handleReset = () => {
+    const defaultProduct = originalProduct || currentCategoryProducts[0] || null;
+    setActiveCategory("Flooring");
+    setRotation(0);
+    setZoomLevel(100);
+    setPanOffset({ x: 0, y: 0 });
+    setActiveRoomImage(INITIAL_SHOWROOMS[0].image);
+    setActiveRoomTitle(INITIAL_SHOWROOMS[0].title);
+    setSurfaces({
+      Flooring: { enabled: true, product: defaultProduct },
+      Wallpapers: { enabled: false, product: null },
+      Curtains: { enabled: false, product: null },
+    });
+    setActiveFilters({ material: "All", style: "All", room: "All", price: "All" });
+    setSearchTerm("");
+    updateUrlParams("Flooring", defaultProduct?._id, INITIAL_SHOWROOMS[0].image, 0);
+  };
+
+  // SAVE TO PROJECT HANDLER (Redirects to existing /login if not authenticated)
+  const handleOpenSave = () => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("user");
+
+      if (!token && !user) {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.href)}`;
+        return;
+      }
+      setIsSaveOpen(true);
     }
   };
 
-  const handleOpenSidebar = () => {
-    setOpenSidebar(true); // Open the sidebar
-  };
-
-  // const handleOpenSidebar = () => {
-  //   setOpenSidebar(true); // Open the sidebar
-  // };
-
-  const handleOpenSidebarForRoom = () => {
-    setSidebarMode('room');
-    setOpenSidebar(true);
-  };
-
-  const handleOpenSidebarForProduct = () => {
-    setSidebarMode('product');
-    setOpenSidebar(true);
-  };
-
-  const handleCloseSidebar = () => {
-    setOpenSidebar(false); // Close the sidebar
-  };
-
-  // Function to toggle the slider visibility when Compare button is clicked
-  const handleCompareClick = () => {
-    setShowSlider(!showSlider); // Toggle the slider visibility
-  };
-
-  // /* OLD LOGIC */
-  // const handleImageClick = (image) => {
-  //   if (!selectedImage) {
-  //     setSelectedImage(image); // Set the first image
-  //    } else if (!otherImage) {
-  //     setOtherImage(image); // Set the first image
-  //   } else if (selectedImage && !otherImage) {
-  //     setOtherImage(image); // Set the second image for comparison
-  //   } else {
-  //     setSelectedImage(image); // Reset and set a new selected image
-  //     setOtherImage(""); // Clear the other image
-  //   }
-  // };
-
-  const handleImageClick = (image) => {
-    if (sidebarMode === 'room') {
-      setActiveMainRoomImage(image);
-    } else if (sidebarMode === 'product') {
-      setActiveProductImage(image);
+  // PANNING HANDLERS WHEN ZOOMED
+  const handleMouseDown = (e) => {
+    if (zoomLevel > 100) {
+      isDragging.current = true;
+      dragStart.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
     }
-    // Auto-close the popup after a selection so the user can see the
-    // updated room / product overlay without manually dismissing it.
-    setOpenSidebar(false);
   };
-  
 
+  const handleMouseMove = (e) => {
+    if (isDragging.current && zoomLevel > 100) {
+      setPanOffset({
+        x: e.clientX - dragStart.current.x,
+        y: e.clientY - dragStart.current.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
+
+  const handleClose = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
+
+  // 6. CLIENT-SIDE SNAPSHOT DOWNLOAD
+  const handleDownloadSnapshot = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 800;
+    const ctx = canvas.getContext("2d");
+
+    const baseImg = new window.Image();
+    baseImg.crossOrigin = "anonymous";
+    baseImg.src = activeRoomImage;
+
+    baseImg.onload = () => {
+      ctx.drawImage(baseImg, 0, 0, 1200, 800);
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(0, 740, 1200, 60);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText("AYATRIO 3D VISUALIZER", 32, 777);
+
+      ctx.font = "normal 16px sans-serif";
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillText(
+        `${activeProduct?.productTitle || currentCategoryKey} • ₹${
+          activeProduct?.perUnitPrice || 95
+        }/sq.ft`,
+        310,
+        777
+      );
+
+      const link = document.createElement("a");
+      link.download = `ayatrio-${currentCategoryKey.toLowerCase()}-${(
+        activeProduct?.productTitle || "design"
+      )
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "-")}.jpg`;
+      link.href = canvas.toDataURL("image/jpeg", 0.95);
+      link.click();
+    };
+  };
+
+  // Safe surface texture image URLs
+  const flooringImg = surfaces.Flooring.enabled
+    ? getProductImage(surfaces.Flooring.product)
+    : null;
+
+  const wallpaperImg = surfaces.Wallpapers.enabled
+    ? getProductImage(surfaces.Wallpapers.product)
+    : null;
+
+  const curtainImg = surfaces.Curtains.enabled
+    ? getProductImage(surfaces.Curtains.product)
+    : null;
 
   return (
-    <div className="bg-gray-100 w-full h-[100vh] flex flex-col ">
-      {/* Header Section */}
-      <div className="flex items-center justify-between py-4 px-8 ">
-        <div className="flex">
-          <Link href="/">
-            <Image
-              src="/images/ayatriologo.webp"
-              alt="Ayatrio Logo"
-              width={300}
-              height={40}
-              priority
-              className="w-36 lg:w-36 object-cover"
-            />
-          </Link>
-        </div>
-        <button
-  className="text-xl px-2 hover:bg-[#e5e5e5] rounded-full cursor-pointer"
-  onClick={() => window.history.back()}
->
-  <Image
-    loading="lazy"
-    src="/icons/cancel.svg"
-    alt="close"
-    width={20}
-    height={20}
-    className="py-2 font-bold"
-  />
-</button>
-
-
-      </div>
-
-      {/* Content Section */}
-      <div className="flex-grow relative flex flex-col">
-        {/* Left Section */}
-        <div className="flex-grow p-4 flex justify-center items-center">
-          {/* OLD LOGIC
-          {showSlider ? (
-            <Slider variantA={selectedImage} variantB={otherImage}/>
-          ) : selectedImage ? (
-            <img
-              src={selectedImage}
-              alt={`${activeRoom} default`}
-              className="object-cover w-[72vw] max-h-[75vh] "
-            />
-          ) : (
-            <div>
-              <p>No images available for {activeRoom}.</p>
-            </div>
-          )} 
-          */}
-          
-          <div className="relative w-full sm:w-[72vw] h-[55vh] sm:h-[75vh]">
-             {/* The Main Room Background */}
-             <img
-                src={activeMainRoomImage}
-                alt={`Room default`}
-                className="object-cover w-full h-full"
-              />
-              
-              {/* Overlay active product as a floating thumbnail for now (until AI merge is ready) */}
-              {activeProductImage && (
-                <div className="absolute top-4 left-4 bg-white p-2 shadow-lg border-2 border-blue-500 rounded-md">
-                   <p className="text-xs font-bold text-center mb-1">Selected Product</p>
-                   <img src={activeProductImage} alt="Selected Product" className="w-24 h-24 object-cover" />
-                </div>
-              )}
-          </div>
-        </div>
-
-        {/* Right Section that stays on screen */}
-        <div className="absolute inset-x-0 bottom-3 sm:inset-x-auto sm:top-0 sm:right-0 sm:bottom-auto sm:h-full flex flex-row sm:flex-col justify-center sm:justify-center items-center sm:items-end gap-2 sm:gap-4 p-2 sm:p-4 z-30 pointer-events-none">
-          {/* Text and Icons */}
-          <div className="flex flex-row sm:flex-col items-center space-x-1 sm:space-x-0 sm:space-y-4 bg-black rounded-full sm:rounded-none px-2 sm:px-0 py-1.5 sm:py-0 pointer-events-auto shadow-lg">
-            {/* Upload Your Room */}
-            <div
-              className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebar}
-            >
-              {/* Hidden text that appears on hover (desktop only) */}
-              <div className="hidden sm:block absolute right-14 bg-white w-48 text-black p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Upload Your Room
-              </div>
-              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
-                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
-                  <Image
-                    src="/icons/camera.svg"
-                    alt="Upload Your Room"
-                    width={20}
-                    height={20}
-                    className="group-hover:filter group-hover:invert-0 invert"
-                  />
-                </div>
-                <span className="text-white text-[10px] sm:hidden mt-0.5">Upload</span>
-              </div>
-            </div>
-
-            {/* Choose a Room */}
-            <div
-              className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebarForRoom}
-            >
-              {/* Hidden text that appears on hover (desktop only) */}
-              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Choose a Room
-              </div>
-              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
-                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
-                  <Image
-                    src="/icons/click and collect.svg"
-                    alt="Choose a Room"
-                    width={20}
-                    height={20}
-                    className="group-hover:filter group-hover:invert-0 invert"
-                  />
-                </div>
-                <span className="text-white text-[10px] sm:hidden mt-0.5">Room</span>
-              </div>
-            </div>
-
-            {/* Choose a Product */}
-            <div
-              className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebarForProduct}
-            >
-              {/* Hidden text that appears on hover (desktop only) */}
-              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Choose a Product
-              </div>
-              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
-                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
-                  <Image
-                    src="/icons/instalation.svg"
-                    alt="Choose a Product"
-                    width={20}
-                    height={20}
-                    className="group-hover:filter group-hover:invert-0 invert"
-                  />
-                </div>
-                <span className="text-white text-[10px] sm:hidden mt-0.5">Product</span>
-              </div>
-            </div>
-
-            {/* Live Specialist Guide */}
-            <div
-              className="group relative flex items-center cursor-pointer"
-              onClick={handleOpenSidebar}
-            >
-              {/* Hidden text that appears on hover (desktop only) */}
-              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Live Specialist Guide
-              </div>
-              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
-                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
-                  <Image
-                    src="/icons/golive.svg"
-                    alt="Live Specialist Guide"
-                    width={20}
-                    height={20}
-                    className="group-hover:filter group-hover:invert-0 invert"
-                  />
-                </div>
-                <span className="text-white text-[10px] sm:hidden mt-0.5">Live</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sidebar Overlay */}
-      {openSidebar && (
-        <>
-          {/* Mobile-only backdrop — clicking closes the popup */}
-          <div
-            className="fixed inset-0 bg-black/40 z-40 block sm:hidden"
-            onClick={handleCloseSidebar}
+    <div className="relative w-full h-[100dvh] flex flex-col lg:flex-row bg-[#111111] overflow-hidden select-none">
+      {/* 1. DESKTOP LEFT STUDIO SIDEBAR WITH SMOOTH HIDE/EXPAND (>= 1024px) */}
+      <div
+        className={`hidden lg:block h-full transition-all duration-300 ease-in-out overflow-hidden z-20 flex-shrink-0 ${
+          isSidebarOpen
+            ? "w-[380px] lg:w-[410px] opacity-100 translate-x-0"
+            : "w-0 opacity-0 -translate-x-full pointer-events-none"
+        }`}
+      >
+        <div className="w-[380px] lg:w-[410px] h-full">
+          <ProductSidebar
+            activeCategory={currentCategoryKey}
+            onSelectCategory={handleSelectCategory}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onOpenFilters={() => setIsFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
+            viewMode={viewMode}
+            onToggleViewMode={() => setViewMode((v) => (v === "grid" ? "list" : "grid"))}
+            onOpenHistory={() => setIsHistoryOpen(true)}
+            originalProduct={originalProduct || currentCategoryProducts[0]}
+            activeProduct={activeProduct}
+            products={filteredProducts}
+            onSelectProduct={handleSelectProduct}
           />
-          <div className="fixed inset-0 sm:inset-y-0 sm:left-auto sm:right-0 w-full sm:w-[450px] overflow-y-auto bg-white h-full shadow-lg z-50 transition-transform transform translate-x-0">
-            <div className="sticky top-0 bg-white flex justify-between items-center p-3 sm:p-4 border-b border-gray-200 z-10">
-              <h2 className="text-base sm:text-lg font-semibold">Choose Products</h2>
-              <button onClick={handleCloseSidebar} aria-label="Close">
-                <Image
-                  loading="lazy"
-                  src="/icons/cancel.svg"
-                  alt="close"
-                  width={20}
-                  height={20}
-                />
-              </button>
-            </div>
+        </div>
+      </div>
 
-            {/* Upload Your Room Button */}
-            <div className="p-3 sm:p-4 flex flex-col items-center justify-center">
-              <button className="bg-blue-600 text-sm text-white py-3 px-4 rounded-full w-full sm:w-auto">
-                Upload Your Room
-              </button>
-              <div className=" flex mt-2 ">
-                <p className="px-[10px] text-center text-sm text-gray-800">
-                  Choose the Right (product name) for Your Rooms is the fast step
-                  of future of living
-                </p>
+      {/* 2. FLOATING HALF-AND-HALF SEAM COLLAPSE/EXPAND BUTTON (CENTERED ON THE CUT LINE) */}
+      <button
+        onClick={() => setIsSidebarOpen((prev) => !prev)}
+        aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        className={`hidden lg:flex absolute top-[56px] -translate-y-1/2 z-50 w-9 h-9 rounded-full bg-white border border-gray-300 shadow-md hover:shadow-lg text-gray-800 hover:text-black hover:bg-gray-50 items-center justify-center cursor-pointer transition-all duration-300 active:scale-90 ${
+          isSidebarOpen
+            ? "left-[380px] lg:left-[410px] -translate-x-1/2"
+            : "left-2 translate-x-0"
+        }`}
+      >
+        {isSidebarOpen ? (
+          <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        ) : (
+          <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        )}
+      </button>
+
+      {/* 3. RIGHT / CANVAS COLUMN */}
+      <div className="flex-1 relative flex flex-col h-full overflow-hidden transition-all duration-300">
+        {/* TOP ACTION BAR */}
+        <TopActionBar
+          activeRoomTitle={activeRoomTitle}
+          onOpenRoomOptions={() => setIsRoomOptionsOpen(true)}
+          onOpenUpload={() => setIsRoomOptionsOpen(true)}
+          onOpenSave={handleOpenSave}
+          onOpenShare={() => setIsShareOpen(true)}
+          onClose={handleClose}
+        />
+
+        {/* CENTER VISUALIZER CANVAS STAGE */}
+        <main
+          className="flex-1 relative h-full flex flex-col items-center justify-between bg-white lg:bg-[#111111] overflow-hidden"
+          style={{
+            paddingBottom: !isRoomOptionsOpen && typeof window !== "undefined" && window.innerWidth < 1024 ? `${sheetHeight}px` : undefined,
+            transition: isSheetDragging ? "none" : "padding-bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {/* SHOWROOM GALLERY OVERLAY */}
+          {isRoomOptionsOpen && (
+            <ShowroomGallery
+              isOpen={isRoomOptionsOpen}
+              onClose={() => setIsRoomOptionsOpen(false)}
+              activeRoomImage={activeRoomImage}
+              onSelectRoom={handleSelectRoom}
+              userUploadedRooms={userUploadedRooms}
+              onUploadRoom={handleUploadRoom}
+            />
+          )}
+
+          {/* COMPARE SLIDER MODE */}
+          {isCompareActive ? (
+            <div className="w-full h-full p-4 sm:p-8 flex items-center justify-center">
+              <Slider
+                variantA={activeRoomImage}
+                variantB={getProductImage(activeProduct) || activeRoomImage}
+              />
+            </div>
+          ) : (
+            /* DYNAMIC MULTI-SURFACE 3D CANVAS WITH INTERACTIVE ZOOM & ROTATE */
+            <div
+              className="flex-1 w-full min-h-0 relative flex items-center justify-center overflow-hidden transition-transform duration-200"
+              style={{
+                transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel / 100})`,
+                cursor: zoomLevel > 100 ? (isDragging.current ? "grabbing" : "grab") : "default",
+              }}
+            >
+              {/* Room Base Image Frame */}
+              <div className="relative w-full h-full max-w-full max-h-[88vh] flex items-center justify-center overflow-hidden">
+                <img
+                  src={activeRoomImage}
+                  alt={activeRoomTitle}
+                  className="w-full h-full object-contain pointer-events-none select-none"
+                />
+
+                {/* 1. DYNAMIC WALLPAPER SURFACE LAYER */}
+                {wallpaperImg && surfaces.Wallpapers.enabled && (
+                  <div
+                    key={`wall-${wallpaperImg}`}
+                    className="absolute top-[8%] inset-x-0 h-[58%] overflow-hidden pointer-events-none transition-all duration-500"
+                    style={{
+                      maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+                      WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+                      opacity: currentCategoryKey === "Wallpapers" ? 0.95 : 0.65,
+                    }}
+                  >
+                    <div
+                      className="w-full h-full absolute inset-0 transition-all duration-500"
+                      style={{
+                        backgroundImage: `url(${wallpaperImg})`,
+                        backgroundRepeat: "repeat",
+                        backgroundSize: "240px 240px",
+                        mixBlendMode: "multiply",
+                        filter: "contrast(1.08) brightness(0.98)",
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* 2. DYNAMIC FLOORING SURFACE LAYER WITH REALISTIC PERSPECTIVE & 90° ROTATION */}
+                {flooringImg && surfaces.Flooring.enabled && (
+                  <div
+                    key={`floor-container-${rotation}-${flooringImg}`}
+                    className="absolute bottom-0 inset-x-0 h-[48%] overflow-hidden pointer-events-none transition-all duration-300"
+                    style={{
+                      clipPath: "polygon(0 20%, 100% 20%, 100% 100%, 0 100%)",
+                      WebkitMaskImage: "linear-gradient(to top, black 82%, rgba(0,0,0,0.6) 96%, transparent 100%)",
+                      maskImage: "linear-gradient(to top, black 82%, rgba(0,0,0,0.6) 96%, transparent 100%)",
+                    }}
+                  >
+                    <div
+                      key={`floor-mesh-${rotation}-${flooringImg}`}
+                      className="w-[280%] h-[280%] -left-[90%] -top-[50%] absolute origin-bottom transition-all duration-300"
+                      style={{
+                        transform: `perspective(450px) rotateX(64deg) rotate(${rotation}deg)`,
+                        backgroundImage: `url(${flooringImg})`,
+                        backgroundRepeat: "repeat",
+                        backgroundSize: rotation === 90 ? "280px 90px" : "90px 280px",
+                        mixBlendMode: "multiply",
+                        filter: "contrast(1.18) brightness(0.92)",
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* 3. DYNAMIC CURTAIN & DRAPES SURFACE LAYER */}
+                {curtainImg && surfaces.Curtains.enabled && (
+                  <div
+                    key={`curtain-${curtainImg}`}
+                    className="absolute top-[12%] left-[4%] w-[24%] h-[68%] overflow-hidden pointer-events-none transition-all duration-500 rounded-lg"
+                    style={{
+                      maskImage: "linear-gradient(to right, black 80%, transparent 100%)",
+                      WebkitMaskImage: "linear-gradient(to right, black 80%, transparent 100%)",
+                      opacity: currentCategoryKey === "Curtains" ? 0.95 : 0.70,
+                    }}
+                  >
+                    <div
+                      className="w-full h-full absolute inset-0 transition-all duration-500"
+                      style={{
+                        backgroundImage: `url(${curtainImg})`,
+                        backgroundRepeat: "repeat",
+                        backgroundSize: "160px 160px",
+                        mixBlendMode: "multiply",
+                        filter: "contrast(1.1) brightness(0.95)",
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
+          )}
 
-            {/* Tab Section - Only show for rooms */}
-            {sidebarMode === 'room' && (
-              <div className="p-3 sm:p-4 flex justify-start sm:justify-between gap-2 overflow-x-auto">
-                <button
-                  onClick={() => handleTabClick("livingroom")}
-                  className={`${
-                    activeRoom === "Living Room"
-                      ? "text-blue-600 border-blue-600"
-                      : "text-black border-gray-400"
-                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
-                >
-                  Living Room
-                </button>
-                <button
-                  onClick={() => handleTabClick("diningroom")}
-                  className={`${
-                    activeRoom === "Dining Room"
-                      ? "text-blue-600 border-blue-600"
-                      : "text-black border-gray-400"
-                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
-                >
-                  Dining Room
-                </button>
-                <button
-                  onClick={() => handleTabClick("bedroom")}
-                  className={`${
-                    activeRoom === "Bedroom"
-                      ? "text-blue-600 border-blue-600"
-                      : "text-black border-gray-400"
-                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
-                >
-                  Bedroom
-                </button>
-              </div>
-            )}
-
-            {/* Image Grid Section */}
-            {/* OLD LOGIC
-            <div className="grid grid-cols-3 gap-4 p-4">
-              {roomImages[activeRoom].map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${activeRoom} ${index}`}
-                  className="w-full h-32 object-cover cursor-pointer"
-                  onClick={() => handleImageClick(image)}
-                />
-              ))}
+          {/* FLOATING CANVAS TOOLBAR WITH REAL ROTATE, RESET, ZOOM */}
+          {!isRoomOptionsOpen && (
+            <div className="w-full shrink-0 relative lg:absolute lg:bottom-6 z-30 flex justify-center inset-x-0 pointer-events-auto">
+              <BottomToolbar
+                onReset={handleReset}
+                onRotate={handleToggleRotate}
+                onToggleCompare={() => setIsCompareActive((prev) => !prev)}
+                isCompareActive={isCompareActive}
+                zoomLevel={zoomLevel}
+                onZoomIn={handleZoomIn}
+                onZoomOut={handleZoomOut}
+                onSetZoom={handleSetZoom}
+                rotation={rotation}
+              />
             </div>
-            */}
-            {/* Content Section */}
-            <div className={`${sidebarMode === 'room' ? 'grid grid-cols-2 sm:grid-cols-3' : 'flex flex-col'} gap-3 sm:gap-4 p-3 sm:p-4`}>
-              {/* Rooms (Grid) */}
-              {sidebarMode === 'room' && staticRoomImages[activeRoom]?.map((image, index) => (
-                <img
-                  key={`room-${index}`}
-                  src={image}
-                  alt={`Static ${activeRoom} ${index}`}
-                  className={`w-full h-24 sm:h-32 object-cover cursor-pointer ${activeMainRoomImage === image ? 'border-4 border-blue-500' : ''}`}
-                  onClick={() => handleImageClick(image)}
-                />
-              ))}
+          )}
+        </main>
+      </div>
 
-              {/* Products (Vertical Cards) */}
-              {sidebarMode === 'product' && categoryProducts.map((product, index) => (
-                <div
-                  key={`product-${index}`}
-                  className={`flex gap-4 p-2 sm:p-3 border rounded-lg cursor-pointer hover:shadow-md transition-shadow bg-white ${activeProductImage === product.images[0] ? 'border-blue-600 ring-1 ring-blue-600' : 'border-gray-200'}`}
-                  onClick={() => handleImageClick(product.images[0])}
-                >
-                  {/* Product Image */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-                    <img src={product.images[0]} alt={product.productTitle} className="w-full h-full object-cover" />
-                  </div>
-                  {/* Product Info */}
-                  <div className="flex flex-col flex-grow justify-center">
-                     <p className="text-sm font-semibold text-gray-900 line-clamp-2">{product.productTitle}</p>
-                     <p className="text-base sm:text-lg font-bold text-black mt-1">
-                       ₹{product.perUnitPrice || product.discountedprice?.price || "N/A"}
-                       <span className="text-xs font-normal text-gray-500 ml-1">/sq.ft</span>
-                     </p>
-                     {/* Dummy Rating (can be replaced with real data later) */}
-                     <div className="flex items-center gap-1 mt-1">
-                        <span className="text-yellow-400 text-sm">★★★★☆</span>
-                        <span className="text-xs text-blue-600 hover:underline">124</span>
-                     </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* Fallbacks */}
-              {sidebarMode === 'room' && (!staticRoomImages[activeRoom] || staticRoomImages[activeRoom].length === 0) && (
-                <p className="col-span-2 sm:col-span-3 text-center text-gray-500">No 3D rooms uploaded for {activeRoom} yet.</p>
-              )}
-              {sidebarMode === 'product' && categoryProducts.length === 0 && (
-                <p className="text-center text-gray-500">No products available for this category.</p>
-              )}
-            </div>
-            {/* Compare Button (sticky on mobile so it stays reachable) */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 sm:p-4 flex items-center justify-center">
-              <button
-                onClick={handleCompareClick}
-                className="bg-blue-600 text-white px-4 py-2 rounded-full w-full sm:w-auto"
-              >
-                Compare
-              </button>
-            </div>
-          </div>
-        </>
+      {/* 4. MOBILE EXPANDABLE BOTTOM SHEET (< 1024px) */}
+      {!isRoomOptionsOpen && (
+        <div className="block lg:hidden">
+          <MobileBottomSheet
+            activeProduct={activeProduct}
+            originalProduct={originalProduct || currentCategoryProducts[0]}
+            products={filteredProducts}
+            onSelectProduct={handleSelectProduct}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onOpenFilters={() => setIsFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
+            onOpenHistory={() => setIsHistoryOpen(true)}
+            sheetHeight={sheetHeight}
+            setSheetHeight={setSheetHeight}
+            isDragging={isSheetDragging}
+            setIsDragging={setIsSheetDragging}
+          />
+        </div>
       )}
 
-      {/* Footer Section — desktop only; the right-side icon stack pill
-          already provides the mobile action surface. */}
-      <div className="hidden sm:block">
-        <Footer handleCompareClick={handleCompareClick} />
-      </div>
-    </div>
+      {/* MODALS */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        activeRoomName={activeRoomTitle}
+        roomImageUrl={activeRoomImage}
+        productTitle={activeProduct?.productTitle || currentCategoryKey}
+        shareUrl={typeof window !== "undefined" ? window.location.href : ""}
+        onDownloadSnapshot={handleDownloadSnapshot}
+      />
 
+      <SaveAuthModal
+        isOpen={isSaveOpen}
+        onClose={() => setIsSaveOpen(false)}
+        productTitle={activeProduct?.productTitle || currentCategoryKey}
+        activeRoomName={activeRoomTitle}
+        activeRoomImage={activeRoomImage}
+        rotation={rotation}
+      />
+
+      <FiltersModal
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        activeFilters={activeFilters}
+        onApplyFilters={(filters) => setActiveFilters(filters)}
+        totalResultsCount={filteredProducts.length}
+      />
+
+      <HistoryDrawer
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        history={history}
+        onSelectProduct={handleSelectProduct}
+        onClearHistory={() => setHistory([])}
+      />
+    </div>
   );
 }
 
