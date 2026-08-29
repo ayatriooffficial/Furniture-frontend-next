@@ -44,6 +44,12 @@ export default function FloatSupportBot() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
+  // Hide the floating support bot entirely on the /seeonwall visualizer
+  // so it doesn't overlap the immersive 3D room UI.
+  // MUST be after all hooks (Rules of Hooks) — placing it before useEffect
+  // throws "Rendered fewer hooks than expected" on route change.
+  if (pathname === "/seeonwall") return null;
+
   const sendMessage = async (text) => {
     const messageText = text ?? input;
     if (!messageText.trim()) return;

@@ -679,6 +679,9 @@ function Header() {
     } else if (sidebarMode === 'product') {
       setActiveProductImage(image);
     }
+    // Auto-close the popup after a selection so the user can see the
+    // updated room / product overlay without manually dismissing it.
+    setOpenSidebar(false);
   };
   
 
@@ -736,7 +739,7 @@ function Header() {
           )} 
           */}
           
-          <div className="relative w-[72vw] h-[75vh]">
+          <div className="relative w-full sm:w-[72vw] h-[55vh] sm:h-[75vh]">
              {/* The Main Room Background */}
              <img
                 src={activeMainRoomImage}
@@ -755,20 +758,20 @@ function Header() {
         </div>
 
         {/* Right Section that stays on screen */}
-        <div className="absolute top-0 right-0 h-full flex flex-col justify-center items-end p-4">
+        <div className="absolute inset-x-0 bottom-3 sm:inset-x-auto sm:top-0 sm:right-0 sm:bottom-auto sm:h-full flex flex-row sm:flex-col justify-center sm:justify-center items-center sm:items-end gap-2 sm:gap-4 p-2 sm:p-4 z-30 pointer-events-none">
           {/* Text and Icons */}
-          <div className="flex flex-col space-y-4 bg-black">
+          <div className="flex flex-row sm:flex-col items-center space-x-1 sm:space-x-0 sm:space-y-4 bg-black rounded-full sm:rounded-none px-2 sm:px-0 py-1.5 sm:py-0 pointer-events-auto shadow-lg">
             {/* Upload Your Room */}
             <div
               className="group relative flex items-center cursor-pointer"
               onClick={handleOpenSidebar}
             >
-              {/* Hidden text that appears on hover */}
-              <div className="absolute right-14 bg-white w-48 text-black p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Hidden text that appears on hover (desktop only) */}
+              <div className="hidden sm:block absolute right-14 bg-white w-48 text-black p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Upload Your Room
               </div>
-              <div className="flex flex-col">
-                <div className="bg-black p-4 group-hover:bg-white cursor-pointer">
+              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
+                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
                   <Image
                     src="/icons/camera.svg"
                     alt="Upload Your Room"
@@ -777,21 +780,21 @@ function Header() {
                     className="group-hover:filter group-hover:invert-0 invert"
                   />
                 </div>
+                <span className="text-white text-[10px] sm:hidden mt-0.5">Upload</span>
               </div>
             </div>
 
             {/* Choose a Room */}
             <div
               className="group relative flex items-center cursor-pointer"
-              // onClick={handleOpenSidebar} // OLD
               onClick={handleOpenSidebarForRoom}
             >
-              {/* Hidden text that appears on hover */}
-              <div className="absolute right-14 bg-white  text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Hidden text that appears on hover (desktop only) */}
+              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Choose a Room
               </div>
-              <div className="flex flex-col">
-                <div className="bg-black p-4 group-hover:bg-white cursor-pointer">
+              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
+                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
                   <Image
                     src="/icons/click and collect.svg"
                     alt="Choose a Room"
@@ -800,21 +803,21 @@ function Header() {
                     className="group-hover:filter group-hover:invert-0 invert"
                   />
                 </div>
+                <span className="text-white text-[10px] sm:hidden mt-0.5">Room</span>
               </div>
             </div>
 
             {/* Choose a Product */}
             <div
               className="group relative flex items-center cursor-pointer"
-              // onClick={handleOpenSidebar} // OLD
               onClick={handleOpenSidebarForProduct}
             >
-              {/* Hidden text that appears on hover */}
-              <div className="absolute right-14 bg-white text-black w-48 p-[14px]  flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Hidden text that appears on hover (desktop only) */}
+              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Choose a Product
               </div>
-              <div className="flex flex-col">
-                <div className="bg-black p-4 group-hover:bg-white cursor-pointer">
+              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
+                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
                   <Image
                     src="/icons/instalation.svg"
                     alt="Choose a Product"
@@ -823,6 +826,7 @@ function Header() {
                     className="group-hover:filter group-hover:invert-0 invert"
                   />
                 </div>
+                <span className="text-white text-[10px] sm:hidden mt-0.5">Product</span>
               </div>
             </div>
 
@@ -831,12 +835,12 @@ function Header() {
               className="group relative flex items-center cursor-pointer"
               onClick={handleOpenSidebar}
             >
-              {/* Hidden text that appears on hover */}
-              <div className="absolute right-14 bg-white text-black w-48 p-[14px]  flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Hidden text that appears on hover (desktop only) */}
+              <div className="hidden sm:block absolute right-14 bg-white text-black w-48 p-[14px] flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Live Specialist Guide
               </div>
-              <div className="flex flex-col">
-                <div className="bg-black p-4 group-hover:bg-white cursor-pointer">
+              <div className="flex flex-col items-center justify-center w-12 sm:w-auto">
+                <div className="bg-black p-2 sm:p-4 group-hover:bg-white cursor-pointer rounded-full sm:rounded-none">
                   <Image
                     src="/icons/golive.svg"
                     alt="Live Specialist Guide"
@@ -845,6 +849,7 @@ function Header() {
                     className="group-hover:filter group-hover:invert-0 invert"
                   />
                 </div>
+                <span className="text-white text-[10px] sm:hidden mt-0.5">Live</span>
               </div>
             </div>
           </div>
@@ -853,145 +858,155 @@ function Header() {
 
       {/* Sidebar Overlay */}
       {openSidebar && (
-        <div className="fixed top-0 right-0 w-[450px] overflow-y-auto bg-white h-full shadow-lg z-50 transition-transform transform translate-x-0">
-          <div className="flex justify-between items-center p-4">
-            <h2 className="text-lg font-semibold">Choose Products</h2>
-            <button onClick={handleCloseSidebar}>
-              <Image
-                loading="lazy"
-                src="/icons/cancel.svg"
-                alt="close"
-                width={20}
-                height={20}
-              />
-            </button>
-          </div>
-
-          {/* Upload Your Room Button */}
-          <div className="p-4 flex flex-col items-center justify-center">
-            <button className="bg-blue-600 text-sm text-white py-3 px-4 rounded-full">
-              Upload Your Room
-            </button>
-            <div className=" flex mt-2 ">
-              <p className="px-[10px] text-center text-sm text-gray-800">
-                Choose the Right (product name) for Your Rooms is the fast step
-                of future of living
-              </p>
-            </div>
-          </div>
-
-          {/* Tab Section - Only show for rooms */}
-          {sidebarMode === 'room' && (
-            <div className="p-4 flex justify-between">
-              <button
-                onClick={() => handleTabClick("livingroom")}
-                className={`${
-                  activeRoom === "Living Room"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-black border-gray-400"
-                } px-4 py-2 border-b-2`}
-              >
-                Living Room
-              </button>
-              <button
-                onClick={() => handleTabClick("diningroom")}
-                className={`${
-                  activeRoom === "Dining Room"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-black border-gray-400"
-                } px-4 py-2 border-b-2`}
-              >
-                Dining Room
-              </button>
-              <button
-                onClick={() => handleTabClick("bedroom")}
-                className={`${
-                  activeRoom === "Bedroom"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-black border-gray-400"
-                } px-4 py-2 border-b-2`}
-              >
-                Bedroom
+        <>
+          {/* Mobile-only backdrop — clicking closes the popup */}
+          <div
+            className="fixed inset-0 bg-black/40 z-40 block sm:hidden"
+            onClick={handleCloseSidebar}
+          />
+          <div className="fixed inset-0 sm:inset-y-0 sm:left-auto sm:right-0 w-full sm:w-[450px] overflow-y-auto bg-white h-full shadow-lg z-50 transition-transform transform translate-x-0">
+            <div className="sticky top-0 bg-white flex justify-between items-center p-3 sm:p-4 border-b border-gray-200 z-10">
+              <h2 className="text-base sm:text-lg font-semibold">Choose Products</h2>
+              <button onClick={handleCloseSidebar} aria-label="Close">
+                <Image
+                  loading="lazy"
+                  src="/icons/cancel.svg"
+                  alt="close"
+                  width={20}
+                  height={20}
+                />
               </button>
             </div>
-          )}
 
-          {/* Image Grid Section */}
-          {/* OLD LOGIC
-          <div className="grid grid-cols-3 gap-4 p-4">
-            {roomImages[activeRoom].map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`${activeRoom} ${index}`}
-                className="w-full h-32 object-cover cursor-pointer"
-                onClick={() => handleImageClick(image)} 
-              />
-            ))}
-          </div> 
-          */}
-          {/* Content Section */}
-          <div className={`${sidebarMode === 'room' ? 'grid grid-cols-3' : 'flex flex-col'} gap-4 p-4`}>
-            {/* Rooms (Grid) */}
-            {sidebarMode === 'room' && staticRoomImages[activeRoom]?.map((image, index) => (
-              <img
-                key={`room-${index}`}
-                src={image}
-                alt={`Static ${activeRoom} ${index}`}
-                className={`w-full h-32 object-cover cursor-pointer ${activeMainRoomImage === image ? 'border-4 border-blue-500' : ''}`}
-                onClick={() => handleImageClick(image)} 
-              />
-            ))}
-
-            {/* Products (Vertical Cards) */}
-            {sidebarMode === 'product' && categoryProducts.map((product, index) => (
-              <div 
-                key={`product-${index}`}
-                className={`flex gap-4 p-3 border rounded-lg cursor-pointer hover:shadow-md transition-shadow bg-white ${activeProductImage === product.images[0] ? 'border-blue-600 ring-1 ring-blue-600' : 'border-gray-200'}`}
-                onClick={() => handleImageClick(product.images[0])}
-              >
-                {/* Product Image */}
-                <div className="w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-                  <img src={product.images[0]} alt={product.productTitle} className="w-full h-full object-cover" />
-                </div>
-                {/* Product Info */}
-                <div className="flex flex-col flex-grow justify-center">
-                   <p className="text-sm font-semibold text-gray-900 line-clamp-2">{product.productTitle}</p>
-                   <p className="text-lg font-bold text-black mt-1">
-                     ₹{product.perUnitPrice || product.discountedprice?.price || "N/A"}
-                     <span className="text-xs font-normal text-gray-500 ml-1">/sq.ft</span>
-                   </p>
-                   {/* Dummy Rating (can be replaced with real data later) */}
-                   <div className="flex items-center gap-1 mt-1">
-                      <span className="text-yellow-400 text-sm">★★★★☆</span>
-                      <span className="text-xs text-blue-600 hover:underline">124</span>
-                   </div>
-                </div>
+            {/* Upload Your Room Button */}
+            <div className="p-3 sm:p-4 flex flex-col items-center justify-center">
+              <button className="bg-blue-600 text-sm text-white py-3 px-4 rounded-full w-full sm:w-auto">
+                Upload Your Room
+              </button>
+              <div className=" flex mt-2 ">
+                <p className="px-[10px] text-center text-sm text-gray-800">
+                  Choose the Right (product name) for Your Rooms is the fast step
+                  of future of living
+                </p>
               </div>
-            ))}
+            </div>
 
-            {/* Fallbacks */}
-            {sidebarMode === 'room' && (!staticRoomImages[activeRoom] || staticRoomImages[activeRoom].length === 0) && (
-              <p className="col-span-3 text-center text-gray-500">No 3D rooms uploaded for {activeRoom} yet.</p>
+            {/* Tab Section - Only show for rooms */}
+            {sidebarMode === 'room' && (
+              <div className="p-3 sm:p-4 flex justify-start sm:justify-between gap-2 overflow-x-auto">
+                <button
+                  onClick={() => handleTabClick("livingroom")}
+                  className={`${
+                    activeRoom === "Living Room"
+                      ? "text-blue-600 border-blue-600"
+                      : "text-black border-gray-400"
+                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
+                >
+                  Living Room
+                </button>
+                <button
+                  onClick={() => handleTabClick("diningroom")}
+                  className={`${
+                    activeRoom === "Dining Room"
+                      ? "text-blue-600 border-blue-600"
+                      : "text-black border-gray-400"
+                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
+                >
+                  Dining Room
+                </button>
+                <button
+                  onClick={() => handleTabClick("bedroom")}
+                  className={`${
+                    activeRoom === "Bedroom"
+                      ? "text-blue-600 border-blue-600"
+                      : "text-black border-gray-400"
+                  } px-3 sm:px-4 py-2 border-b-2 whitespace-nowrap text-sm sm:text-base`}
+                >
+                  Bedroom
+                </button>
+              </div>
             )}
-            {sidebarMode === 'product' && categoryProducts.length === 0 && (
-              <p className="text-center text-gray-500">No products available for this category.</p>
-            )}
+
+            {/* Image Grid Section */}
+            {/* OLD LOGIC
+            <div className="grid grid-cols-3 gap-4 p-4">
+              {roomImages[activeRoom].map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`${activeRoom} ${index}`}
+                  className="w-full h-32 object-cover cursor-pointer"
+                  onClick={() => handleImageClick(image)}
+                />
+              ))}
+            </div>
+            */}
+            {/* Content Section */}
+            <div className={`${sidebarMode === 'room' ? 'grid grid-cols-2 sm:grid-cols-3' : 'flex flex-col'} gap-3 sm:gap-4 p-3 sm:p-4`}>
+              {/* Rooms (Grid) */}
+              {sidebarMode === 'room' && staticRoomImages[activeRoom]?.map((image, index) => (
+                <img
+                  key={`room-${index}`}
+                  src={image}
+                  alt={`Static ${activeRoom} ${index}`}
+                  className={`w-full h-24 sm:h-32 object-cover cursor-pointer ${activeMainRoomImage === image ? 'border-4 border-blue-500' : ''}`}
+                  onClick={() => handleImageClick(image)}
+                />
+              ))}
+
+              {/* Products (Vertical Cards) */}
+              {sidebarMode === 'product' && categoryProducts.map((product, index) => (
+                <div
+                  key={`product-${index}`}
+                  className={`flex gap-4 p-2 sm:p-3 border rounded-lg cursor-pointer hover:shadow-md transition-shadow bg-white ${activeProductImage === product.images[0] ? 'border-blue-600 ring-1 ring-blue-600' : 'border-gray-200'}`}
+                  onClick={() => handleImageClick(product.images[0])}
+                >
+                  {/* Product Image */}
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                    <img src={product.images[0]} alt={product.productTitle} className="w-full h-full object-cover" />
+                  </div>
+                  {/* Product Info */}
+                  <div className="flex flex-col flex-grow justify-center">
+                     <p className="text-sm font-semibold text-gray-900 line-clamp-2">{product.productTitle}</p>
+                     <p className="text-base sm:text-lg font-bold text-black mt-1">
+                       ₹{product.perUnitPrice || product.discountedprice?.price || "N/A"}
+                       <span className="text-xs font-normal text-gray-500 ml-1">/sq.ft</span>
+                     </p>
+                     {/* Dummy Rating (can be replaced with real data later) */}
+                     <div className="flex items-center gap-1 mt-1">
+                        <span className="text-yellow-400 text-sm">★★★★☆</span>
+                        <span className="text-xs text-blue-600 hover:underline">124</span>
+                     </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Fallbacks */}
+              {sidebarMode === 'room' && (!staticRoomImages[activeRoom] || staticRoomImages[activeRoom].length === 0) && (
+                <p className="col-span-2 sm:col-span-3 text-center text-gray-500">No 3D rooms uploaded for {activeRoom} yet.</p>
+              )}
+              {sidebarMode === 'product' && categoryProducts.length === 0 && (
+                <p className="text-center text-gray-500">No products available for this category.</p>
+              )}
+            </div>
+            {/* Compare Button (sticky on mobile so it stays reachable) */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 sm:p-4 flex items-center justify-center">
+              <button
+                onClick={handleCompareClick}
+                className="bg-blue-600 text-white px-4 py-2 rounded-full w-full sm:w-auto"
+              >
+                Compare
+              </button>
+            </div>
           </div>
-          {/* Compare Button */}
-          <div className="p-4 flex items-center justify-center">
-            <button
-              onClick={handleCompareClick}
-              className="bg-blue-600 text-white px-4 py-2 rounded-full"
-            >
-              Compare
-            </button>
-          </div>
-        </div>
+        </>
       )}
 
-      {/* Footer Section */}
-      <Footer handleCompareClick={handleCompareClick} />
+      {/* Footer Section — desktop only; the right-side icon stack pill
+          already provides the mobile action surface. */}
+      <div className="hidden sm:block">
+        <Footer handleCompareClick={handleCompareClick} />
+      </div>
     </div>
 
   );

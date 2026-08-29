@@ -288,9 +288,9 @@ const RoomToolbar = ({ data }) => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto sm:overflow-visible whitespace-nowrap px-2 sm:px-0 [&::-webkit-scrollbar]:hidden">
       {openFreeSAmple && <div className="background-overlay open"></div>}
-      <div className="flex flex-row bg-red-500 gap-2 px-[10px] py-[5px]">
+      <div className="flex flex-row bg-red-500 gap-2 px-[10px] py-[5px] flex-shrink-0">
         <Image
           src="/icons/golive.svg"
           alt="live icon"
@@ -302,14 +302,14 @@ const RoomToolbar = ({ data }) => {
       </div>
       <button
         // onClick={handleJoinLive}
-        className="py-2 focus:outline-none text-black flex items-center ml-2 h-8"
+        className="py-2 focus:outline-none text-black flex items-center ml-2 h-8 flex-shrink-0"
       >
-        <span className="text-sm">Join Live</span>
+        <span className="text-xs sm:text-sm">Join Live</span>
       </button>
-      <span></span>
+      <span className="flex-shrink-0"></span>
       <div
         // onClick={handleFreeSampling}
-        className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 "
+        className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 flex-shrink-0"
       >
         <Image
           src="/icons/free sample.svg"
@@ -318,12 +318,12 @@ const RoomToolbar = ({ data }) => {
           height={25}
           loading="lazy"
         />
-        <span className="text-sm">Sample request</span>
+        <span className="text-xs sm:text-sm">Sample request</span>
       </div>
-      <span></span>
+      <span className="flex-shrink-0"></span>
       <div
         onClick={handleSeeOnWall}
-        className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 "
+        className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 flex-shrink-0"
       >
         <Image
           src="/icons/3d.svg"
@@ -332,7 +332,7 @@ const RoomToolbar = ({ data }) => {
           height={25}
           loading="lazy"
         />
-        <span className="text-sm">See on the wall</span>
+        <span className="text-xs sm:text-sm">See on the wall</span>
       </div>
 
       {openFreeSAmple && (
