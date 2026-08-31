@@ -88,7 +88,7 @@ const ProductPage = ({ productId, initialData }) => {
 
   return (
     <main
-      className="mb-[32px] px-[12px] sm:px-[20px] md:px-[52px]"
+      className="mb-[32px] px-[12px] sm:px-[20px] md:px-[52px] pt-[118px] sm:pt-0"
       aria-label="Product details"
       aria-live="polite"
       data-component="product-main"

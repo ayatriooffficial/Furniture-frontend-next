@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import "./imagecaresoul.css";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import {
   selectImages,
@@ -10,9 +11,91 @@ import {
 } from "../Features/Slices/imageDataSlice";
 import { useSelector } from "react-redux";
 import Link from "next/link";
+
+/**
+ * Resolves dynamic Visualizer action label based on category and subcategory.
+ */
+const getVisualizerActionLabel = (category = "", subcategory = "", title = "") => {
+  const text = `${category || ""} ${subcategory || ""} ${title || ""}`.toLowerCase();
+
+  // 1. Curtains & Blinds -> Window
+  if (
+    text.includes("curtain") ||
+    text.includes("drape") ||
+    text.includes("blind") ||
+    text.includes("shade") ||
+    text.includes("shutter")
+  ) {
+    return "See on the Window";
+  }
+
+  // 2. Flooring, Mats, Rugs, Artificial Grass -> Floor
+  if (
+    text.includes("floor") ||
+    text.includes("carpet") ||
+    text.includes("rug") ||
+    text.includes("mat") ||
+    text.includes("grass") ||
+    text.includes("plank") ||
+    (text.includes("tile") && !text.includes("wall tile"))
+  ) {
+    return "See on the Floor";
+  }
+
+  // 3. Wallpaper, Wall Decor, Wall Murals -> Wall
+  if (
+    text.includes("wall") ||
+    text.includes("paper") ||
+    text.includes("paint") ||
+    text.includes("mural")
+  ) {
+    return "See on the Wall";
+  }
+
+  // 4. Upholstery & Furniture Fabrics -> Furniture
+  if (
+    text.includes("upholster") ||
+    text.includes("sofa") ||
+    text.includes("chair") ||
+    text.includes("fabric")
+  ) {
+    return "See on Furniture";
+  }
+
+  // 5. Home furnishing, Pillows, Cushions, Bedding -> Room
+  if (
+    text.includes("furnish") ||
+    text.includes("pillow") ||
+    text.includes("cushion") ||
+    text.includes("bed") ||
+    text.includes("decor")
+  ) {
+    return "See in the Room";
+  }
+
+  // Default clean fallback
+  return "See in Your Room";
+};
 const Carousel = ({ images: prodImage, data }) => {
+  const router = useRouter();
   const productImages = useSelector(selectProductImages);
   // const prodImage = useSelector(selectImages);
+
+  const visualizerLabel = useMemo(() => {
+    return getVisualizerActionLabel(data?.category, data?.subcategory, data?.productTitle);
+  }, [data?.category, data?.subcategory, data?.productTitle]);
+
+  const handleSeeOnWall = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    if (data?.category && data?._id) {
+      const category = encodeURIComponent(data.category);
+      const id = encodeURIComponent(data._id);
+      router.push(`/seeonwall?category=${category}&id=${id}`);
+    } else {
+      router.push("/seeonwall");
+    }
+  };
 
   const images = productImages.length > 0 ? productImages[0].images : prodImage;
 
@@ -45,10 +128,29 @@ const Carousel = ({ images: prodImage, data }) => {
 
     if (swiperRef.current) {
       Object.assign(swiperRef.current, params);
-
       swiperRef.current.initialize?.();
     }
-  }, [images, swiperRef, swiperRef.current]);
+  }, [images, swiperRef]);
+
+  const handlePrevSlide = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    if (swiperRef.current?.swiper) {
+      swiperRef.current.swiper.slidePrev();
+    } else if (typeof swiperRef.current?.slidePrev === "function") {
+      swiperRef.current.slidePrev();
+    }
+  };
+
+  const handleNextSlide = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    if (swiperRef.current?.swiper) {
+      swiperRef.current.swiper.slideNext();
+    } else if (typeof swiperRef.current?.slideNext === "function") {
+      swiperRef.current.slideNext();
+    }
+  };
 
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
@@ -246,29 +348,44 @@ const Carousel = ({ images: prodImage, data }) => {
             })} */}
           </span>
 
-          <div className="z-50 custom-prev-button">
-            <Image
-              loading="lazy"
-              src="/icons/backarrowhite.svg"
-              height={20}
-              width={20}
-              alt="arrow"
-              className="absolute left-3 h-8 w-8 top-1/2 hover:opacity-100"
-              // className="absolute filter drop-shadow-sm w-7 h-7  text-white opacity-85 group hover:cursor-pointer hover:opacity-100 hover:scale-104 hover:filter-drop-shadow-lg  arrow-left"
-            />
-          </div>
+          {/* SWIPER PREV / NEXT NAVIGATION BUTTONS */}
+          <button
+            type="button"
+            onClick={handlePrevSlide}
+            aria-label="Previous image"
+            className="z-50 custom-prev-button absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-gray-800 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-90"
+          >
+            <svg className="w-4 h-4 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
 
-          <div className="z-50 custom-next-button">
+          <button
+            type="button"
+            onClick={handleNextSlide}
+            aria-label="Next image"
+            className="z-50 custom-next-button absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-gray-800 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-90"
+          >
+            <svg className="w-4 h-4 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+
+          {/* FLOATING BOTTOM-RIGHT DYNAMIC VISUALIZER ACTION BUTTON */}
+          <button
+            onClick={handleSeeOnWall}
+            aria-label={visualizerLabel}
+            className="absolute bottom-3 right-3 z-40 flex items-center gap-1.5 bg-white/95 hover:bg-white text-gray-900 px-3.5 py-1.5 rounded-full shadow-md border border-gray-200/90 backdrop-blur-xs font-bold text-xs tracking-tight transition-all active:scale-95 cursor-pointer"
+          >
             <Image
-              loading="lazy"
-              src="/icons/rightarro-white.svg"
-              height={30}
-              width={30}
-              alt="arrow"
-              className="absolute right-3 top-1/2 h-8 w-8 hover:opacity-100"
-              // className="absolute filter drop-shadow-sm w-7 h-7 -mt-[13px] text-white opacity-85 group hover:cursor-pointer hover:opacity-100 hover:scale-104 hover:filter-drop-shadow-lg arrow-right"
+              src="/icons/3d.svg"
+              alt="3D Visualizer"
+              width={16}
+              height={16}
+              className="w-4 h-4 object-contain"
             />
-          </div>
+            <span>{visualizerLabel}</span>
+          </button>
         </figure>
       </div>
     </section>

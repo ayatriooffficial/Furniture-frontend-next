@@ -18,89 +18,60 @@ const NavigationItem = ({ product: data }) => {
     }
   }, []);
   return (
-    <div className="flex items-center gap-1 ">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-gray-500 font-medium overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-1">
       {navigationItemData ? (
-        <>
-          <div className="flex items-center justify-center">
-            <Link href={`${navigationItemData.href}`}>
-              <span className="hover:text-gray-600 cursor-pointer ">
-                {navigationItemData.label}
-              </span>
-            </Link>
-            <Image
-              src="/icons/backarrowRevarce.svg"
-              alt="tick"
-              width={10}
-              height={10}
-              className="opacity-100 h-[8px]"
-            />
-          </div>
-        </>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link href={`${navigationItemData.href}`} className="hover:text-black transition-colors">
+            {navigationItemData.label}
+          </Link>
+          <span className="text-gray-400 select-none">/</span>
+        </div>
       ) : (
-        <>
-          <div className="flex items-center gap-1">
-            <Link href="/">
-              <span className="hover:text-gray-600 cursor-pointer">Home</span>
-            </Link>
-            <Image
-              src="/icons/backarrowRevarce.svg"
-              alt="tick"
-              width={10}
-              height={10}
-              className="opacity-100 h-[8px] mt-[2px]"
-            />
-          </div>
-        </>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link href="/" className="hover:text-black transition-colors">
+            Home
+          </Link>
+          <span className="text-gray-400 select-none">/</span>
+        </div>
       )}
-      <div className="flex items-center gap-1">
-        <Link href={`/${data?.category?.replace(/ /g, "-")}/collection/all`}>
-          <span className="hover:text-gray-500 cursor-pointer line-clamp-1">
+
+      {data?.category && (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link
+            href={`/${data?.category?.replace(/ /g, "-")}/collection/all`}
+            className="hover:text-black transition-colors"
+          >
             {data?.category}
-          </span>
-        </Link>
-        {/* Only show tick after category if there's a subcategory or product title */}
-        {(data?.subcategory || data?.productTitle) && (
-          <Image
-            src="/icons/backarrowRevarce.svg"
-            alt="tick"
-            width={10}
-            height={10}
-            className="opacity-100 h-[8px] mt-[2px]"
-          />
-        )}
-      </div>
-      {/* Only render subcategory section if subcategory exists */}
+          </Link>
+          {(data?.subcategory || data?.productTitle) && (
+            <span className="text-gray-400 select-none">/</span>
+          )}
+        </div>
+      )}
+
       {data?.subcategory && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5 shrink-0">
           <Link
             href={`/${data?.subcategory?.replace(
               / /g,
               "-"
             )}/subcollection/${data?.category?.replace(/ /g, "-")}`}
+            className="hover:text-black transition-colors"
           >
-            <span className="hover:text-gray-500 cursor-pointer line-clamp-1">
-              {data?.subcategory}
-            </span>
+            {data?.subcategory}
           </Link>
-          {/* Only show tick after subcategory if there's a product title */}
           {data?.productTitle && (
-            <Image
-              src="/icons/backarrowRevarce.svg"
-              alt="tick"
-              width={10}
-              height={10}
-              className="opacity-100 h-[8px] mt-[2px]"
-            />
+            <span className="text-gray-400 select-none">/</span>
           )}
         </div>
       )}
-      {/* Only show product title if it exists */}
+
       {data?.productTitle && (
-        <span className="text-gray-500 cursor-pointer line-clamp-1">
+        <span className="text-gray-800 font-semibold truncate max-w-[160px] sm:max-w-[240px]">
           {data?.productTitle}
         </span>
       )}
-    </div>
+    </nav>
   );
 };
 

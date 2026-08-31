@@ -392,7 +392,7 @@ const RoomToolbar = ({ data }) => {
       <span className="flex-shrink-0"></span>
       <div
         onClick={handleSeeOnWall}
-        className="py-2 focus:outline-none h-8 flex items-center cursor-pointer space-x-2 flex-shrink-0"
+        className="hidden sm:flex py-2 focus:outline-none h-8 items-center cursor-pointer space-x-2 flex-shrink-0"
       >
         <Image
           src="/icons/3d.svg"

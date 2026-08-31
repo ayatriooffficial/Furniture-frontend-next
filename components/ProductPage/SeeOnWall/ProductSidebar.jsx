@@ -127,12 +127,9 @@ const getProductImage = (prod) => {
 function ProductSidebar({
   activeCategory,
   onSelectCategory,
-  searchTerm,
-  onSearchChange,
-  onOpenFilters,
-  activeFilterCount = 0,
-  viewMode = "list",
-  onToggleViewMode,
+  subcategories = [],
+  activeSubcategory,
+  onSelectSubcategory,
   onOpenHistory,
   originalProduct,
   activeProduct,
@@ -192,10 +189,10 @@ function ProductSidebar({
   const [visibleCount, setVisibleCount] = useState(20);
   const sentinelRef = useRef(null);
 
-  // Reset visibleCount when category, search, or filters change
+  // Reset visibleCount when category or subcategory changes
   useEffect(() => {
     setVisibleCount(20);
-  }, [activeCategory, searchTerm, activeFilterCount]);
+  }, [activeCategory, activeSubcategory]);
 
   // IntersectionObserver for seamless infinite scrolling
   useEffect(() => {
@@ -300,66 +297,32 @@ function ProductSidebar({
         </div>
       </div>
 
-      {/* 3. SEARCH & FILTER TOOLBAR */}
-      <div className="p-3 border-b border-gray-100 flex items-center gap-2 bg-white shrink-0">
-        {/* Search Box */}
-        <div className="relative flex-1">
-          <svg className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search finishes..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 bg-gray-100 hover:bg-gray-200/60 focus:bg-white text-xs font-medium text-gray-900 rounded-lg border border-transparent focus:border-blue-500 focus:outline-none transition-colors"
-          />
+      {/* 3. DYNAMIC HORIZONTAL SUBCATEGORIES TRACK (AUTO-SELECTED) */}
+      {subcategories && subcategories.length > 0 && (
+        <div className="border-b border-gray-100 bg-gray-50/60 px-3 py-2 shrink-0">
+          <div
+            className="overflow-x-auto flex items-center gap-1.5 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {subcategories.map((sub) => {
+              const isSelected = (activeSubcategory || "").toLowerCase() === sub.toLowerCase();
+              return (
+                <button
+                  key={sub}
+                  onClick={() => onSelectSubcategory && onSelectSubcategory(sub)}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                    isSelected
+                      ? "bg-black text-white shadow-sm"
+                      : "bg-white text-gray-600 hover:text-black hover:bg-gray-100 border border-gray-200"
+                  }`}
+                >
+                  {sub}
+                </button>
+              );
+            })}
+          </div>
         </div>
-
-        {/* Filter Button */}
-        <button
-          onClick={onOpenFilters}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer shrink-0 ${
-            activeFilterCount > 0
-              ? "border-blue-600 bg-blue-50 text-blue-700 font-bold"
-              : "border-gray-300 hover:bg-gray-50 text-gray-700"
-          }`}
-        >
-          <Image src="/icons/filter.svg" alt="Filters" width={14} height={14} />
-          <span>Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="bg-blue-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-
-        {/* View Switcher (Grid / List) */}
-        <button
-          onClick={onToggleViewMode}
-          className="p-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors cursor-pointer shrink-0"
-          title={viewMode === "grid" ? "Switch to List" : "Switch to Grid"}
-        >
-          {viewMode === "grid" ? (
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="8" x2="21" y1="6" y2="6" />
-              <line x1="8" x2="21" y1="12" y2="12" />
-              <line x1="8" x2="21" y1="18" y2="18" />
-              <line x1="3" x2="3.01" y1="6" y2="6" />
-              <line x1="3" x2="3.01" y1="12" y2="12" />
-              <line x1="3" x2="3.01" y1="18" y2="18" />
-            </svg>
-          ) : (
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect width="7" height="7" x="3" y="3" rx="1" />
-              <rect width="7" height="7" x="14" y="3" rx="1" />
-              <rect width="7" height="7" x="14" y="14" rx="1" />
-              <rect width="7" height="7" x="3" y="14" rx="1" />
-            </svg>
-          )}
-        </button>
-      </div>
+      )}
 
       {/* 4. SCROLLABLE CATALOG WITH INFINITE SCROLL */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
@@ -369,52 +332,7 @@ function ProductSidebar({
 
         {displayedProducts.length === 0 ? (
           <div className="py-12 text-center text-gray-400 text-xs font-medium">
-            No products match your current filters.
-          </div>
-        ) : viewMode === "grid" ? (
-          /* GRID VIEW */
-          <div className="grid grid-cols-2 gap-3">
-            {displayedProducts.map((item) => {
-              const isSelected = item._id === activeProduct?._id;
-              const isOriginal = item._id === originalProduct?._id;
-
-              return (
-                <div
-                  key={item._id}
-                  onClick={() => onSelectProduct(item)}
-                  className={`group relative rounded-xl border-2 p-2.5 cursor-pointer transition-all bg-white hover:shadow-md ${
-                    isSelected
-                      ? "border-blue-600 ring-1 ring-blue-600"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                >
-                  {isOriginal && (
-                    <div className="mb-1.5">
-                      <span className="bg-blue-600 text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
-                        Original
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gray-100 mb-2">
-                    <img
-                      src={getProductImage(item)}
-                      alt={item.productTitle}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-
-                  <p className="text-xs font-extrabold text-gray-900">
-                    ₹{item.perUnitPrice || item.discountedprice?.price || item.price || "95"}
-                    <span className="text-[10px] font-normal text-gray-500 ml-0.5">/sq.ft</span>
-                  </p>
-                  <p className="text-[11px] font-semibold text-gray-700 line-clamp-1 mt-0.5">
-                    {item.productTitle}
-                  </p>
-                </div>
-              );
-            })}
+            No products available in this subcategory.
           </div>
         ) : (
           /* LIST VIEW */

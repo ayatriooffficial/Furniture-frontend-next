@@ -21,14 +21,13 @@ const getProductImage = (prod) => {
 function MobileBottomSheet({
   activeCategory,
   onSelectCategory,
+  subcategories = [],
+  activeSubcategory,
+  onSelectSubcategory,
   activeProduct,
   originalProduct,
   products = [],
   onSelectProduct,
-  searchTerm,
-  onSearchChange,
-  onOpenFilters,
-  activeFilterCount = 0,
   onOpenHistory,
   sheetHeight = 310,
   setSheetHeight,
@@ -140,7 +139,7 @@ function MobileBottomSheet({
 
   useEffect(() => {
     setVisibleCount(20);
-  }, [activeCategory, searchTerm, activeFilterCount]);
+  }, [activeCategory, activeSubcategory]);
 
   useEffect(() => {
     if (!sentinelRef.current) return;
@@ -235,69 +234,32 @@ function MobileBottomSheet({
         </div>
       </div>
 
-      {/* 3. SEARCH, FILTERS, HISTORY CONTROLS */}
-      <div
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        className="px-3 sm:px-4 py-2 flex items-center gap-2 border-b border-gray-100 shrink-0 touch-none"
-      >
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <svg
-            className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      {/* 3. DYNAMIC HORIZONTAL SUBCATEGORIES TRACK (AUTO-SELECTED) */}
+      {subcategories && subcategories.length > 0 && (
+        <div className="border-b border-gray-100 bg-gray-50/70 px-2.5 py-2 shrink-0 touch-none">
+          <div
+            className="overflow-x-auto flex items-center gap-1.5 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search finishes..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onFocus={() => {
-              if (setSheetHeight) setSheetHeight(maxHeightRef.current);
-            }}
-            className="w-full pl-8 pr-3 py-1.5 bg-gray-100 hover:bg-gray-200/60 focus:bg-white text-xs font-medium text-gray-900 rounded-lg border border-transparent focus:border-blue-500 focus:outline-none transition-colors"
-          />
+            {subcategories.map((sub) => {
+              const isSelected = (activeSubcategory || "").toLowerCase() === sub.toLowerCase();
+              return (
+                <button
+                  key={sub}
+                  onClick={() => onSelectSubcategory && onSelectSubcategory(sub)}
+                  className={`px-3 py-1 text-[11px] font-semibold rounded-full whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                    isSelected
+                      ? "bg-black text-white shadow-sm"
+                      : "bg-white text-gray-600 hover:text-black border border-gray-200"
+                  }`}
+                >
+                  {sub}
+                </button>
+              );
+            })}
+          </div>
         </div>
-
-        {/* Filters Button */}
-        <button
-          onClick={onOpenFilters}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer shadow-2xs shrink-0 ${
-            activeFilterCount > 0
-              ? "border-blue-600 bg-blue-50 text-blue-700 font-bold"
-              : "border-gray-300 hover:bg-gray-50 text-gray-700"
-          }`}
-        >
-          <Image src="/icons/filter.svg" alt="Filters" width={14} height={14} />
-          <span>Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="bg-blue-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-
-        {/* History Button */}
-        <button
-          onClick={onOpenHistory}
-          className="p-1.5 border border-gray-300 hover:bg-gray-50 rounded-lg text-gray-700 transition-colors cursor-pointer shrink-0"
-          title="Recent History"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        </button>
-      </div>
+      )}
 
       {/* 4. SCROLLABLE PRODUCT LIST */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-2 space-y-2.5 overscroll-contain">

@@ -93,6 +93,7 @@ function Header() {
 
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeSubcategory, setActiveSubcategory] = useState("");
   const [viewMode, setViewMode] = useState("list");
   const [activeFilters, setActiveFilters] = useState({
     material: "All",
@@ -299,43 +300,78 @@ function Header() {
     }
   };
 
-  // 4. FILTERING & SEARCH LOGIC
+  // 4. DYNAMIC SUBCATEGORY EXTRACTION & AUTO-SELECTION
   const currentCategoryProducts = categoryProductsMap[currentCategoryKey] || [];
 
-  const filteredProducts = useMemo(() => {
-    return currentCategoryProducts.filter((item) => {
-      // Search
-      if (searchTerm.trim()) {
-        const term = searchTerm.toLowerCase();
-        const matchesTitle = item.productTitle?.toLowerCase().includes(term);
-        const matchesCategory = item.category?.toLowerCase().includes(term);
-        const matchesMaterial = item.material?.toLowerCase().includes(term);
-        if (!matchesTitle && !matchesCategory && !matchesMaterial) return false;
-      }
-
-      // Material filter
-      if (activeFilters.material !== "All") {
-        const itemMat = (item.material || item.subcategory || "").toLowerCase();
-        if (!itemMat.includes(activeFilters.material.toLowerCase())) return false;
-      }
-
-      // Price filter
-      const price = item.perUnitPrice || item.discountedprice?.price || item.price || 95;
-      if (activeFilters.price === "Under ₹80" && price >= 80) return false;
-      if (activeFilters.price === "₹80 - ₹120" && (price < 80 || price > 120)) return false;
-      if (activeFilters.price === "₹120+" && price < 120) return false;
-
-      return true;
+  // Extract distinct, authentic subcategories present for this category
+  const availableSubcategories = useMemo(() => {
+    const subs = new Set();
+    currentCategoryProducts.forEach((p) => {
+      const sub = (p.subcategory || p.subCategory || "").trim();
+      if (sub) subs.add(sub);
     });
-  }, [currentCategoryProducts, searchTerm, activeFilters]);
 
-  const activeFilterCount =
-    (activeFilters.material !== "All" ? 1 : 0) +
-    (activeFilters.style !== "All" ? 1 : 0) +
-    (activeFilters.room !== "All" ? 1 : 0) +
-    (activeFilters.price !== "All" ? 1 : 0);
+    // Fallback predefined lists if database products haven't finished populating
+    if (subs.size === 0) {
+      if (currentCategoryKey === "Flooring") ["Luxury Vinyl Plank", "Laminate", "Wooden Floor", "Vinyl Floor", "Carpet", "Carpet Tiles", "Deck Wood"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Wallpaper") ["3D", "Abstract", "Animals & Birds", "Floral", "Brick & Stone", "Geometric", "Modern", "Plain & Texture"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Window Blinds") ["Roller Blinds", "Zebra Blinds", "Vertical Blinds", "Wooden Blinds", "Roman Blinds"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Curtains") ["Window Curtains", "Door Curtains", "Sheer Curtains", "Blackout Curtains", "Geometric", "Floral"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Carpet & Rugs") ["Area Rugs", "Living Room Carpets", "Hand-Tufted Rugs", "Runner Rugs"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Home furnishing") ["Cushions & Pillows", "Pouffes & Stools", "Vases & Decor", "Lamps & Lighting"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Artificial Green") ["Artificial Grass", "Vertical Garden", "Interlocking Gym Mats", "Rubber Tiles"].forEach((s) => subs.add(s));
+      else if (currentCategoryKey === "Upholstery") ["Sofa & Couch Fabrics", "Velvet & Suede", "Linen & Cotton"].forEach((s) => subs.add(s));
+    }
 
-  // 5. HANDLERS
+    return Array.from(subs);
+  }, [currentCategoryProducts, currentCategoryKey]);
+
+  // Auto-select the subcategory matching the active / original product or the 1st subcategory
+  useEffect(() => {
+    if (availableSubcategories.length === 0) return;
+
+    // Check if activeProduct or originalProduct has a subcategory in availableSubcategories
+    const targetProd = activeProduct || originalProduct;
+    const prodSub = (targetProd?.subcategory || targetProd?.subCategory || "").trim();
+
+    if (prodSub) {
+      const match = availableSubcategories.find(
+        (s) => s.toLowerCase() === prodSub.toLowerCase() || prodSub.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(prodSub.toLowerCase())
+      );
+      if (match) {
+        setActiveSubcategory(match);
+        return;
+      }
+    }
+
+    // Default to the first subcategory if not already set or invalid
+    if (!activeSubcategory || !availableSubcategories.includes(activeSubcategory)) {
+      setActiveSubcategory(availableSubcategories[0]);
+    }
+  }, [availableSubcategories, currentCategoryKey, originalProduct, activeProduct]);
+
+  // 5. FILTERING PRODUCTS BY ACTIVE SUBCATEGORY ONLY (100% REAL DATA)
+  const filteredProducts = useMemo(() => {
+    if (!activeSubcategory) return currentCategoryProducts;
+
+    const subLower = activeSubcategory.toLowerCase();
+    const matched = currentCategoryProducts.filter((item) => {
+      const itemSub = (item.subcategory || item.subCategory || "").toLowerCase();
+      const itemTitle = (item.productTitle || "").toLowerCase();
+      return (
+        itemSub === subLower ||
+        itemSub.includes(subLower) ||
+        subLower.includes(itemSub) ||
+        itemTitle.includes(subLower)
+      );
+    });
+
+    return matched.length > 0 ? matched : currentCategoryProducts;
+  }, [currentCategoryProducts, activeSubcategory]);
+
+  const activeFilterCount = 0;
+
+  // 6. HANDLERS
   const handleSelectCategory = (catKey) => {
     setActiveCategory(catKey);
 
@@ -555,12 +591,9 @@ function Header() {
           <ProductSidebar
             activeCategory={currentCategoryKey}
             onSelectCategory={handleSelectCategory}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onOpenFilters={() => setIsFiltersOpen(true)}
-            activeFilterCount={activeFilterCount}
-            viewMode={viewMode}
-            onToggleViewMode={() => setViewMode((v) => (v === "grid" ? "list" : "grid"))}
+            subcategories={availableSubcategories}
+            activeSubcategory={activeSubcategory}
+            onSelectSubcategory={setActiveSubcategory}
             onOpenHistory={() => setIsHistoryOpen(true)}
             originalProduct={originalProduct || currentCategoryProducts[0]}
             activeProduct={activeProduct}
@@ -755,14 +788,13 @@ function Header() {
           <MobileBottomSheet
             activeCategory={activeCategory}
             onSelectCategory={handleSelectCategory}
+            subcategories={availableSubcategories}
+            activeSubcategory={activeSubcategory}
+            onSelectSubcategory={setActiveSubcategory}
             activeProduct={activeProduct}
             originalProduct={originalProduct || currentCategoryProducts[0]}
             products={filteredProducts}
             onSelectProduct={handleSelectProduct}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onOpenFilters={() => setIsFiltersOpen(true)}
-            activeFilterCount={activeFilterCount}
             onOpenHistory={() => setIsHistoryOpen(true)}
             sheetHeight={sheetHeight}
             setSheetHeight={setSheetHeight}

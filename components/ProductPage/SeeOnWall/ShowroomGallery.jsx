@@ -71,17 +71,9 @@ function ShowroomGallery({
   };
 
   return (
-    <div className="absolute inset-0 z-50 bg-white overflow-y-auto px-4 sm:px-8 py-4 sm:py-6 animate-in fade-in duration-200">
+    <div className="absolute inset-0 z-30 bg-white overflow-y-auto px-4 sm:px-8 py-4 sm:py-6 animate-in fade-in duration-200">
       {/* Top Navigation Bar */}
-      <div className="max-w-4xl mx-auto flex items-center justify-between pb-4 border-b border-gray-200">
-        <button
-          onClick={onClose}
-          className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-        >
-          <span className="text-base font-bold">←</span>
-          <span>Back to Visualizer</span>
-        </button>
-
+      <div className="max-w-4xl mx-auto flex items-center justify-end pb-3 border-b border-gray-200">
         <button
           onClick={onClose}
           aria-label="Close"
