@@ -95,6 +95,21 @@ export const ALL_8_CATEGORIES = [
 
 export const ALL_7_CATEGORIES = ALL_8_CATEGORIES;
 
+/**
+ * Intelligent Close-Group Category Map
+ * Defines the active category + 2 closest related sibling categories (3 tabs total)
+ */
+export const CLOSE_CATEGORY_MAP = {
+  "Flooring": ["Flooring", "Carpet & Rugs", "Artificial Green"],
+  "Wallpaper": ["Wallpaper", "Curtains", "Home furnishing"],
+  "Window Blinds": ["Window Blinds", "Curtains", "Wallpaper"],
+  "Curtains": ["Curtains", "Window Blinds", "Home furnishing"],
+  "Carpet & Rugs": ["Carpet & Rugs", "Flooring", "Home furnishing"],
+  "Home furnishing": ["Home furnishing", "Upholstery", "Curtains"],
+  "Artificial Green": ["Artificial Green", "Flooring", "Carpet & Rugs"],
+  "Upholstery": ["Upholstery", "Home furnishing", "Curtains"],
+};
+
 // Helper to get valid image
 const getProductImage = (prod) => {
   if (!prod) return "/images/default.jpg";
@@ -124,14 +139,51 @@ function ProductSidebar({
   products = [],
   onSelectProduct,
 }) {
+  // One-way expansion state: false = close group (3 categories + View More), true = full 8 categories
+  const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
+
+  // Determine current category key for close group matching
+  const currentKey = useMemo(() => {
+    const lower = (activeCategory || "").toLowerCase();
+    if (lower.includes("floor")) return "Flooring";
+    if (lower.includes("wall")) return "Wallpaper";
+    if (lower.includes("blind")) return "Window Blinds";
+    if (lower.includes("curtain")) return "Curtains";
+    if (lower.includes("carpet") || lower.includes("rug")) return "Carpet & Rugs";
+    if (lower.includes("furnish") || lower.includes("home")) return "Home furnishing";
+    if (lower.includes("green") || lower.includes("grass")) return "Artificial Green";
+    if (lower.includes("upholster")) return "Upholstery";
+    return "Flooring";
+  }, [activeCategory]);
+
+  // Compute visible categories
+  const visibleCategories = useMemo(() => {
+    if (isCategoriesExpanded) return ALL_8_CATEGORIES;
+    const allowedIds = CLOSE_CATEGORY_MAP[currentKey] || ["Flooring", "Carpet & Rugs", "Artificial Green"];
+    return ALL_8_CATEGORIES.filter((c) => allowedIds.includes(c.id));
+  }, [isCategoriesExpanded, currentKey]);
+
   // Ensure original product is only pinned when browsing its corresponding category
   const unifiedProductList = useMemo(() => {
-    const isMatchingCategory =
-      !activeCategory ||
-      activeCategory.toLowerCase().includes("floor") ||
-      (originalProduct?.category && originalProduct.category.toLowerCase() === activeCategory.toLowerCase());
+    if (!originalProduct) return products;
 
-    if (!originalProduct || !isMatchingCategory) return products;
+    const origCat = (originalProduct.category || "").toLowerCase();
+    const currentCat = (activeCategory || "").toLowerCase();
+    const isMatching =
+      origCat === currentCat ||
+      (origCat.includes("floor") && currentCat.includes("floor")) ||
+      (origCat.includes("wall") && currentCat.includes("wall")) ||
+      (origCat.includes("curtain") && currentCat.includes("curtain")) ||
+      (origCat.includes("blind") && currentCat.includes("blind")) ||
+      (origCat.includes("carpet") && currentCat.includes("carpet")) ||
+      (origCat.includes("rug") && currentCat.includes("rug")) ||
+      (origCat.includes("furnish") && currentCat.includes("furnish")) ||
+      (origCat.includes("home") && currentCat.includes("home")) ||
+      (origCat.includes("green") && currentCat.includes("green")) ||
+      (origCat.includes("grass") && currentCat.includes("grass")) ||
+      (origCat.includes("upholster") && currentCat.includes("upholster"));
+
+    if (!isMatching) return products;
     const others = products.filter((p) => p._id !== originalProduct._id);
     return [originalProduct, ...others];
   }, [originalProduct, products, activeCategory]);
@@ -163,9 +215,9 @@ function ProductSidebar({
   const displayedProducts = unifiedProductList.slice(0, visibleCount);
 
   return (
-    <aside className="w-[380px] lg:w-[410px] h-screen flex flex-col bg-white border-r border-gray-200 z-20 select-none flex-shrink-0 shadow-lg">
-      {/* 1. BRAND HEADER: AYATRIO LOGO + HISTORY CLOCK BUTTON */}
-      <div className="h-14 flex items-center justify-between px-4 sm:px-5 border-b border-gray-200 bg-white shrink-0">
+    <aside className="w-full h-full bg-white flex flex-col border-r border-gray-200 select-none">
+      {/* 1. TOP BRAND ROW */}
+      <div className="h-14 px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
         <Link href="/" className="flex items-center">
           <Image
             src="/images/ayatriologo.webp"
@@ -191,13 +243,13 @@ function ProductSidebar({
         </button>
       </div>
 
-      {/* 2. ALL 8 CATEGORIES: HORIZONTAL SCROLL TRACK WITH 3-TAB PEEK RATIO */}
+      {/* 2. CLOSE-GROUP CATEGORIES TRACK WITH ONE-WAY "VIEW MORE" EXPANSION */}
       <div className="border-b border-gray-200 bg-white px-1 shrink-0">
         <div
           className="overflow-x-auto flex items-center scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {ALL_8_CATEGORIES.map((cat) => {
+          {visibleCategories.map((cat) => {
             const lowerActive = (activeCategory || "").toLowerCase();
             const isActive =
               lowerActive === cat.id.toLowerCase() ||
@@ -227,6 +279,24 @@ function ProductSidebar({
               </button>
             );
           })}
+
+          {/* ONE-WAY "VIEW MORE" BUTTON (100% Symmetrical with Category Tabs) */}
+          {!isCategoriesExpanded && (
+            <button
+              onClick={() => setIsCategoriesExpanded(true)}
+              className="flex flex-col items-center justify-center py-2.5 px-3 min-w-[96px] sm:min-w-[105px] border-b-2 border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-200 font-medium transition-all cursor-pointer shrink-0"
+              title="View all categories"
+            >
+              <div className="mb-1 text-gray-500">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+              </div>
+              <span className="text-xs tracking-tight whitespace-nowrap">View more</span>
+            </button>
+          )}
         </div>
       </div>
 

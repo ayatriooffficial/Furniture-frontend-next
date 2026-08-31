@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import "./styles.css";
 import { useRouter } from "next/navigation";
 import { addFreeSamples } from "@/tag-manager/events/add_free_samples";
@@ -11,10 +11,79 @@ const { default: Link } = require("next/link");
 const { useDispatch } = require("react-redux");
 const { setDbItems } = require("../Features/Slices/cartSlice");
 
+/**
+ * Resolves dynamic Visualizer action label based on category and subcategory.
+ */
+const getVisualizerActionLabel = (category = "", subcategory = "", title = "") => {
+  const text = `${category || ""} ${subcategory || ""} ${title || ""}`.toLowerCase();
+
+  // 1. Curtains & Blinds -> Window
+  if (
+    text.includes("curtain") ||
+    text.includes("drape") ||
+    text.includes("blind") ||
+    text.includes("shade") ||
+    text.includes("shutter")
+  ) {
+    return "See on the Window";
+  }
+
+  // 2. Flooring, Mats, Rugs, Artificial Grass -> Floor
+  if (
+    text.includes("floor") ||
+    text.includes("carpet") ||
+    text.includes("rug") ||
+    text.includes("mat") ||
+    text.includes("grass") ||
+    text.includes("plank") ||
+    (text.includes("tile") && !text.includes("wall tile"))
+  ) {
+    return "See on the Floor";
+  }
+
+  // 3. Wallpaper, Wall Decor, Wall Murals -> Wall
+  if (
+    text.includes("wall") ||
+    text.includes("paper") ||
+    text.includes("paint") ||
+    text.includes("mural")
+  ) {
+    return "See on the Wall";
+  }
+
+  // 4. Upholstery & Furniture Fabrics -> Furniture
+  if (
+    text.includes("upholster") ||
+    text.includes("sofa") ||
+    text.includes("chair") ||
+    text.includes("fabric")
+  ) {
+    return "See on Furniture";
+  }
+
+  // 5. Home furnishing, Pillows, Cushions, Bedding -> Room
+  if (
+    text.includes("furnish") ||
+    text.includes("pillow") ||
+    text.includes("cushion") ||
+    text.includes("bed") ||
+    text.includes("decor")
+  ) {
+    return "See in the Room";
+  }
+
+  // Default clean fallback
+  return "See in Your Room";
+};
+
 const RoomToolbar = ({ data }) => {
   const dispatch = useDispatch();
   const [openFreeSAmple, setOpenFreeSample] = useState(false);
   const router = useRouter();
+
+  const visualizerLabel = useMemo(() => {
+    return getVisualizerActionLabel(data?.category, data?.subcategory, data?.productTitle);
+  }, [data?.category, data?.subcategory, data?.productTitle]);
   // const [openFreeSAmple, setOpenFreeSample] = useState(false)
   const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
   const [ColorfilterOpen, setColorFilterOpen] = useState(false);
@@ -332,7 +401,7 @@ const RoomToolbar = ({ data }) => {
           height={25}
           loading="lazy"
         />
-        <span className="text-xs sm:text-sm">See on the wall</span>
+        <span className="text-xs sm:text-sm">{visualizerLabel}</span>
       </div>
 
       {openFreeSAmple && (

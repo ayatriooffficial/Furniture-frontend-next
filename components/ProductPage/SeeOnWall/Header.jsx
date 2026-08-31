@@ -257,7 +257,7 @@ function Header() {
           initial = validProducts[0];
         }
 
-        if (initial && !originalProduct && catKey === "Flooring") {
+        if (initial && !originalProduct) {
           setOriginalProduct(initial);
         }
 

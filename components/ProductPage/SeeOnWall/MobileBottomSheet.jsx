@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ALL_8_CATEGORIES } from "./ProductSidebar";
+import { ALL_8_CATEGORIES, CLOSE_CATEGORY_MAP } from "./ProductSidebar";
 
 // Helper to get valid image
 const getProductImage = (prod) => {
@@ -39,6 +39,30 @@ function MobileBottomSheet({
   const touchStartHeight = useRef(310);
   const minHeightRef = useRef(260);
   const maxHeightRef = useRef(620);
+
+  // One-way expansion state: false = close group (3 categories + View More), true = full 8 categories
+  const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
+
+  // Determine current category key for close group matching
+  const currentKey = useMemo(() => {
+    const lower = (activeCategory || "").toLowerCase();
+    if (lower.includes("floor")) return "Flooring";
+    if (lower.includes("wall")) return "Wallpaper";
+    if (lower.includes("blind")) return "Window Blinds";
+    if (lower.includes("curtain")) return "Curtains";
+    if (lower.includes("carpet") || lower.includes("rug")) return "Carpet & Rugs";
+    if (lower.includes("furnish") || lower.includes("home")) return "Home furnishing";
+    if (lower.includes("green") || lower.includes("grass")) return "Artificial Green";
+    if (lower.includes("upholster")) return "Upholstery";
+    return "Flooring";
+  }, [activeCategory]);
+
+  // Compute visible categories
+  const visibleCategories = useMemo(() => {
+    if (isCategoriesExpanded) return ALL_8_CATEGORIES;
+    const allowedIds = CLOSE_CATEGORY_MAP[currentKey] || ["Flooring", "Carpet & Rugs", "Artificial Green"];
+    return ALL_8_CATEGORIES.filter((c) => allowedIds.includes(c.id));
+  }, [isCategoriesExpanded, currentKey]);
 
   // Initialize responsive min and max bounds based on window height
   useEffect(() => {
@@ -87,12 +111,25 @@ function MobileBottomSheet({
 
   // Unified single list with original product at top when matching category
   const unifiedProductList = useMemo(() => {
-    const isMatchingCategory =
-      !activeCategory ||
-      activeCategory.toLowerCase().includes("floor") ||
-      (originalProduct?.category && originalProduct.category.toLowerCase() === activeCategory.toLowerCase());
+    if (!originalProduct) return products;
 
-    if (!originalProduct || !isMatchingCategory) return products;
+    const origCat = (originalProduct.category || "").toLowerCase();
+    const currentCat = (activeCategory || "").toLowerCase();
+    const isMatching =
+      origCat === currentCat ||
+      (origCat.includes("floor") && currentCat.includes("floor")) ||
+      (origCat.includes("wall") && currentCat.includes("wall")) ||
+      (origCat.includes("curtain") && currentCat.includes("curtain")) ||
+      (origCat.includes("blind") && currentCat.includes("blind")) ||
+      (origCat.includes("carpet") && currentCat.includes("carpet")) ||
+      (origCat.includes("rug") && currentCat.includes("rug")) ||
+      (origCat.includes("furnish") && currentCat.includes("furnish")) ||
+      (origCat.includes("home") && currentCat.includes("home")) ||
+      (origCat.includes("green") && currentCat.includes("green")) ||
+      (origCat.includes("grass") && currentCat.includes("grass")) ||
+      (origCat.includes("upholster") && currentCat.includes("upholster"));
+
+    if (!isMatching) return products;
     const others = products.filter((p) => p._id !== originalProduct._id);
     return [originalProduct, ...others];
   }, [originalProduct, products, activeCategory]);
@@ -141,13 +178,13 @@ function MobileBottomSheet({
         <div className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full transition-colors" />
       </div>
 
-      {/* 2. ALL 8 CATEGORIES: HORIZONTAL SCROLL TRACK WITH 3-TAB PEEK RATIO */}
+      {/* 2. CLOSE-GROUP CATEGORIES TRACK WITH ONE-WAY "VIEW MORE" EXPANSION */}
       <div className="border-b border-gray-100 px-1 shrink-0 bg-white">
         <div
           className="overflow-x-auto flex items-center scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {ALL_8_CATEGORIES.map((cat) => {
+          {visibleCategories.map((cat) => {
             const lowerActive = (activeCategory || "").toLowerCase();
             const isActive =
               lowerActive === cat.id.toLowerCase() ||
@@ -177,6 +214,24 @@ function MobileBottomSheet({
               </button>
             );
           })}
+
+          {/* ONE-WAY "VIEW MORE" BUTTON (100% Symmetrical with Category Tabs) */}
+          {!isCategoriesExpanded && (
+            <button
+              onClick={() => setIsCategoriesExpanded(true)}
+              className="flex flex-col items-center justify-center py-2 px-2.5 min-w-[85px] sm:min-w-[95px] border-b-2 border-transparent text-gray-500 hover:text-gray-900 font-medium transition-all cursor-pointer shrink-0"
+              title="View all categories"
+            >
+              <div className="mb-1 text-gray-500">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+              </div>
+              <span className="text-[11px] tracking-tight whitespace-nowrap">View more</span>
+            </button>
+          )}
         </div>
       </div>
 
