@@ -9,7 +9,6 @@ import ShowroomGallery from "./ShowroomGallery";
 import ShareModal from "./ShareModal";
 import SaveAuthModal from "./SaveAuthModal";
 import FiltersModal from "./FiltersModal";
-import HistoryDrawer from "./HistoryDrawer";
 import Slider from "./Slider";
 
 const INITIAL_SHOWROOMS = [
@@ -101,14 +100,12 @@ function Header() {
     room: "All",
     price: "All",
   });
-  const [history, setHistory] = useState([]);
 
   // Modals State
   const [isRoomOptionsOpen, setIsRoomOptionsOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isCompareActive, setIsCompareActive] = useState(false);
 
   // Active Category Key Normalization
@@ -271,13 +268,6 @@ function Header() {
           },
         };
       });
-
-      if (validProducts.length > 0) {
-        setHistory((prev) => {
-          const first = validProducts[0];
-          return prev.find((x) => x._id === first._id) ? prev : [first, ...prev];
-        });
-      }
     }
   };
 
@@ -419,11 +409,6 @@ function Header() {
     }));
 
     updateUrlParams(currentCategoryKey, product._id, activeRoomImage, rotation);
-
-    setHistory((prev) => {
-      const filtered = prev.filter((p) => p._id !== product._id);
-      return [product, ...filtered].slice(0, 10);
-    });
   };
 
   const handleSelectRoom = (roomImg, roomTitle) => {
@@ -594,7 +579,6 @@ function Header() {
             subcategories={availableSubcategories}
             activeSubcategory={activeSubcategory}
             onSelectSubcategory={setActiveSubcategory}
-            onOpenHistory={() => setIsHistoryOpen(true)}
             originalProduct={originalProduct || currentCategoryProducts[0]}
             activeProduct={activeProduct}
             products={filteredProducts}
@@ -795,7 +779,6 @@ function Header() {
             originalProduct={originalProduct || currentCategoryProducts[0]}
             products={filteredProducts}
             onSelectProduct={handleSelectProduct}
-            onOpenHistory={() => setIsHistoryOpen(true)}
             sheetHeight={sheetHeight}
             setSheetHeight={setSheetHeight}
             isDragging={isSheetDragging}
@@ -830,14 +813,6 @@ function Header() {
         activeFilters={activeFilters}
         onApplyFilters={(filters) => setActiveFilters(filters)}
         totalResultsCount={filteredProducts.length}
-      />
-
-      <HistoryDrawer
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        history={history}
-        onSelectProduct={handleSelectProduct}
-        onClearHistory={() => setHistory([])}
       />
     </div>
   );

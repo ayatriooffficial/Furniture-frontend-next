@@ -130,7 +130,6 @@ function ProductSidebar({
   subcategories = [],
   activeSubcategory,
   onSelectSubcategory,
-  onOpenHistory,
   originalProduct,
   activeProduct,
   products = [],
@@ -214,7 +213,7 @@ function ProductSidebar({
   return (
     <aside className="w-full h-full bg-white flex flex-col border-r border-gray-200 select-none">
       {/* 1. TOP BRAND ROW */}
-      <div className="h-14 px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
+      <div className="h-14 px-4 border-b border-gray-200 flex items-center shrink-0">
         <Link href="/" className="flex items-center">
           <Image
             src="/images/ayatriologo.webp"
@@ -225,19 +224,6 @@ function ProductSidebar({
             className="w-28 sm:w-32 object-contain"
           />
         </Link>
-
-        {/* History Button with clock icon */}
-        <button
-          onClick={onOpenHistory}
-          className="p-2 text-gray-700 hover:text-black hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors cursor-pointer active:scale-95"
-          title="View Recent History"
-          aria-label="Recent History"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        </button>
       </div>
 
       {/* 2. CLOSE-GROUP CATEGORIES TRACK WITH ONE-WAY "VIEW MORE" EXPANSION */}

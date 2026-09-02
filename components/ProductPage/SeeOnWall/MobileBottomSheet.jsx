@@ -28,7 +28,6 @@ function MobileBottomSheet({
   originalProduct,
   products = [],
   onSelectProduct,
-  onOpenHistory,
   sheetHeight = 310,
   setSheetHeight,
   isDragging = false,
