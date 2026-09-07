@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
+import LogoLoader from "../../Splashscreen/LogoLoader";
 import TopActionBar from "./TopActionBar";
 import ProductSidebar from "./ProductSidebar";
 import MobileBottomSheet from "./MobileBottomSheet";
@@ -110,7 +111,6 @@ function Header() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isCompareActive, setIsCompareActive] = useState(false);
 
-  // Active Category Key Normalization
   const currentCategoryKey = useMemo(() => {
     const lower = (activeCategory || "").toLowerCase();
     if (lower.includes("floor")) return "Flooring";
@@ -125,6 +125,148 @@ function Header() {
   }, [activeCategory]);
 
   const activeProduct = surfaces[currentCategoryKey]?.product;
+
+  const [visualizedImage, setVisualizedImage] = useState(null);
+  const [isVisualizing, setIsVisualizing] = useState(false);
+  const [visualizationError, setVisualizationError] = useState(null);
+
+  const parseAndFormatError = (dataOrText) => {
+    if (!dataOrText) return "An unknown error occurred while visualizing the product.";
+    
+    let errObj = dataOrText;
+    if (typeof dataOrText === "string") {
+      try {
+        errObj = JSON.parse(dataOrText);
+      } catch (e) {
+        return dataOrText;
+      }
+    }
+
+    if (typeof errObj === "string") return errObj;
+
+    if (typeof errObj === "object" && errObj !== null) {
+      const parts = [];
+      if (typeof errObj.error === "string") {
+        parts.push(errObj.error);
+      } else if (typeof errObj.message === "string") {
+        parts.push(errObj.message);
+      } else if (typeof errObj.detail === "string") {
+        parts.push(errObj.detail);
+      }
+
+      if (errObj.received_category) {
+        parts.push(`Received category: "${errObj.received_category}"`);
+      }
+
+      if (Array.isArray(errObj.supported_categories) && errObj.supported_categories.length > 0) {
+        parts.push(`Supported categories: ${errObj.supported_categories.join(", ")}`);
+      }
+
+      if (parts.length > 0) {
+        return parts.join(" • ");
+      }
+
+      try {
+        return JSON.stringify(errObj);
+      } catch (e) {
+        return "An unknown error object was returned from server.";
+      }
+    }
+
+    return String(dataOrText);
+  };
+
+  const handleVisualize = async () => {
+    console.log("Triggering handleVisualize for product:", activeProduct?._id);
+    if (!activeProduct?._id) return;
+    try {
+      setIsVisualizing(true);
+      setVisualizationError(null);
+      // Clear previous visualization to show local CSS masks while loading
+      setVisualizedImage(null); 
+      
+      let finalRoomImageUrl = activeRoomImage;
+
+      // 1. Ensure room image is a Cloudinary URL. If not already on Cloudinary, upload it via /api/upload-room
+      if (finalRoomImageUrl && !finalRoomImageUrl.includes("cloudinary.com")) {
+        console.log("Room image is not on Cloudinary. Uploading via /api/upload-room:", finalRoomImageUrl);
+        try {
+          const uploadRes = await fetch("/api/upload-room", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: finalRoomImageUrl }),
+          });
+
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            if (uploadData.url) {
+              finalRoomImageUrl = uploadData.url;
+              console.log("Cloudinary upload successful:", finalRoomImageUrl);
+            } else {
+              console.warn("Upload API route returned 200 but no URL field:", uploadData);
+            }
+          } else {
+            const errText = await uploadRes.text();
+            console.error("Cloudinary upload API route failed with status", uploadRes.status, ":", errText);
+            setVisualizationError("Failed to prepare room image for visualization.");
+            return;
+          }
+        } catch (uploadErr) {
+          console.error("Network error when calling /api/upload-room:", uploadErr);
+          setVisualizationError("Network error while preparing room image.");
+          return;
+        }
+      }
+
+      const baseUrl = process.env.NEXT_PUBLIC_SEEONWALL_API_URL || "http://172.19.226.253:5000";
+      const apiUrl = `${baseUrl}`;
+      console.log("Making POST request to Python API:", apiUrl);
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          productId: activeProduct._id,
+          category: currentCategoryKey || activeProduct.category,
+          imageUrl: getProductImage(activeProduct),
+          roomImage: finalRoomImageUrl
+        }),
+      });
+
+      console.log("Python API Response Status:", response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Python API Response Data:", data);
+
+        const returnedUrl = data.cloudinary_url;
+
+        if (returnedUrl) {
+          setVisualizedImage(returnedUrl);
+          setVisualizationError(null);
+        } else {
+          console.warn("Python response OK but no image URL key found in response body:", data);
+          setVisualizedImage(null);
+          setVisualizationError(parseAndFormatError(data));
+        }
+      } else {
+        const errText = await response.text();
+        console.error("Python API Error:", errText);
+        setVisualizedImage(null);
+        setVisualizationError(parseAndFormatError(errText || `Python Service Error (${response.status}: ${response.statusText || 'Server Error'})`));
+      }
+    } catch (error) {
+      console.error("Visualization network/fetch error:", error);
+      setVisualizedImage(null);
+      setVisualizationError(error.message || "Failed to connect to 3D visualization Python service.");
+    } finally {
+      setIsVisualizing(false);
+    }
+  };
+
+  useEffect(() => {
+    handleVisualize();
+  }, [activeProduct?._id, activeRoomImage]);
 
   // 1. EXTRACT URL PARAMETERS ON INITIAL MOUNT
   useEffect(() => {
@@ -197,6 +339,8 @@ function Header() {
     if (rawList.length === 0) {
       try {
         const fallbackSearch = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchProducts?query=${encodeURIComponent(catKey)}`);
+
+        console.log("Hello:    ",fallbackSearch);
         if (fallbackSearch.ok) {
           const searchData = await fallbackSearch.json();
           const list = Array.isArray(searchData) ? searchData : Array.isArray(searchData?.products) ? searchData.products : [];
@@ -628,6 +772,42 @@ function Header() {
             />
           )}
 
+          {/* PYTHON SERVICE VISUALIZATION ERROR TOAST BANNER */}
+          {visualizationError && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 max-w-xl w-[92%] sm:w-auto bg-neutral-900/95 text-white backdrop-blur-md px-5 py-4 rounded-xl shadow-2xl border border-red-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-300 animate-in fade-in slide-in-from-top-4">
+              <div className="flex items-start gap-3.5 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                  <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-bold uppercase tracking-wider text-red-400">Visualization Error</span>
+                  <span className="text-xs text-neutral-200 font-medium leading-relaxed mt-0.5 max-h-24 overflow-y-auto pr-1">
+                    {String(visualizationError)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <button
+                  onClick={() => handleVisualize()}
+                  className="text-xs bg-red-600 hover:bg-red-500 active:scale-95 text-white px-3.5 py-1.5 rounded-lg font-semibold transition-all shadow-md"
+                >
+                  Retry
+                </button>
+                <button
+                  onClick={() => setVisualizationError(null)}
+                  className="text-neutral-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                  aria-label="Dismiss error"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* COMPARE SLIDER MODE */}
           {isCompareActive ? (
             <div className="w-full h-full p-4 sm:p-8 flex items-center justify-center">
@@ -647,13 +827,21 @@ function Header() {
             >
               {/* Room Base Image Frame */}
               <div className="relative w-full h-full max-w-full max-h-[88vh] flex items-center justify-center overflow-hidden">
+                {isVisualizing && (
+                   <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                     <LogoLoader size={100} speed={2} variant="spin" />
+                   </div>
+                )}
+                
                 <img
-                  src={activeRoomImage}
+                  src={visualizedImage || activeRoomImage}
                   alt={activeRoomTitle}
-                  className="w-full h-full object-contain pointer-events-none select-none"
+                  className="w-full h-full object-contain pointer-events-none select-none transition-opacity duration-300"
                 />
 
-                {/* 1. DYNAMIC WALLPAPER SURFACE LAYER */}
+                {!visualizedImage && (
+                  <>
+                    {/* 1. DYNAMIC WALLPAPER SURFACE LAYER */}
                 {wallpaperImg && surfaces.Wallpapers.enabled && (
                   <div
                     key={`wall-${wallpaperImg}`}
@@ -725,6 +913,8 @@ function Header() {
                       }}
                     />
                   </div>
+                )}
+                  </>
                 )}
               </div>
             </div>
