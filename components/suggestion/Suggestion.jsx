@@ -778,13 +778,43 @@ const Suggestion = ({ id }) => {
                 suggestion.structuredFeatures.length > 0))) && (
             <section aria-labelledby="features-section">
               <h2 id="features-section" className="sr-only">Product Features</h2>
-              <FeaturesSection
+                            <FeaturesSection
                 suggestion={suggestion}
                 iconMap={iconMap}
                 aria-label="Product feature highlights"
               />
             </section>
           )}
+
+          {suggestion.position.includes("faqs") &&
+            Array.isArray(suggestion.faqs) &&
+            suggestion.faqs.filter((f) => f && f.title && String(f.title).trim()).length > 0 && (
+              <section
+                className="mt-20 px-[20px] sm:px-[50px] pb-10"
+                aria-labelledby="faqs-section"
+              >
+                <h2 id="faqs-section" className="text-2xl font-semibold">
+                  Frequently Asked Questions
+                </h2>
+                <div className="mt-6 sm:w-3/4 w-full divide-y divide-gray-200 border-y border-gray-200">
+                  {suggestion.faqs
+                    .filter((f) => f && f.title && String(f.title).trim())
+                    .map((faq, i) => (
+                      <details key={faq._id || i} className="group py-4">
+                        <summary className="flex cursor-pointer list-none items-center justify-between text-base font-medium text-gray-900">
+                          <span>{faq.title}</span>
+                          <span className="ml-4 text-xl text-gray-500 transition-transform group-open:rotate-45">
+                            +
+                          </span>
+                        </summary>
+                        <p className="mt-3 text-sm text-gray-600 whitespace-pre-line">
+                          {faq.description}
+                        </p>
+                      </details>
+                    ))}
+                </div>
+              </section>
+            )}
         </main>
       )}
     </div>
