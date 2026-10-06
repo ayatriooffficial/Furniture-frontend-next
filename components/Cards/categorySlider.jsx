@@ -37,7 +37,7 @@ const CategoriesSlider = () => {
               aria-label="Trending categories"
               data-component="categories-slider"
             >
-              <div className="flex flex-row group items-center justify-end gap-4 lg:mb-4">
+              <div className="flex flex-row group items-center justify-end gap-4 lg:mb-3">
                 <CategorySliderSwiper
                   categories={categories}
                   aria-describedby="category-slider-description"

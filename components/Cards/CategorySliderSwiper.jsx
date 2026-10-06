@@ -84,7 +84,7 @@ const CategorySliderSwiper = ({ categories }) => {
           "--swiper-navigation-size": "24px",
           width: "100%",
           height: "auto",
-          paddingTop: "15px",
+          paddingTop: "10px",
         }}
         aria-live="polite"
         data-component="swiper-container"
