@@ -241,7 +241,7 @@ const Tabs = ({ data }) => {
     return (
       <>
         {/* Desktop 3-Column Waterfall (md and above) */}
-        <div className="hidden md:grid md:grid-cols-3 gap-4 lg:gap-6 items-start">
+        <div className="hidden md:grid md:grid-cols-3 gap-4 lg:gap-4 items-start">
           <div className="flex flex-col gap-4 lg:gap-6">
             {col0.map(({ item, idx }) => renderItemCard(item, idx))}
           </div>
