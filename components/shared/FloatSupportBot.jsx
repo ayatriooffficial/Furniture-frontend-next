@@ -144,7 +144,7 @@ export default function FloatSupportBot() {
 
               <div className="relative z-10 text-[13px] md:text-[14px] text-gray-800 text-center leading-[1.4] pr-2 md:pr-0">
                 <div>Hey there.👋 Got any questions?</div>
-                <div className="text-gray-500 hidden md:block mt-0.5">Schedule a personalized room design.</div>
+                <div className="text-gray-500 hidden md:block mt-0.5">Chat with Home Furnishing Specialists!</div>
               </div>
             </div>
           )}
